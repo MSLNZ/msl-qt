@@ -31,11 +31,22 @@ setup(
     author=fetch_init('__author__'),
     author_email='joseph.borbely@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-qt',
-    description='Write a short description about msl-qt here',
+    description='Custom Qt components for the UI',
     long_description=read('README.rst'),
     license='MIT',
     platforms='any',
-    classifiers=[],  # list the classifiers, see: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Topic :: Scientific/Engineering :: Physics',
+        'Topic :: Software Development :: User Interfaces'
+    ],  # see: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest-cov', 'pytest'],
     install_requires=read('requirements.txt').splitlines(),
