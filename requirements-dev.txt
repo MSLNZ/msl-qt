@@ -1,0 +1,6 @@
+pytest
+pytest-cov
+pytest-runner
+sphinx
+sphinx_rtd_theme
+pyqt5
