@@ -6,6 +6,16 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
+from unittest.mock import MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return MagicMock()
+
+MOCK_MODULES = ['pyqt5']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 from msl import qt
 
 # -- General configuration ------------------------------------------------
