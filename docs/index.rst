@@ -12,6 +12,7 @@ Contents
    :maxdepth: 2
 
    Install <install>
+   API <api>
    License <license>
    Authors <authors>
    Release Notes <changelog>
