@@ -6,16 +6,6 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-from unittest.mock import MagicMock
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-            return MagicMock()
-
-MOCK_MODULES = ['PyQt5']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
 from msl import qt
 
 # -- General configuration ------------------------------------------------
@@ -112,6 +102,17 @@ todo_include_todos = True
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
+
+    from unittest.mock import MagicMock
+
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            return MagicMock()
+
+    MOCK_MODULES = ['PyQt5']
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 else:
     html_theme = 'sphinx_rtd_theme'
 
@@ -210,4 +211,5 @@ epub_exclude_files = ['search.html']
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
+    'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
 }
