@@ -80,7 +80,7 @@ def question(message, default=True, title=None):
 
 
 def double(message, default=0, minimum=-2147483647, maximum=2147483647, precision=1, title=None):
-    """Get a floating-point value from the user.
+    """Request a floating-point value from the user.
 
     Parameters
     ----------
@@ -102,7 +102,7 @@ def double(message, default=0, minimum=-2147483647, maximum=2147483647, precisio
     -------
     :obj:`float` or :obj:`None`
         The floating-point value or :obj:`None` if the user cancelled
-        the request to enter a number.
+        the request to enter a floating-point number.
     """
     app, title = _get_app_and_title(title)
     value, ok = QtWidgets.QInputDialog.getDouble(app.activeWindow(), title, message,
@@ -112,7 +112,7 @@ def double(message, default=0, minimum=-2147483647, maximum=2147483647, precisio
 
 
 def integer(message, default=0, minimum=-2147483647, maximum=2147483647, step=1, title=None):
-    """Get an integer value from the user.
+    """Request an integer value from the user.
 
     Parameters
     ----------
@@ -145,7 +145,7 @@ def integer(message, default=0, minimum=-2147483647, maximum=2147483647, step=1,
 
 
 def item(message, items, index=0, title=None):
-    """Select an item from a list of items.
+    """Request an item from a list of items.
 
     Parameters
     ----------
@@ -162,7 +162,8 @@ def item(message, items, index=0, title=None):
     Returns
     -------
     :obj:`object`
-        The selected item or :obj:`None` if the user cancelled the request to select an item.
+        The selected item or :obj:`None` if the user cancelled the request to
+        select an item.
 
         .. note::
             The data type of the selected item is preserved. For example, if
@@ -180,7 +181,7 @@ def item(message, items, index=0, title=None):
 
 
 def text(message, default='', multi_line=False, title=None):
-    """Get text from the user.
+    """Request text from the user.
 
     Parameters
     ----------
@@ -197,8 +198,8 @@ def text(message, default='', multi_line=False, title=None):
     Returns
     -------
     :obj:`str`
-        The text that the user entered or :obj:`None` if the user cancelled the request
-        to enter text.
+        The text that the user entered or :obj:`None` if the user cancelled the
+        request to enter text.
     """
     app, title = _get_app_and_title(title)
     if multi_line:
@@ -212,6 +213,98 @@ def text(message, default='', multi_line=False, title=None):
     return value.strip() if ok else None
 
 
+def save(initial=None, filters=None, title='Save As'):
+    """Request the user to select the name of a file to save.
+
+    Parameters
+    ----------
+    initial : :obj:`str`, optional
+        The initial directory to start in.
+    filters : :obj:`str` or :obj:`list` of :obj:`str` or :obj:`dict`
+        Only files that match the specified filters are shown.
+
+        Examples::
+
+            'Images (*.png *.xpm *.jpg)'
+            'Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)'
+            ['Images (*.png *.xpm *.jpg)', 'Text files (*.txt)', 'XML files (*.xml)']
+            {'Images': ('*.png', '*.xpm', '*.jpg'), 'Text files': '*.txt'}
+
+    title : :obj:`str`, optional
+        The text to display in the title bar of the pop-up window.
+
+    Returns
+    -------
+    :obj:`str`
+        The name of the file to save or :obj:`None` if the user cancelled the
+        request to select a file name.
+    """
+    app, title = _get_app_and_title(title)
+    filters = _get_file_filters(filters)
+    name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, initial, filters)
+    return name if len(name) > 0 else None
+
+
+def folder(initial=None, title='Select Folder'):
+    """Request to select an existing folder or to create a new folder.
+
+    Parameters
+    ----------
+    initial : :obj:`str`, optional
+        The initial directory to start in.
+    title : :obj:`str`, optional
+        The text to display in the title bar of the pop-up window.
+
+    Returns
+    -------
+    :obj:`str`
+        The name of the selected folder or :obj:`None` if the user cancelled
+        the request to select a folder.
+    """
+    app, title = _get_app_and_title(title)
+    name = QtWidgets.QFileDialog.getExistingDirectory(app.activeWindow(), title, initial)
+    return name if len(name) > 0 else None
+
+
+def filename(initial=None, filters=None, multiple=False, title='Select File'):
+    """Request to select the file(s) to open.
+
+    Parameters
+    ----------
+    initial : :obj:`str`, optional
+        The initial directory to start in.
+    filters : :obj:`str` or :obj:`list` of :obj:`str` or :obj:`dict`
+        Only files that match the specified filters are shown.
+
+        Examples::
+
+            'Images (*.png *.xpm *.jpg)'
+            'Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)'
+            ['Images (*.png *.xpm *.jpg)', 'Text files (*.txt)', 'XML files (*.xml)']
+            {'Images': ('*.png', '*.xpm', '*.jpg'), 'Text files': '*.txt'}
+
+    multiple : :obj:`bool`
+        Whether multiple files can be selected.
+    title : :obj:`str`, optional
+        The text to display in the title bar of the pop-up window.
+
+    Returns
+    -------
+    :obj:`str` or :obj:`list` of :obj:`str`
+        The name(s) of the file(s) to open or :obj:`None` if the user cancelled
+        the request to select the file(s).
+    """
+    app, title = _get_app_and_title(title)
+    filters = _get_file_filters(filters)
+    if multiple:
+        if title == 'Select File':
+            title += 's'
+        name, _ = QtWidgets.QFileDialog.getOpenFileNames(app.activeWindow(), title, initial, filters)
+    else:
+        name, _ = QtWidgets.QFileDialog.getOpenFileName(app.activeWindow(), title, initial, filters)
+    return name if len(name) > 0 else None
+
+
 def _get_app_and_title(title):
     """Returns a tuple of the QApplication instance and the title bar text."""
     app = application()
@@ -219,3 +312,38 @@ def _get_app_and_title(title):
         w = app.activeWindow()
         title = 'MSL' if w is None else w.windowTitle()
     return app, title
+
+
+def _get_file_filters(filters):
+    """Make the `filters` value be in the appropriate syntax."""
+    def _check_extn(ex):
+        """Check the format of the file extension."""
+        if ex is None:
+            return ALL_FILES
+        if '*' in ex:
+            return ex
+        if ex.startswith('.'):
+            return '*' + ex
+        return '*.' + ex
+
+    ALL_FILES = 'All Files (*)'
+
+    if filters is None:
+        return ALL_FILES
+
+    if isinstance(filters, dict):
+        f = ''
+        for name, extn in filters.items():
+            if isinstance(extn, (list, tuple)):
+                f += '{} ({});;'.format(name, ' '.join(_check_extn(e) for e in extn))
+            else:
+                f += '{} ({});;'.format(name, _check_extn(extn))
+        return f[:-2]
+
+    if isinstance(filters, (list, tuple)):
+        return ';;'.join(f if f is not None else ALL_FILES for f in filters)
+
+    if filters.endswith(';;'):
+        return filters[:-2]
+
+    return filters
