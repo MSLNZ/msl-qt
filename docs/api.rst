@@ -16,6 +16,12 @@ which has the following modules
 
    msl.qt.prompt
 
+and the following classes
+
++----------------------------------+-------------------------------------------------------------------+
+| :class:`msl.qt.LoopUntilAbort    | Repeatedly perform a task until aborted by the user.              |
+| <msl.qt.loop_until_abort>`       |                                                                   |
++----------------------------------+-------------------------------------------------------------------+
 
 Package Structure
 -----------------

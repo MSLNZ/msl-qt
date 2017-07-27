@@ -11,5 +11,6 @@ Submodules
 
 .. toctree::
 
+   msl.qt.loop_until_abort
    msl.qt.prompt
 

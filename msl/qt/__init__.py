@@ -32,3 +32,5 @@ def application(args=None):
     if app is None:
         app = QtWidgets.QApplication(sys.argv if args is None else args)
     return app
+
+from .loop_until_abort import LoopUntilAbort
