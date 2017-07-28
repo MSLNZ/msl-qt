@@ -31,7 +31,7 @@ class LoopUntilAbort(object):
             The text to display in the title bar of the dialog window.
             If :obj:`None` then uses the name of the subclass as the title.
         bg_color : :obj:`str` or :obj:`QColor`
-            The background color.
+            The background color of the dialog window.
         fg_color : :obj:`str` or :obj:`QColor`
             The color of the **Elapsed time** and **Iterations** text.
         font_family : :obj:`str`
