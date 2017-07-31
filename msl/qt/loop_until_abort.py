@@ -2,6 +2,7 @@
 Repeatedly perform a task until aborted by the user.
 """
 import datetime
+import traceback
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -92,11 +93,19 @@ class LoopUntilAbort(object):
         s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
         self._main_window.statusBar().showMessage('Started ' + s)
 
-        self.setup()
-        self._runtime_timer.start(1000)
-        self._loop_timer.start(0)
-        self._main_window.show()
-        self._app.exec_()
+        try:
+            self.setup()
+            setup_successful = True
+        except:
+            msg = 'The following exception occurred in the setup() method:\n\n{}'.format(traceback.format_exc())
+            prompt.critical(msg, title)
+            setup_successful = False
+
+        if setup_successful:
+            self._runtime_timer.start(1000)
+            self._loop_timer.start(0)
+            self._main_window.show()
+            self._app.exec_()
 
     @property
     def counter(self):
@@ -188,7 +197,7 @@ class LoopUntilAbort(object):
         self._main_window.statusBar().showMessage('Stopping the loop...')
         self._loop_timer.stop()
         self._runtime_timer.stop()
-        self.teardown()
+        self._teardown()
         event.accept()
 
     def _update_runtime_label(self):
@@ -211,17 +220,26 @@ class LoopUntilAbort(object):
             self._runtime_timer.stop()
             msg = 'Maximum number of iterations reached ({})'.format(self._counter)
             self._main_window.statusBar().showMessage(msg)
-            self.teardown()
+            self._teardown()
         else:
             try:
                 self.loop()
                 self._counter += 1
                 self._counter_label.setText('Iterations: {}'.format(self._counter))
-            except Exception as e:
-                prompt.critical(e)
+            except:
+                msg = 'The following exception occurred in the loop() method:\n\n{}'.format(traceback.format_exc())
+                prompt.critical(msg)
                 self._loop_error = True
                 self._main_window.close()
 
     def _is_max_reached(self):
         """Whether the maximum number of iterations was reached"""
         return self._max_iterations is not None and self._counter == self._max_iterations
+
+    def _teardown(self):
+        """Wraps the teardown method in a try..except block."""
+        try:
+            self.teardown()
+        except:
+            msg = 'The following exception occurred in the teardown() method:\n\n{}'.format(traceback.format_exc())
+            prompt.critical(msg)
