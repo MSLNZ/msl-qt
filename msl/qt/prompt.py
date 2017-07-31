@@ -4,6 +4,8 @@ Convenience functions to prompt the user.
 The following functions create a pop-up window to either notify the user of an
 event that happened or to request information from the user.
 """
+import traceback
+
 from PyQt5 import QtWidgets, QtCore
 
 from msl.qt import application
@@ -21,6 +23,8 @@ def critical(message, title=None):
         If :obj:`None` then uses the text in the title bar of the active window.
     """
     app, title = _get_app_and_title(title)
+    if isinstance(message, Exception):
+        message = traceback.format_exc()
     QtWidgets.QMessageBox.critical(app.activeWindow(), title, str(message))
 
 
@@ -36,6 +40,8 @@ def warning(message, title=None):
         If :obj:`None` then uses the text in the title bar of the active window.
     """
     app, title = _get_app_and_title(title)
+    if isinstance(message, Exception):
+        message = traceback.format_exc()
     QtWidgets.QMessageBox.warning(app.activeWindow(), title, str(message))
 
 
@@ -51,6 +57,8 @@ def information(message, title=None):
         If :obj:`None` then uses the text in the title bar of the active window.
     """
     app, title = _get_app_and_title(title)
+    if isinstance(message, Exception):
+        message = traceback.format_exc()
     QtWidgets.QMessageBox.information(app.activeWindow(), title, str(message))
 
 
