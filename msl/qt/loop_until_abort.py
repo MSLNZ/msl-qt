@@ -11,8 +11,9 @@ from msl.qt import application, prompt
 
 class LoopUntilAbort(object):
 
-    def __init__(self, loop_delay=0, title=None, bg_color='#DFDFDF', text_color='#20548B',
-                 font_family='Helvetica', font_size=14, max_iterations=None):
+    def __init__(self, loop_delay=0, max_iterations=None, title=None,
+                 bg_color='#DFDFDF', text_color='#20548B',
+                 font_family='Helvetica', font_size=14):
         """Repeatedly perform a task until aborted by the user.
 
         This class provides an interface to show the status of a task (e.g. read
@@ -35,6 +36,10 @@ class LoopUntilAbort(object):
             :meth:`loop` method; if `loop_delay` = ``1000`` then wait 1 second
             between successive calls to the :meth:`loop` method. The time delay
             occurs **before** the :meth:`loop` method is executed.
+        max_iterations : :obj:`int`
+            The maximum number of times to call the :meth:`loop` method. The
+            default value is :obj:`None`, which means to loop until the user
+            aborts the program.
         title : :obj:`str`
             The text to display in the title bar of the dialog window.
             If :obj:`None` then uses the name of the subclass as the title.
@@ -46,23 +51,15 @@ class LoopUntilAbort(object):
             The font family to use for the text.
         font_size : :obj:`int`
             The font size of the text.
-        max_iterations : :obj:`int`
-            The maximum number of times to call the :meth:`loop` method. The
-            default value is :obj:`None`, which means to loop until the user
-            aborts the program.
         """
-        super(LoopUntilAbort, self).__init__()
-
         self._counter = 0
         self._loop_error = False
-        bg_hex_color = QtGui.QColor(bg_color).name()
-        text_hex_color = QtGui.QColor(text_color).name()
-
         self._max_iterations = int(max_iterations) if max_iterations is not None else None
 
         self._app = application()
 
         self._central_widget = QtWidgets.QWidget()
+        bg_hex_color = QtGui.QColor(bg_color).name()
         self._central_widget.setStyleSheet('background:{};'.format(bg_hex_color))
 
         self._main_window = QtWidgets.QMainWindow()
@@ -74,11 +71,11 @@ class LoopUntilAbort(object):
         self._main_window.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
 
         font = QtGui.QFont(font_family, pointSize=font_size)
+        text_hex_color = QtGui.QColor(text_color).name()
+
         self._runtime_label = QtWidgets.QLabel()
         self._runtime_label.setFont(font)
         self._runtime_label.setStyleSheet('color:{};'.format(text_hex_color))
-        self._runtime_timer = QtCore.QTimer()
-        self._runtime_timer.timeout.connect(self._update_runtime_label)
 
         self._counter_label = QtWidgets.QLabel()
         self._counter_label.setFont(font)
@@ -87,14 +84,17 @@ class LoopUntilAbort(object):
         self._user_label = QtWidgets.QLabel()
         self._user_label.setFont(font)
 
-        self._loop_timer = QtCore.QTimer()
-        self._loop_timer.timeout.connect(self._call_loop)
-
         vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self._runtime_label)
         vbox.addWidget(self._counter_label)
         vbox.addWidget(self._user_label)
         self._central_widget.setLayout(vbox)
+
+        self._runtime_timer = QtCore.QTimer()
+        self._runtime_timer.timeout.connect(self._update_runtime_label)
+
+        self._loop_timer = QtCore.QTimer()
+        self._loop_timer.timeout.connect(self._call_loop)
 
         self._start_time = datetime.datetime.now()
         s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
