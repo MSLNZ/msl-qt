@@ -100,6 +100,7 @@ class LoopUntilAbort(object):
         s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
         self._main_window.statusBar().showMessage('Started ' + s)
         self._update_runtime_label()
+        self._update_iteration_label()
 
         try:
             self.setup()
@@ -222,6 +223,10 @@ class LoopUntilAbort(object):
         else:
             self._runtime_label.setText(base + '(+{} days)'.format(dt.days))
 
+    def _update_iteration_label(self):
+        """update the 'Iterations' label"""
+        self._counter_label.setText('Iterations: {}'.format(self._counter))
+
     def _call_loop(self):
         """call the loop method once"""
         if self._is_max_reached():
@@ -234,7 +239,7 @@ class LoopUntilAbort(object):
             try:
                 self.loop()
                 self._counter += 1
-                self._counter_label.setText('Iterations: {}'.format(self._counter))
+                self._update_iteration_label()
             except:
                 msg = 'The following exception occurred in the loop() method:\n\n{}'.format(traceback.format_exc())
                 prompt.critical(msg)
