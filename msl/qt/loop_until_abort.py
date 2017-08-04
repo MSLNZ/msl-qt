@@ -11,7 +11,7 @@ from msl.qt import application, prompt
 
 class LoopUntilAbort(object):
 
-    def __init__(self, title=None, bg_color='#DFDFDF', fg_color='#20548B',
+    def __init__(self, loop_delay=0, title=None, bg_color='#DFDFDF', text_color='#20548B',
                  font_family='Helvetica', font_size=14, max_iterations=None):
         """Repeatedly perform a task until aborted by the user.
 
@@ -28,12 +28,19 @@ class LoopUntilAbort(object):
 
         Parameters
         ----------
+        loop_delay : :obj:`int`
+            The delay time, in milliseconds, to wait between successive calls
+            to the :meth:`loop` method. For example, if `loop_delay` = ``0``
+            then there is no time delay between successive calls to the
+            :meth:`loop` method; if `loop_delay` = ``1000`` then wait 1 second
+            between successive calls to the :meth:`loop` method. The time delay
+            occurs **before** the :meth:`loop` method is executed.
         title : :obj:`str`
             The text to display in the title bar of the dialog window.
             If :obj:`None` then uses the name of the subclass as the title.
         bg_color : :obj:`str` or :obj:`QColor`
             The background color of the dialog window.
-        fg_color : :obj:`str` or :obj:`QColor`
+        text_color : :obj:`str` or :obj:`QColor`
             The color of the **Elapsed time** and **Iterations** text.
         font_family : :obj:`str`
             The font family to use for the text.
@@ -48,8 +55,8 @@ class LoopUntilAbort(object):
 
         self._counter = 0
         self._loop_error = False
-        fg_hex_color = QtGui.QColor(fg_color).name()
         bg_hex_color = QtGui.QColor(bg_color).name()
+        text_hex_color = QtGui.QColor(text_color).name()
 
         self._max_iterations = int(max_iterations) if max_iterations is not None else None
 
@@ -69,13 +76,13 @@ class LoopUntilAbort(object):
         font = QtGui.QFont(font_family, pointSize=font_size)
         self._runtime_label = QtWidgets.QLabel()
         self._runtime_label.setFont(font)
-        self._runtime_label.setStyleSheet('color:{};'.format(fg_hex_color))
+        self._runtime_label.setStyleSheet('color:{};'.format(text_hex_color))
         self._runtime_timer = QtCore.QTimer()
         self._runtime_timer.timeout.connect(self._update_runtime_label)
 
         self._counter_label = QtWidgets.QLabel()
         self._counter_label.setFont(font)
-        self._counter_label.setStyleSheet('color:{};'.format(fg_hex_color))
+        self._counter_label.setStyleSheet('color:{};'.format(text_hex_color))
 
         self._user_label = QtWidgets.QLabel()
         self._user_label.setFont(font)
@@ -92,20 +99,17 @@ class LoopUntilAbort(object):
         self._start_time = datetime.datetime.now()
         s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
         self._main_window.statusBar().showMessage('Started ' + s)
+        self._update_runtime_label()
 
         try:
             self.setup()
-            setup_successful = True
+            self._runtime_timer.start(1000)
+            self._loop_timer.start(max(0, int(loop_delay)))
+            self._main_window.show()
+            self._app.exec_()
         except:
             msg = 'The following exception occurred in the setup() method:\n\n{}'.format(traceback.format_exc())
             prompt.critical(msg, title)
-            setup_successful = False
-
-        if setup_successful:
-            self._runtime_timer.start(1000)
-            self._loop_timer.start(0)
-            self._main_window.show()
-            self._app.exec_()
 
     @property
     def counter(self):
@@ -136,6 +140,11 @@ class LoopUntilAbort(object):
     def max_iterations(self):
         """:obj:`int` or :obj:`None`: The maximum number of times to call the :meth:`loop` method."""
         return self._max_iterations
+
+    @property
+    def loop_delay(self):
+        """:obj:`int`: The time delay, in milliseconds, between successive calls to the loop method."""
+        return self._loop_timer.interval()
 
     def setup(self):
         """This method gets called before the :meth:`loop` starts.
