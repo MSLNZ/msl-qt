@@ -3,7 +3,7 @@ Display all the icons available in QStyle.StandardPixmap and in the *standard* W
 """
 from PyQt5 import QtWidgets, QtCore
 
-from msl.qt import application, icon, prompt
+from msl.qt import application, icon
 
 
 class ShowStandardIcons(object):
@@ -13,17 +13,25 @@ class ShowStandardIcons(object):
         app = application()
 
         self.tab_widget = QtWidgets.QTabWidget()
-        self.tab_widget.setWindowTitle('Standard Icons')
         self.tab_widget.closeEvent = self.close_event
 
+        self.main_window = QtWidgets.QMainWindow()
+        self.main_window.setWindowTitle('Standard Icons')
+        self.main_window.setCentralWidget(self.tab_widget)
+
+        # add a progress bar to the status bar
+        self.progress_bar = QtWidgets.QProgressBar(self.main_window.statusBar())
+        self.progress_bar.setAlignment(QtCore.Qt.AlignCenter)
+        self.main_window.statusBar().addPermanentWidget(self.progress_bar)
+
         self.num_icons = 0
+        self.file_index = 0
         self.zoom_widget = QtWidgets.QLabel()
         self.zoom_widget.setScaledContents(True)
         self.zoom_size = QtCore.QSize(512, 512)
         self.zoom_widget.resize(self.zoom_size)
 
         qt_icons = [sp for sp in dir(QtWidgets.QStyle) if sp.startswith('SP_')]
-        self.add_qt_tab('Qt Icons', qt_icons)
 
         self.windows_files = [
             'accessibilitycpl',
@@ -48,6 +56,12 @@ class ShowStandardIcons(object):
             'wmploc',
             'wpdshext'
         ]
+
+        self.num_files = 1 + len(self.windows_files)
+        self.progress_bar.setRange(0, self.num_files)
+
+        self.add_qt_tab('Qt Icons', qt_icons)
+
         self.windows_index = 0
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.add_windows_tab)
@@ -61,6 +75,8 @@ class ShowStandardIcons(object):
         self.tab_widget.addTab(tab, label)
 
         layout = QtWidgets.QGridLayout()
+
+        self.update_message('Loading Qt icons...')
 
         count = 0
         num_cols = 4
@@ -76,14 +92,17 @@ class ShowStandardIcons(object):
 
         tab.setLayout(layout)
 
+        self.file_index += 1
+        self.progress_bar.setValue(self.file_index)
+
         # show the main widget now, after we have drawn some icons
-        self.tab_widget.resize(self.tab_widget.sizeHint())
-        self.tab_widget.show()
+        self.main_window.showMaximized()
 
     def add_windows_tab(self):
         """Add the icons from the Windows DLL and EXE files."""
-        num_cols = 12
+        num_cols = 16
         filename = self.windows_files[self.windows_index]
+        self.update_message('Loading icons from {}...'.format(filename))
 
         tab = QtWidgets.QWidget()
         self.tab_widget.addTab(tab, filename)
@@ -105,12 +124,19 @@ class ShowStandardIcons(object):
             index += 1
             self.num_icons += 1
 
+        self.file_index += 1
+        self.progress_bar.setValue(self.file_index)
+
         tab.setLayout(layout)
 
         self.windows_index += 1
         if self.windows_index == len(self.windows_files):
             self.timer.stop()
-            prompt.information('Loaded {} icons.'.format(self.num_icons))
+            self.update_message('Loaded {} icons.'.format(self.num_icons))
+            self.progress_bar.hide()
+
+    def update_message(self, text):
+        self.main_window.statusBar().showMessage(text)
 
     def zoom(self, dummy, ico, name):
         self.zoom_widget.setWindowTitle(name)
