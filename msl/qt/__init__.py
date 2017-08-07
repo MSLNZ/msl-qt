@@ -43,12 +43,12 @@ def application(args=None):
                'h/riKcqbqYOMrMfQTxEdQvKC4/eAu4iMYBG0RL9gAthd6yg4lco6B+AiKFzSfB1erBVQj8+CyF2PB1sPrAg' \
                'fyea4RP8TiBb+GmDIA0ArF5h/CLUCPx5AKuISAsJJYIV4w8O8hAOj2O9VbTJRNn6YpAHT6nZxQnYun49nmQ' \
                'NTrXcSaKN8t37RRU85AMRvPEgDoXnZT8Pe3un31FXMymTzL/xwrXlA8n2MHdwPYAbB5AAAAAElFTkSuQmCC'
-        app.setWindowIcon(icon(logo.encode()))
+        app.setWindowIcon(get_icon(logo.encode()))
 
     return app
 
 
-def icon(obj):
+def get_icon(obj):
     """Convert the input object into a :obj:`QIcon`.
 
     Parameters
@@ -62,7 +62,7 @@ def icon(obj):
           See `StandardPixmap <http://doc.qt.io/qt-5/qstyle.html#StandardPixmap-enum>`_
           for the possible enum values. Example::
 
-              msl.qt.icon(PyQt5.QtWidgets.QStyle.SP_TitleBarMenuButton)
+              msl.qt.get_icon(PyQt5.QtWidgets.QStyle.SP_TitleBarMenuButton)
 
         * :obj:`bytes`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_ representation
           of an encoded image. See also :func:`image_to_base64`.
@@ -78,29 +78,29 @@ def icon(obj):
           in a :obj:`str`-type argument::
 
               # provide the full path to image files
-              msl.qt.icon('D:/code/resources/icons/msl.png')
-              msl.qt.icon('D:/code/resources/icons/photon.png')
+              msl.qt.get_icon('D:/code/resources/icons/msl.png')
+              msl.qt.get_icon('D:/code/resources/icons/photon.png')
 
               # insert the folder where the icons are located into sys.path
               sys.path.insert(0, 'D:/code/resources/icons/')
               # so now only the filename needs to be specified to load the icon
-              msl.qt.icon('msl.png')
-              msl.qt.icon('photon.png')
+              msl.qt.get_icon('msl.png')
+              msl.qt.get_icon('photon.png')
 
               # load icon 23 from the Windows shell32.dll file
-              msl.qt.icon('C:/Windows/System32/shell32.dll|23')
+              msl.qt.get_icon('C:/Windows/System32/shell32.dll|23')
 
               # load icon 0 from the Windows explorer.exe file
-              msl.qt.icon('C:/Windows/explorer.exe|0')
+              msl.qt.get_icon('C:/Windows/explorer.exe|0')
 
               # by default it is assumed that the icon is located in a file in one of two directories:
               # a DLL file in C:/Windows/System32/ or an EXE file in C:/Windows/
               # so the following is a simplified way to load an icon in a Windows DLL file
-              msl.qt.icon('shell32|23')
-              msl.qt.icon('imageres|1')
-              msl.qt.icon('compstui|51')
+              msl.qt.get_icon('shell32|23')
+              msl.qt.get_icon('imageres|1')
+              msl.qt.get_icon('compstui|51')
               # and the following is a simplified way to load an icon in a Windows EXE file
-              msl.qt.icon('explorer|0')
+              msl.qt.get_icon('explorer|0')
 
     Returns
     -------
@@ -118,7 +118,7 @@ def icon(obj):
         return obj
     elif isinstance(obj, str):
         if '|' in obj:  # then loading an icon from a Windows DLL/EXE file
-            return icon(image_to_base64(obj))
+            return get_icon(image_to_base64(obj))
         # otherwise loading an icon from an image file
         if os.path.isfile(obj):
             return QtGui.QIcon(obj)
@@ -154,7 +154,7 @@ def image_to_base64(image, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG')
     Parameters
     ----------
     image : :obj:`object`
-        An image with a data type that is handled by :func:`icon`.
+        An image with a data type that is handled by :func:`get_icon`.
     size : :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`QSize`
         Rescale the image to the specified `size` before converting it to Base64_.
         If :obj:`None` then do not rescale the image. If a :obj:`float` then a scaling
@@ -244,9 +244,9 @@ def image_to_base64(image, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG')
         stream.Dispose()
         return base
 
-    icon_ = icon(image)
-    default_size = icon_.availableSizes()[-1]  # use the largest size as the default size
-    pixmap = icon_.pixmap(default_size)
+    icon = get_icon(image)
+    default_size = icon.availableSizes()[-1]  # use the largest size as the default size
+    pixmap = icon.pixmap(default_size)
 
     if size is None:
         size = default_size

@@ -3,7 +3,7 @@ Display all the icons available in QStyle.StandardPixmap and in the *standard* W
 """
 from PyQt5 import QtWidgets, QtCore
 
-from msl.qt import application, icon
+from msl.qt import application, get_icon
 
 
 class ShowStandardIcons(object):
@@ -13,23 +13,29 @@ class ShowStandardIcons(object):
         app = application()
 
         self.tab_widget = QtWidgets.QTabWidget()
-        self.tab_widget.closeEvent = self.close_event
 
         self.main_window = QtWidgets.QMainWindow()
         self.main_window.setWindowTitle('Standard Icons')
         self.main_window.setCentralWidget(self.tab_widget)
+        self.main_window.closeEvent = self.close_event
 
         # add a progress bar to the status bar
         self.progress_bar = QtWidgets.QProgressBar(self.main_window.statusBar())
         self.progress_bar.setAlignment(QtCore.Qt.AlignCenter)
         self.main_window.statusBar().addPermanentWidget(self.progress_bar)
+        self.main_window.showMaximized()
 
         self.num_icons = 0
         self.file_index = 0
-        self.zoom_widget = QtWidgets.QLabel()
-        self.zoom_widget.setScaledContents(True)
-        self.zoom_size = QtCore.QSize(512, 512)
-        self.zoom_widget.resize(self.zoom_size)
+        self.zoom_widget = QtWidgets.QDialog()
+        self.zoom_widget.setSizeGripEnabled(True)
+        self.zoom_widget.resize(QtCore.QSize(256, 256))
+        self.zoom_widget.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+        vbox = QtWidgets.QVBoxLayout()
+        self.zoom_label = QtWidgets.QLabel()
+        self.zoom_label.setScaledContents(True)
+        vbox.addWidget(self.zoom_label)
+        self.zoom_widget.setLayout(vbox)
 
         qt_icons = [sp for sp in dir(QtWidgets.QStyle) if sp.startswith('SP_')]
 
@@ -82,7 +88,7 @@ class ShowStandardIcons(object):
         num_cols = 4
         for i in icons:
             button = QtWidgets.QPushButton(i)
-            ico = icon(getattr(QtWidgets.QStyle, i))
+            ico = get_icon(getattr(QtWidgets.QStyle, i))
             button.setIcon(ico)
             button.clicked.connect(lambda dummy, ic=ico, n=i: self.zoom(dummy, ic, n))
 
@@ -94,9 +100,6 @@ class ShowStandardIcons(object):
 
         self.file_index += 1
         self.progress_bar.setValue(self.file_index)
-
-        # show the main widget now, after we have drawn some icons
-        self.main_window.showMaximized()
 
     def add_windows_tab(self):
         """Add the icons from the Windows DLL and EXE files."""
@@ -114,7 +117,7 @@ class ShowStandardIcons(object):
             button = QtWidgets.QPushButton(str(index))
             try:
                 name = '{}|{}'.format(filename, str(index))
-                ico = icon(name)
+                ico = get_icon(name)
             except IOError:
                 break
 
@@ -140,7 +143,7 @@ class ShowStandardIcons(object):
 
     def zoom(self, dummy, ico, name):
         self.zoom_widget.setWindowTitle(name)
-        self.zoom_widget.setPixmap(ico.pixmap(self.zoom_size))
+        self.zoom_label.setPixmap(ico.pixmap(self.zoom_widget.size()))
         self.zoom_widget.setWindowState(QtCore.Qt.WindowActive)
         self.zoom_widget.activateWindow()
         self.zoom_widget.show()
