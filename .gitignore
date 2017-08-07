@@ -40,5 +40,4 @@ junit.xml
 coverage.xml
 
 # irrelevant msl-qt files
-msl/examples/qt/loop_until_abort.txt
 junk*.py
