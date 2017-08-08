@@ -140,7 +140,7 @@ def get_icon(obj):
         raise TypeError("Argument has unexpected type '{}'".format(type(obj).__name__))
 
 
-def image_to_base64(image, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
+def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
     """Encode the image using Base64_ and return the encoded :obj:`bytes`.
 
     This function is useful if you want to save images in a database or if you
@@ -154,7 +154,8 @@ def image_to_base64(image, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG')
     Parameters
     ----------
     image : :obj:`object`
-        An image with a data type that is handled by :func:`get_icon`.
+        An image with a data type that is handled by :func:`get_icon`. If :obj:`None` then
+        a dialog window is created to allow the user to select an image file.
     size : :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`QSize`
         Rescale the image to the specified `size` before converting it to Base64_.
         If :obj:`None` then do not rescale the image. If a :obj:`float` then a scaling
@@ -244,8 +245,22 @@ def image_to_base64(image, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG')
         stream.Dispose()
         return base
 
+    # ensure that a QApplication exists in order to access Qt classes
+    app = application()
+
+    if image is None:
+        title = 'Select An Image File To Convert To Base64'
+        filters = {'Images': ('bmp', 'jpg', 'jpeg', 'png'), 'All files': '*'}
+        image = prompt.filename(title=title, filters=filters)
+        if image is None:
+            return b''
+
     icon = get_icon(image)
-    default_size = icon.availableSizes()[-1]  # use the largest size as the default size
+    try:
+        default_size = icon.availableSizes()[-1]  # use the largest size as the default size
+    except IndexError:
+        prompt.critical('Invalid image file.')
+        return b''
     pixmap = icon.pixmap(default_size)
 
     if size is None:
@@ -274,3 +289,4 @@ def image_to_base64(image, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG')
 
 
 from .loop_until_abort import LoopUntilAbort
+from . import prompt
