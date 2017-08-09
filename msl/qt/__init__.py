@@ -70,16 +70,16 @@ def get_icon(obj):
           for the possible enum values. Example::
 
               msl.qt.get_icon(PyQt5.QtWidgets.QStyle.SP_TitleBarMenuButton)
-
         * :obj:`bytes`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_ representation
-          of an encoded image. See also :func:`image_to_base64`.
+          of an encoded image.
+
+          See also :func:`image_to_base64`.
         * :obj:`str`: The path to an image file or an icon embedded in a Windows DLL/EXE file.
           If `obj` is a path to an image file and if only the filename is specified then the
           directories in :obj:`sys.path` and :obj:`os.environ['PATH'] <os.environ>` are used
           to search for the image file. If `obj` refers to an icon in a Windows DLL/EXE file
           then `obj` is the path to the DLL/EXE file and the icon index separated by the ``|``
-          character. An overview of some Windows DLL/EXE files which contain icons can be found
-          `here <http://www.digitalcitizen.life/where-find-most-windows-10s-native-icons>`_.
+          character.
 
           The following examples illustrate the various ways to request an icon by passing
           in a :obj:`str`-type argument::
@@ -100,7 +100,7 @@ def get_icon(obj):
               # load icon 0 from the Windows explorer.exe file
               msl.qt.get_icon('C:/Windows/explorer.exe|0')
 
-              # by default it is assumed that the icon is located in a file in one of two directories:
+              # by default it is assumed that the file is in one of two directories:
               # a DLL file in C:/Windows/System32/ or an EXE file in C:/Windows/
               # so the following is a simplified way to load an icon in a Windows DLL file
               msl.qt.get_icon('shell32|23')
@@ -120,6 +120,13 @@ def get_icon(obj):
         If `obj` is of type :obj:`str` and the file cannot be found.
     :obj:`TypeError`
         If the data type of `obj` is not supported.
+
+    Example
+    -------
+    To view the standard icons that come with Qt and that come with Windows run.
+
+    >>> from msl.examples.qt import ShowStandardIcons
+    >>> ShowStandardIcons() # doctest: +SKIP
     """
     if isinstance(obj, QtGui.QIcon):
         return obj
@@ -256,7 +263,7 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
     app = application()
 
     if image is None:
-        title = 'Select An Image File To Convert To Base64'
+        title = 'Select an image file to convert to Base64'
         filters = {'Images': ('bmp', 'jpg', 'jpeg', 'png'), 'All files': '*'}
         image = prompt.filename(title=title, filters=filters)
         if image is None:
@@ -295,5 +302,6 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
     return bytes(array.toBase64())
 
 
-from .loop_until_abort import LoopUntilAbort
 from . import prompt
+from .loop_until_abort import LoopUntilAbort
+from .toggle_switch import ToggleSwitch

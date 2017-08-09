@@ -13,4 +13,4 @@ Submodules
 
    msl.qt.loop_until_abort
    msl.qt.prompt
-
+   msl.qt.toggle_switch
