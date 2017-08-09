@@ -4,3 +4,4 @@ pytest-runner
 sphinx
 sphinx_rtd_theme
 pyqt5
+pythonnet>=2.2.2 ; platform_system == 'Windows'
