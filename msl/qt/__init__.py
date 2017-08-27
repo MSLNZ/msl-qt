@@ -303,5 +303,6 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
 
 
 from . import prompt
+from .logger import Logger
 from .loop_until_abort import LoopUntilAbort
 from .toggle_switch import ToggleSwitch
