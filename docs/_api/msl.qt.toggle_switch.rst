@@ -1,5 +1,5 @@
-msl\.qt\.toggle_switch module
-=============================
+msl\.qt\.toggle\_switch module
+==============================
 
 .. automodule:: msl.qt.toggle_switch
     :members:
