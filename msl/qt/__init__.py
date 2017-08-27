@@ -53,7 +53,6 @@ def application(args=None):
 
     return app
 
-from . import prompt
 from .logger import Logger
 from .loop_until_abort import LoopUntilAbort
 from .toggle_switch import ToggleSwitch
