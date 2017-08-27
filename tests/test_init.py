@@ -69,7 +69,7 @@ def test_icon():
         with pytest.raises(IOError):
             qt.get_icon('C:/Windows/System32/explorer.exe|0')  # the exe is located at 'C:/Windows/explorer.exe'
         with pytest.raises(IOError):
-            qt.get_icon('shell32|306')  # the maximum icon index is 305
+            qt.get_icon('shell32|9999')  # the maximum icon index should be much less than 9999
 
 
 def test_image_to_base64():
