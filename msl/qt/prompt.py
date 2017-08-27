@@ -12,7 +12,7 @@ from msl.qt import application
 
 
 def critical(message, title=None):
-    """Displays the critical `message` in a pop-up window.
+    """Display the critical `message` in a pop-up window.
 
     Parameters
     ----------
@@ -29,7 +29,7 @@ def critical(message, title=None):
 
 
 def warning(message, title=None):
-    """Displays the warning `message` in a pop-up window.
+    """Display the warning `message` in a pop-up window.
 
     Parameters
     ----------
@@ -46,7 +46,7 @@ def warning(message, title=None):
 
 
 def information(message, title=None):
-    """Displays the information `message` in a pop-up window.
+    """Display the information `message` in a pop-up window.
 
     Parameters
     ----------
@@ -63,7 +63,7 @@ def information(message, title=None):
 
 
 def question(message, default=True, title=None):
-    """Ask the user a question to receive a ``Yes`` or ``No`` answer.
+    """Ask a question to receive a ``Yes`` or ``No`` answer.
 
     Parameters
     ----------
@@ -88,7 +88,7 @@ def question(message, default=True, title=None):
 
 
 def double(message, default=0, minimum=-2147483647, maximum=2147483647, precision=1, title=None):
-    """Request a floating-point value from the user.
+    """Request a floating-point value.
 
     Parameters
     ----------
@@ -120,17 +120,17 @@ def double(message, default=0, minimum=-2147483647, maximum=2147483647, precisio
 
 
 def integer(message, default=0, minimum=-2147483647, maximum=2147483647, step=1, title=None):
-    """Request an integer value from the user.
+    """Request an integer value.
 
     Parameters
     ----------
     message : :obj:`str`
         The message that is shown to the user to describe what the value represents.
-    default : :obj:`float`, optional
-        The default floating-point value.
-    minimum : :obj:`float`, optional
+    default : :obj:`int`, optional
+        The default integer value.
+    minimum : :obj:`int`, optional
         The minimum value that the user can enter.
-    maximum : :obj:`float`, optional
+    maximum : :obj:`int`, optional
         The maximum value that the user can enter.
     step : :obj:`int`, optional
         The amount by which the values change as the user presses the arrow
@@ -189,7 +189,7 @@ def item(message, items, index=0, title=None):
 
 
 def text(message, default='', multi_line=False, title=None):
-    """Request text from the user.
+    """Request text.
 
     Parameters
     ----------
@@ -197,7 +197,7 @@ def text(message, default='', multi_line=False, title=None):
         The message that is shown to the user to describe what the text represents.
     default : :obj:`str`, optional
         The default text.
-    multi_line : :obj:`bool`
+    multi_line : :obj:`bool`, optional
         Whether the entered text can span multiple lines.
     title : :obj:`str`, optional
         The text to display in the title bar of the pop-up window.
@@ -222,14 +222,14 @@ def text(message, default='', multi_line=False, title=None):
 
 
 def save(initial=None, filters=None, title='Save As'):
-    """Request the user to select the name of a file to save.
+    """Request to select the name of a file to save.
 
     Parameters
     ----------
     initial : :obj:`str`, optional
         The initial directory to start in.
-    filters : :obj:`str` or :obj:`list` of :obj:`str` or :obj:`dict`
-        Only files that match the specified filters are shown.
+    filters : :obj:`str`, :obj:`list` of :obj:`str` or :obj:`dict`, optional
+        Only filenames that match the specified `filters` are shown.
 
         Examples::
 
@@ -245,7 +245,7 @@ def save(initial=None, filters=None, title='Save As'):
     -------
     :obj:`str`
         The name of the file to save or :obj:`None` if the user cancelled the
-        request to select a file name.
+        request to select a file.
     """
     app, title = _get_app_and_title(title)
     filters = _get_file_filters(filters)
@@ -281,8 +281,8 @@ def filename(initial=None, filters=None, multiple=False, title='Select File'):
     ----------
     initial : :obj:`str`, optional
         The initial directory to start in.
-    filters : :obj:`str` or :obj:`list` of :obj:`str` or :obj:`dict`
-        Only files that match the specified filters are shown.
+    filters : :obj:`str`, :obj:`list` of :obj:`str` or :obj:`dict`, optional
+        Only filenames that match the specified `filters` are shown.
 
         Examples::
 
@@ -291,7 +291,7 @@ def filename(initial=None, filters=None, multiple=False, title='Select File'):
             ['Images (*.png *.xpm *.jpg)', 'Text files (*.txt)', 'XML files (*.xml)']
             {'Images': ('*.png', '*.xpm', '*.jpg'), 'Text files': '*.txt'}
 
-    multiple : :obj:`bool`
+    multiple : :obj:`bool`, optional
         Whether multiple files can be selected.
     title : :obj:`str`, optional
         The text to display in the title bar of the pop-up window.
@@ -300,7 +300,7 @@ def filename(initial=None, filters=None, multiple=False, title='Select File'):
     -------
     :obj:`str` or :obj:`list` of :obj:`str`
         The name(s) of the file(s) to open or :obj:`None` if the user cancelled
-        the request to select the file(s).
+        the request to select a file.
     """
     app, title = _get_app_and_title(title)
     filters = _get_file_filters(filters)
