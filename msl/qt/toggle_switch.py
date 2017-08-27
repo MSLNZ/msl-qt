@@ -1,5 +1,5 @@
 """
-A toggle switch QWidget.
+A toggle switch :class:`QWidget`.
 """
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -12,16 +12,21 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         .. |switch| image:: ../../docs/_static/toggle_switch.gif
            :scale: 50 %
 
-        .. literalinclude:: ../../msl/examples/qt/toggle_switch.py
-
         Parameters
         ----------
-        parent : :obj:`QWidget`
+        parent : :obj:`QWidget`, optional
             The parent :obj:`QWidget`.
-        checked_color : :obj:`str` or :obj:`QColor`
+        checked_color : :obj:`str` or :obj:`QColor`, optional
             The color to draw the switch when it is in the checked state.
-        unchecked_color : :obj:`str` or :obj:`QColor`
+        unchecked_color : :obj:`str` or :obj:`QColor`, optional
             The color to draw the switch when it is **not** in the checked state.
+
+        Examples
+        --------
+        To view an example with the :class:`ToggleSwitch` run:
+
+        >>> from msl.examples.qt import toggle_switch
+        >>> toggle_switch.show()  # doctest: +SKIP
         """
         super(ToggleSwitch, self).__init__(parent)
 
@@ -31,7 +36,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         self.setCheckable(True)
 
     def paintEvent(self, event):
-        """Overrides the paintEvent method."""
+        """Overrides :obj:`QAbstractButton.paintEvent`."""
         diameter = self.height() - 2 * self._pad
         radius = diameter * 0.5
 
@@ -65,9 +70,9 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             p.drawEllipse(ellipse)
 
     def enterEvent(self, event):
-        """Overrides the enterEvent method."""
+        """Overrides :obj:`QAbstractButton.enterEvent`."""
         self.setCursor(QtCore.Qt.PointingHandCursor)
 
     def sizeHint(self):
-        """Overrides the sizeHint method."""
+        """Overrides :obj:`QWidget.sizeHint`."""
         return QtCore.QSize(2 * (self.height() + self._pad), self.height() + 2 * self._pad)

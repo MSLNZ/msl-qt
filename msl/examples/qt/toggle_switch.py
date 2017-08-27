@@ -1,5 +1,5 @@
 """
-Example showing how to use the :obj:`ToggleSwitch <msl.qt.toggle_switch.ToggleSwitch>`.
+Example showing the :obj:`ToggleSwitch <msl.qt.toggle_switch.ToggleSwitch>`.
 """
 from PyQt5 import QtWidgets
 
@@ -10,7 +10,7 @@ def print_state(checked):
     print('The switch is {}'.format('on' if checked else 'off'))
 
 
-def main():
+def show():
     app = application()
     window = QtWidgets.QWidget()
     window.setWindowTitle('Toggle Switch Example')
@@ -23,4 +23,4 @@ def main():
     app.exec_()
 
 if __name__ == '__main__':
-    main()
+    show()
