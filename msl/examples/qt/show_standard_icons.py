@@ -7,6 +7,13 @@ from PyQt5 import QtWidgets, QtCore
 from msl.qt import application
 from msl.qt.io import get_icon
 
+try:
+    # check if pythonnet is installed
+    import clr
+    has_clr = True
+except ImportError:
+    has_clr = False
+
 
 class ShowStandardIcons(object):
 
@@ -70,10 +77,14 @@ class ShowStandardIcons(object):
 
         self.add_qt_tab('Qt Icons', qt_icons)
 
-        self.windows_index = 0
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.add_windows_tab)
-        self.timer.start(0)
+        if has_clr:
+            self.windows_index = 0
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(self.add_windows_tab)
+            self.timer.start(0)
+        else:
+            self.update_message('Loaded {} icons.'.format(self.num_icons))
+            self.progress_bar.hide()
 
         app.exec()
 
