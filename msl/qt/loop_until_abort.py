@@ -16,9 +16,9 @@ class LoopUntilAbort(object):
                  font_family='Helvetica', font_size=14):
         """Repeatedly perform a task until aborted by the user.
 
-        This class provides an interface to show the status of a task (e.g. read
-        a sensor value and write it to a file) that you want to perform for an
-        unknown period of time (e.g. during lunch, overnight) and you want to
+        This class provides an interface to show the status of a task (e.g., read
+        a sensor value and write the value to a file) that you want to perform for
+        an unknown period of time (e.g., during lunch or overnight) and you want to
         stop the task whenever you return. It can be regarded as a way to tell
         your program to *"get as much data as possible until I get back"*.
 
@@ -27,29 +27,36 @@ class LoopUntilAbort(object):
 
         .. literalinclude:: ../../msl/examples/qt/loop_until_abort.py
 
+        Example
+        -------
+        To view this example run:
+
+        >>> from msl.examples.qt import LoopExample
+        >>> LoopExample() # doctest: +SKIP
+
         Parameters
         ----------
-        loop_delay : :obj:`int`
+        loop_delay : :obj:`int`, optional
             The delay time, in milliseconds, to wait between successive calls
             to the :meth:`loop` method. For example, if `loop_delay` = ``0``
             then there is no time delay between successive calls to the
             :meth:`loop` method; if `loop_delay` = ``1000`` then wait 1 second
             between successive calls to the :meth:`loop` method. The time delay
-            occurs **before** the :meth:`loop` method is executed.
-        max_iterations : :obj:`int`
+            occurs *before* the :meth:`loop` method is executed.
+        max_iterations : :obj:`int`, optional
             The maximum number of times to call the :meth:`loop` method. The
             default value is :obj:`None`, which means to loop until the user
             aborts the program.
-        title : :obj:`str`
+        title : :obj:`str`, optional
             The text to display in the title bar of the dialog window.
             If :obj:`None` then uses the name of the subclass as the title.
-        bg_color : :obj:`str` or :obj:`QColor`
+        bg_color : :obj:`str` or :obj:`QColor`, optional
             The background color of the dialog window.
-        text_color : :obj:`str` or :obj:`QColor`
+        text_color : :obj:`str` or :obj:`QColor`, optional
             The color of the **Elapsed time** and **Iterations** text.
-        font_family : :obj:`str`
+        font_family : :obj:`str`, optional
             The font family to use for the text.
-        font_size : :obj:`int`
+        font_size : :obj:`int`, optional
             The font size of the text.
         """
         self._counter = 0
@@ -134,7 +141,12 @@ class LoopUntilAbort(object):
 
     @property
     def user_label(self):
-        """:obj:`QLabel`: The reference to a label that the user can modify the text of."""
+        """:obj:`QLabel`: The reference to a label that the user can modify the text of.
+
+        See Also
+        --------
+        :obj:`update_label`
+        """
         return self._user_label
 
     @property
@@ -158,8 +170,8 @@ class LoopUntilAbort(object):
     def loop(self):
         """The task to perform in a repeated loop.
 
-        .. important::
-            You MUST override this method.
+        .. attention::
+            You **MUST** override this method.
         """
         raise NotImplementedError("You must override the 'loop' method.")
 
@@ -178,6 +190,10 @@ class LoopUntilAbort(object):
         ----------
         text : :obj:`str`
             The text to display in the user-accessible label.
+
+        See Also
+        --------
+        :obj:`user_label`
         """
         self._user_label.setText(text)
 
