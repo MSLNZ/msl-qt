@@ -4,6 +4,7 @@ General convenience functions and package constants.
 import os
 import sys
 import base64
+import fnmatch
 from collections import namedtuple
 
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -56,7 +57,7 @@ def application(args=None):
 
 
 def get_icon(obj):
-    """Convert the input object into a :obj:`QIcon`.
+    """Convert the input object in to a :obj:`QIcon`.
 
     Parameters
     ----------
@@ -301,6 +302,30 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
     buffer.close()
     return bytes(array.toBase64())
 
+
+def get_drag_enter_paths(event, pattern=None):
+    """Returns the list of file paths from a :obj:`QtGui.QDragEnterEvent`.
+
+    Parameters
+    ----------
+    event : :obj:`QtGui.QDragEnterEvent`
+        A drag-enter event.
+    pattern : :obj:`str`, optional
+        Include only the file paths that match the `pattern`.
+        See :func:`fnmatch.fnmatch`.
+
+    Returns
+    -------
+    :obj:`list` of :obj:`str`
+        The list of file paths.
+    """
+    if event.mimeData().hasUrls():
+        urls = event.mimeData().urls()
+        paths = [str(url.toLocalFile()) for url in urls if url.isValid() and url.scheme() == 'file']
+        if pattern is None:
+            return paths
+        return fnmatch.filter(paths, pattern)
+    return []
 
 from . import prompt
 from .logger import Logger
