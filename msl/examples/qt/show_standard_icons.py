@@ -1,9 +1,11 @@
 """
-Display all the icons available in QStyle.StandardPixmap and in the *standard* Windows DLL/EXE files.
+Display all the icons available in :obj:`QStyle.StandardPixmap` and in
+the *standard* Windows DLL/EXE files.
 """
 from PyQt5 import QtWidgets, QtCore
 
-from msl.qt import application, get_icon
+from msl.qt import application
+from msl.qt.io import get_icon
 
 
 class ShowStandardIcons(object):

@@ -1,22 +1,30 @@
 """
-Displays :mod:`logging` messages.
+A :class:`QWidget` to display :mod:`logging` messages.
 """
 import logging
 
 from PyQt5 import QtWidgets, QtGui, Qt
 
-from msl.qt import get_icon, prompt
+from msl.qt import prompt
+from msl.qt.io import get_icon
 
 
 class Logger(logging.Handler, QtWidgets.QWidget):
 
     def __init__(self, **kwargs):
-        """Displays :mod:`logging` messages.
+        """A :class:`QWidget` to display :mod:`logging` messages.
 
         Parameters
         ----------
         **kwargs
             The keyword arguments are passed to :obj:`logging.basicConfig`.
+
+        Example
+        -------
+        To view an example of the :class:`Logger` widget run:
+
+        >>> from msl.examples.qt import logger
+        >>> logger.show() # doctest: +SKIP
         """
         logging.Handler.__init__(self)
         QtWidgets.QWidget.__init__(self)
@@ -100,7 +108,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
     @property
     def records(self):
-        """:obj:`list` of :obj:`logging.LogRecord`: A history of all the log records."""
+        """:obj:`list` of :obj:`logging.LogRecord`: The history of all the log records."""
         return self._records
 
     def emit(self, record):
@@ -109,8 +117,8 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         if record.levelno >= self._level_combobox.currentData():
             self._append_record(record)
 
-    def view_latest_message(self):
-        """Move the vertical scrollbar to display the latest logging message."""
+    def show_latest(self):
+        """Move the vertical scrollbar to show the latest logging record."""
         vsb = self._text_browser.verticalScrollBar()
         vsb.setValue(vsb.maximum())
 

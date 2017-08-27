@@ -1,36 +1,36 @@
 """
-Example to show how to use the Logger QWidget.
+Example to show the :class:`Logger <msl.qt.logger.Logger>`.
 """
-import sys
 import random
 import logging
 
 from msl.qt import application, Logger
 
 
-def main():
-    logger = logging.getLogger()
+def show():
+    log = logging.getLogger()
 
     app = application()
-    log = Logger()
-    log.setWindowTitle('Logger Widget')
 
-    for i in range(1000):
+    logger = Logger()
+    logger.setWindowTitle('Logger Widget')
+
+    for i in range(100):
         level = random.randint(10, 60)
         if level < logging.INFO:
-            logger.debug('debug message {}'.format(i+1))
+            log.debug('debug message {}'.format(i+1))
         elif level < logging.WARNING:
-            logger.info('info message {}'.format(i+1))
+            log.info('info message {}'.format(i+1))
         elif level < logging.ERROR:
-            logger.warning('warning message {}'.format(i+1))
+            log.warning('warning message {}'.format(i+1))
         elif level < logging.CRITICAL:
-            logger.error('error message {}'.format(i+1))
+            log.error('error message {}'.format(i+1))
         else:
-            logger.critical('critical message {}'.format(i+1))
+            log.critical('critical message {}'.format(i+1))
 
-    log.resize(800, 400)
-    log.show()
-    sys.exit(app.exec())
+    logger.resize(800, 400)
+    logger.show()
+    app.exec()
 
 if __name__ == '__main__':
-    main()
+    show()
