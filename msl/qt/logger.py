@@ -169,6 +169,9 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
     def _save_records(self, checked):
         """Save the LogRecords that are currently displayed in the QTextBrowser to a file."""
+        if len(self._records) == 0:
+            prompt.information('There are no log records to save.')
+            return
         path = prompt.save(filters={'Log Files': '*.log'}, title='Save the Log Records')
         if path is None:
             return
