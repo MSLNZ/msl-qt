@@ -39,6 +39,7 @@ Package Structure
 
 .. toctree::
 
+   msl.qt <_api/msl.qt>
    msl.qt.io <_api/msl.qt.io>
    msl.qt.logger <_api/msl.qt.logger>
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
