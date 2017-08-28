@@ -11,13 +11,31 @@ from msl.qt.io import get_icon
 
 class Logger(logging.Handler, QtWidgets.QWidget):
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 level=logging.INFO,
+                 fmt='%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s',
+                 datefmt=None,
+                 ):
         """A :class:`QWidget` to display :mod:`logging` messages.
 
         Parameters
         ----------
-        **kwargs
-            The keyword arguments are passed to :obj:`logging.basicConfig`.
+        level : :obj:`int`, optional
+            The default `logging level`_ to use to display the :obj:`~logging.LogRecord`
+            (e.g., ``logging.INFO``).
+
+            .. _logging level: https://docs.python.org/3/library/logging.html#logging-levels
+
+        fmt : :obj:`str`, optional
+            The `string format`_ to use to display the :obj:`~logging.LogRecord`.
+
+            .. _string format: https://docs.python.org/3/library/logging.html#logrecord-attributes
+
+        datefmt : :obj:`str` or :obj:`None`, optional
+            The `date format`_ to use for the time stamp. If :obj:`None` then the ``ISO8601``
+            date format is used.
+
+            .. _date format: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
         Example
         -------
@@ -56,11 +74,15 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             self.color_map[logging.DEMO] = QtGui.QColor(93, 170, 78)
             self._level_names['DEMO'] = logging.DEMO
 
+        #
         # configure logging
-        self._current_level = kwargs.pop('level', logging.INFO)
-        handlers = (self,) + kwargs.pop('handlers', ())
-        format = kwargs.pop('format', '%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s')
-        logging.basicConfig(level=logging.NOTSET, handlers=handlers, format=format, **kwargs)
+        #
+
+        root = logging.getLogger()
+        self._current_level = level  # set the initial logging level
+        root.setLevel(logging.NOTSET)  # however, the root logger must have access to all logging levels
+        self.setFormatter(logging.Formatter(fmt, datefmt))
+        logging.getLogger().addHandler(self)
 
         #
         # create the widgets
@@ -108,7 +130,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
     @property
     def records(self):
-        """:obj:`list` of :obj:`logging.LogRecord`: The history of all the log records."""
+        """:obj:`list` of :obj:`~logging.LogRecord`: The history of all the log records."""
         return self._records
 
     def emit(self, record):

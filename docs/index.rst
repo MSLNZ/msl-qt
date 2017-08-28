@@ -3,7 +3,7 @@ MSL-Qt
 
 This package provides custom Qt_ components that can be used for the user interface.
 
-.. _Qt: https://wiki.python.org/moin/PyQt
+.. _Qt: https://www.qt.io/
 
 Contents
 ========
@@ -22,4 +22,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`

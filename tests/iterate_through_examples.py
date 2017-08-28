@@ -5,9 +5,9 @@ from msl.qt.prompt import question
 import msl.examples.qt as ex
 
 examples = [
-    ex.LoopExample,
     ex.logger.show,
     ex.toggle_switch.show,
+    ex.LoopExample,
     ex.ShowStandardIcons,
 ]
 

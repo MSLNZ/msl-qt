@@ -86,7 +86,7 @@ class ShowStandardIcons(object):
             self.update_message('Loaded {} icons.'.format(self.num_icons))
             self.progress_bar.hide()
 
-        app.exec()
+        app.exec_()
 
     def add_qt_tab(self, label, icons):
         """Add the Qt icons."""

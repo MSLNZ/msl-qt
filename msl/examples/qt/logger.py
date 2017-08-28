@@ -30,7 +30,7 @@ def show():
 
     logger.resize(800, 400)
     logger.show()
-    app.exec()
+    app.exec_()
 
 if __name__ == '__main__':
     show()

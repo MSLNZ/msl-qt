@@ -1,10 +1,10 @@
 """
-Custom `Qt <https://wiki.python.org/moin/PyQt>`_ components for the user interface.
+Custom `Qt <https://www.qt.io/>`_ components for the user interface.
 """
 import sys
 from collections import namedtuple
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 
 __author__ = 'Joseph Borbely'
 __copyright__ = '\xa9 2017, ' + __author__
@@ -49,7 +49,7 @@ def application(args=None):
                'ns7XZd0pDR49A8qrM3Eht5lgF/H9lKAuFC5KM1me5V48ZAVgBwJTNgwLD3/f3Q2sm57LA/SbCSuMiUggKpK' \
                'QbQN4KwgXy9AA4r13gAhPhxfL6T8y/FrQlyIjl7wYAAAAASUVORK5CYII='
         from msl.qt.io import get_icon
-        app.setWindowIcon(get_icon(logo.encode()))
+        app.setWindowIcon(get_icon(QtCore.QByteArray(logo.encode())))
 
     return app
 

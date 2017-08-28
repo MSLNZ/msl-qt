@@ -3,7 +3,6 @@ I/O helper functions.
 """
 import os
 import sys
-import base64
 import fnmatch
 
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -29,8 +28,8 @@ def get_icon(obj):
 
               get_icon(PyQt5.QtWidgets.QStyle.SP_TitleBarMenuButton)
 
-        * :obj:`bytes`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_ representation
-          of an encoded image.
+        * :class:`~QtCore.QByteArray`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_
+          representation of an encoded image.
 
           See :func:`image_to_base64`.
 
@@ -78,7 +77,7 @@ def get_icon(obj):
 
     Raises
     ------
-    :obj:`FileNotFoundError`
+    :obj:`IOError`
         If `obj` is of type :obj:`str` and the file cannot be found.
     :obj:`TypeError`
         If the data type of `obj` is not supported.
@@ -103,27 +102,27 @@ def get_icon(obj):
             full_path = os.path.join(path, obj)
             if os.path.isfile(full_path):
                 return QtGui.QIcon(full_path)
-        raise FileNotFoundError("Cannot find image file '{}'".format(obj))
+        raise IOError("Cannot find image file '{}'".format(obj))
     elif isinstance(obj, QtWidgets.QStyle.StandardPixmap):
         return QtGui.QIcon(application().style().standardIcon(obj))
     elif isinstance(obj, QtGui.QPixmap):
         return QtGui.QIcon(obj)
-    elif isinstance(obj, bytes):
+    elif isinstance(obj, (bytes, bytearray, QtCore.QByteArray)):
         img = QtGui.QImage()
         img.loadFromData(QtCore.QByteArray.fromBase64(obj))
         return QtGui.QIcon(QtGui.QPixmap.fromImage(img))
     else:
-        raise TypeError("Argument has unexpected type '{}'".format(type(obj).__name__))
+        raise TypeError('Argument has unexpected type {}'.format(type(obj)))
 
 
 def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
-    """Encode the image using Base64_ and return the encoded :obj:`bytes`.
+    """The image as a :class:`~QtCore.QByteArray` encoded as Base64_.
 
     This function is useful if you want to save images in a database or if you
     want to use images in your GUI and rather than loading images from a
     file on the hard disk you define your images in a Python module as a Base64_
-    :obj:`bytes` variable. Loading the images from the hard disk means that you
-    must also distribute the images with your Python code if you share your code.
+    variable. Loading the images from the hard disk means that you must also distribute
+    the images with your Python code if you share your code.
 
     .. _Base64: https://en.wikipedia.org/wiki/Base64
 
@@ -146,12 +145,12 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
 
     Returns
     -------
-    :obj:`bytes`
-        The Base64_ representation of the image encoded as :obj:`bytes`.
+    :class:`~QtCore.QByteArray`
+        The Base64_ representation of the image.
 
     Raises
     ------
-    :obj:`FileNotFoundError`
+    :obj:`IOError`
         If the image file cannot be found.
     :obj:`ValueError`
         If the image format, `fmt`, to use for converting is not supported.
@@ -186,14 +185,14 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
         if not os.path.isfile(path):
             err_msg = "Cannot find DLL/EXE file '{}'".format(s[0])
             if os.path.split(path)[0]:  # then it wasn't just the filename that was specified
-                raise FileNotFoundError(err_msg)
+                raise IOError(err_msg)
 
             filename = os.path.splitext(os.path.basename(path))[0]
             path = 'C:/Windows/System32/{}.dll'.format(filename)
             if not os.path.isfile(path):
                 path = 'C:/Windows/{}.exe'.format(filename)
                 if not os.path.isfile(path):
-                    raise FileNotFoundError(err_msg)
+                    raise IOError(err_msg)
 
         # extract the handle to the "large" icon
         path_ptr = ctypes.c_char_p(path.encode())
@@ -211,10 +210,10 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
         # get the icon bitmap and convert it to base64
         handle = clr.System.Int32(handle_large.value)
         handle_ptr = clr.System.IntPtr.op_Explicit(handle)
+        bmp = clr.System.Drawing.Bitmap.FromHicon(handle_ptr)
         stream = clr.System.IO.MemoryStream()
-        bmp = clr.System.Drawing.Icon.FromHandle(handle_ptr).ToBitmap()
         bmp.Save(stream, img_fmts[fmt])
-        base = base64.b64encode(bytes(stream.GetBuffer()))
+        base = QtCore.QByteArray(clr.System.Convert.ToBase64String(stream.GetBuffer()).encode())
 
         # clean up
         ctypes.windll.user32.DestroyIcon(handle_large)
@@ -229,14 +228,15 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
         filters = {'Images': ('bmp', 'jpg', 'jpeg', 'png'), 'All files': '*'}
         image = prompt.filename(title=title, filters=filters)
         if image is None:
-            return b''
+            return QtCore.QByteArray()
+        image = str(image)
 
     icon = get_icon(image)
     try:
         default_size = icon.availableSizes()[-1]  # use the largest size as the default size
     except IndexError:
         prompt.critical('Invalid image file.')
-        return b''
+        return QtCore.QByteArray()
     pixmap = icon.pixmap(default_size)
 
     if size is None:
@@ -261,7 +261,7 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
     buffer.open(QtCore.QIODevice.WriteOnly)
     pixmap.save(buffer, fmt)
     buffer.close()
-    return bytes(array.toBase64())
+    return array.toBase64()
 
 
 def get_drag_enter_paths(event, pattern=None):
