@@ -16,18 +16,11 @@ if on_rtd:
     from unittest.mock import MagicMock
 
     class Mock(MagicMock):
-        Qt = object
         @classmethod
-        def __getattr__(self, name):
-            full_name = '{0}.{1}'.format(self.__name__, name)
-            cls = MagicMock(full_name, (type,), {})
-            if full_name in ('PyQt5.QtWidgets.QtWidget',
-                             'PyQt5.QtCore.Qt',
-                             'PyQt5.Qt'):
-                return object
-            return cls
+        def __getattr__(cls, name):
+            return MagicMock()
 
-    MOCK_MODULES = ['PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.Qt', 'PyQt5.QtCore.Qt']
+    MOCK_MODULES = ['sip', 'PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.Qt']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 else:
