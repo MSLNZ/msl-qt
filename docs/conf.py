@@ -16,12 +16,14 @@ if on_rtd:
     from unittest.mock import MagicMock
 
     class Mock(MagicMock):
+        #Qt = object
         @classmethod
         def __getattr__(self, name):
             full_name = '{0}.{1}'.format(self.__name__, name)
             cls = MagicMock(full_name, (type,), {})
             if full_name in ('PyQt5.QtWidgets.QtWidget',
-                             'PyQt5.QtCore.Qt'):
+                             'PyQt5.QtCore.Qt',
+                             'PyQt5.Qt'):
                 return object
             return cls
 
