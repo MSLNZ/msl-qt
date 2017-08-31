@@ -1,17 +1,9 @@
 """
 A :class:`QWidget` to display :mod:`logging` messages.
 """
-#import os
 import logging
 
 from PyQt5 import QtWidgets, QtGui, Qt
-
-#on_rtd = os.environ.get('READTHEDOCS') == 'True'
-#if on_rtd:
-#    import logging
-#    class MockQtWidget(object):
-#        QWidget = logging.Filterer
-#    QtWidgets = MockQtWidget
 
 from msl.qt import prompt
 from msl.qt.io import get_icon

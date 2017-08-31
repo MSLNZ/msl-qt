@@ -15,12 +15,30 @@ if on_rtd:
 
     from unittest.mock import MagicMock
 
+    class QtWidgets(object):
+        class QWidget(object):
+            pass
+        QWidget = QWidget
+
+        class QAbstractButton(object):
+            pass
+        QAbstractButton = QAbstractButton
+
+    class QtCore(object):
+        class Qt(object):
+            KeepAspectRatio = 'QtCore.Qt.KeepAspectRatio'
+        Qt = Qt
+
     class Mock(MagicMock):
         @classmethod
         def __getattr__(cls, name):
+            if name == 'QtWidgets':
+                return QtWidgets
+            if name == 'QtCore':
+                return QtCore
             return MagicMock()
 
-    MOCK_MODULES = ['sip', 'PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.Qt']
+    MOCK_MODULES = ['PyQt5']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 else:
@@ -213,5 +231,5 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
     'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
-    'msl.equipment': ('https://msl-equipment.readthedocs.io/en/stable/', None),
+    'msl.equipment': ('http://msl-equipment.readthedocs.io/en/latest/', None),
 }
