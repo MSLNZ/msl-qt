@@ -16,7 +16,7 @@ if on_rtd:
     from unittest.mock import MagicMock
 
     class Mock(MagicMock):
-        #Qt = object
+        Qt = object
         @classmethod
         def __getattr__(self, name):
             full_name = '{0}.{1}'.format(self.__name__, name)
