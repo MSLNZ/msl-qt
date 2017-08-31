@@ -15,7 +15,9 @@ if on_rtd:
 
     from unittest.mock import MagicMock
 
-    class Mock(MagicMock):
+    import logging
+    class Mock(MagicMock, logging.Filterer):
+        #QWidget = logging.Filterer
         @classmethod
         def __getattr__(cls, name):
             return MagicMock()
