@@ -8,7 +8,10 @@ from PyQt5 import QtWidgets, QtGui, Qt
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
-    QtWidgets = object
+    import logging
+    class MockQtWidget(object):
+        QWidget = logging.Handler
+    QtWidgets = MockQtWidget
 
 from msl.qt import prompt
 from msl.qt.io import get_icon
