@@ -9,7 +9,7 @@ from msl.qt import prompt
 from msl.qt.io import get_icon
 
 
-class Logger(logging.Handler, QtWidgets.QWidget):
+class Logger(logging.Handler):#, QtWidgets.QWidget):
 
     def __init__(self,
                  level=logging.INFO,
