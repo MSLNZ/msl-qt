@@ -213,4 +213,5 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
     'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
+    'msl.equipment': ('https://msl-equipment.readthedocs.io/en/stable/', None),
 }
