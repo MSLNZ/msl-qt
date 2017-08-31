@@ -13,6 +13,8 @@ on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
 
+    sys.path.insert(0, os.path.abspath('.'))
+
     from unittest.mock import MagicMock
     import mock_qtwidgets
 
