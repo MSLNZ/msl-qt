@@ -8,6 +8,8 @@ from PyQt5 import QtWidgets, QtGui, Qt
 from msl.qt import prompt
 from msl.qt.io import get_icon
 
+import inspect
+print(inspect.getmro(QtWidgets.QWidget))
 
 class Logger(logging.Handler, QtWidgets.QWidget):
 
