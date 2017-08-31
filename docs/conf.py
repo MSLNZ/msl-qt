@@ -13,19 +13,15 @@ on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
 
-    sys.path.insert(0, os.path.abspath('.'))
-
     from unittest.mock import MagicMock
-    import mock_qtwidgets
 
     class Mock(MagicMock):
         @classmethod
         def __getattr__(cls, name):
             return MagicMock()
 
-    MOCK_MODULES = ['PyQt5', 'PyQt5.QtCore', 'PyQt5.QtGui']
+    MOCK_MODULES = ['PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-    sys.modules.update((('PyQt5.QtWidgets', mock_qtwidgets),))
 
 else:
     html_theme = 'sphinx_rtd_theme'
