@@ -24,7 +24,7 @@ if on_rtd:
                 return object
             return cls
 
-    MOCK_MODULES = ['PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui']
+    MOCK_MODULES = ['PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.Qt']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 else:
