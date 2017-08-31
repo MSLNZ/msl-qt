@@ -1,3 +1,5 @@
+import logging
+
 class QAbstractButton(object):
     pass
 
@@ -568,7 +570,7 @@ class QVBoxLayout(object):
 class QWhatsThis(object):
     pass
 
-class QWidget(object):
+class QWidget(logging.Handler):
     pass
 
 class QWidgetAction(object):
