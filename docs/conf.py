@@ -15,12 +15,14 @@ if on_rtd:
 
     from unittest.mock import MagicMock
 
-    import logging
-    class Mock(MagicMock, logging.Filterer):
-        #QWidget = logging.Filterer
+    class Mock(MagicMock):
         @classmethod
-        def __getattr__(cls, name):
-            return MagicMock()
+        def __getattr__(self, name):
+            full_name = '{0}.{1}'.format(self.__name__, name)
+            cls = MagicMock(full_name, (type,), {})
+            if full_name in ('PyQt5.QtWidgets.QtWidget',):
+                return object
+            return cls
 
     MOCK_MODULES = ['PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
