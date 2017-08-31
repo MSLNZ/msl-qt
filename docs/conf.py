@@ -14,7 +14,7 @@ if on_rtd:
     html_theme = 'default'
 
     from unittest.mock import MagicMock
-    from . import mock_qtwidgets
+    import mock_qtwidgets
 
     class Mock(MagicMock):
         @classmethod
