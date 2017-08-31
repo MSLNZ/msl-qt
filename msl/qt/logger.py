@@ -10,7 +10,7 @@ on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
     import logging
     class MockQtWidget(object):
-        QWidget = logging.Handler
+        QWidget = logging.Filterer
     QtWidgets = MockQtWidget
 
 from msl.qt import prompt
