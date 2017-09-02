@@ -9,7 +9,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 
 from msl.qt import application, prompt
 
-__all__ = ['get_icon', 'get_drag_enter_paths', 'image_to_base64']
+__all__ = ['get_drag_enter_paths', 'get_icon', 'image_to_base64']
 
 
 def get_icon(obj):
