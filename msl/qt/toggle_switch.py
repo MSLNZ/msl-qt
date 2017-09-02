@@ -7,10 +7,10 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 class ToggleSwitch(QtWidgets.QAbstractButton):
 
     def __init__(self, parent=None, checked_color='#009688', unchecked_color='#B4B4B4'):
-        """Constructs a toggle switch, |switch|
+        """Constructs a toggle switch, |toggle_switch|
 
-        .. |switch| image:: ../../docs/_static/toggle_switch.gif
-           :scale: 50 %
+        .. |toggle_switch| image:: ../../docs/_static/toggle_switch.gif
+           :scale: 40 %
 
         Parameters
         ----------
