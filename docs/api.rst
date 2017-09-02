@@ -17,27 +17,30 @@ which has the following modules
    msl.qt.io
    msl.qt.prompt
 
-the following :class:`QWidget`\'s
+the following general :class:`QWidget`\'s
 
-+----------------------------------+-------------------------------------------------------------------+
-| :class:`msl.qt.Logger            | Displays :mod:`logging` messages.                                 |
-| <msl.qt.logger>`                 |                                                                   |
-+----------------------------------+-------------------------------------------------------------------+
-| :class:`msl.qt.ToggleSwitch      | A toggle switch QWidget, |toggle_switch|                          |
-| <msl.qt.toggle_switch>`          |                                                                   |
-+----------------------------------+-------------------------------------------------------------------+
+.. autosummary::
 
-and the following classes
+   ~msl.qt.logger.Logger
+   ~msl.qt.toggle_switch.ToggleSwitch
 
-+----------------------------------+-------------------------------------------------------------------+
-| :class:`msl.qt.LoopUntilAbort    | Repeatedly perform a task until aborted by the user.              |
-| <msl.qt.loop_until_abort>`       |                                                                   |
-+----------------------------------+-------------------------------------------------------------------+
+the following :class:`QWidget`\'s that are compatible with the `MSL Equipment`_ package
+
+.. autosummary::
+
+   ~msl.qt.equipment.message_based.MessageBased
+
+and the following general classes
+
+.. autosummary::
+
+   ~msl.qt.loop_until_abort.LoopUntilAbort
 
 Package Structure
 -----------------
 
 .. toctree::
+   :maxdepth: 1
 
    msl.qt <_api/msl.qt>
    msl.qt.io <_api/msl.qt.io>
@@ -45,6 +48,9 @@ Package Structure
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
    msl.qt.prompt <_api/msl.qt.prompt>
    msl.qt.toggle_switch <_api/msl.qt.toggle_switch>
+   msl.qt.equipment <_api/msl.qt.equipment>
 
 .. |toggle_switch| image:: _static/toggle_switch.gif
    :scale: 40 %
+
+.. _MSL Equipment: http://msl-equipment.readthedocs.io/en/latest/

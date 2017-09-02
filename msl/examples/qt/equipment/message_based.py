@@ -1,5 +1,7 @@
 """
 Example showing the use of the :obj:`MessageBased <msl.qt.equipment.message_based.MessageBased>` widget.
+
+The messages are sent to a *dummy* :class:`~msl.equipment.record_types.EquipmentRecord` in demo mode.
 """
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
