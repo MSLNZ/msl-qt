@@ -26,8 +26,17 @@ if on_rtd:
 
     class QtCore(object):
         class Qt(object):
-            KeepAspectRatio = 'QtCore.Qt.KeepAspectRatio'
+            KeepAspectRatio = 1
         Qt = Qt
+
+        class QThread(object):
+            pass
+        QThread = QThread
+
+        @staticmethod
+        def pyqtSignal(*args, **kwargs):
+            pass
+        pyqtSignal = pyqtSignal
 
     class Mock(MagicMock):
         @classmethod
