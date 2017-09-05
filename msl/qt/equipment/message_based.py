@@ -47,7 +47,7 @@ class MessageBased(QtWidgets.QWidget):
         self._command_list = []
 
         self._header = ['Action', 'Delay', 'Message', 'Reply']
-        self._actions = ['write', 'read', 'query', 'delay']
+        self._actions = ['write', 'read', 'readline', 'query', 'delay']
         self._table = QtWidgets.QTableWidget(0, len(self._header), self)
         self._table.setHorizontalHeaderLabels(self._header)
         self._table.horizontalHeader().setStretchLastSection(True)
@@ -55,6 +55,13 @@ class MessageBased(QtWidgets.QWidget):
         self._table.horizontalHeader().customContextMenuRequested.connect(self._show_horizontal_popup_menu)
         self._table.verticalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self._table.verticalHeader().customContextMenuRequested.connect(self._show_vertical_popup_menu)
+
+        self._timeout_spinbox = QtWidgets.QDoubleSpinBox()
+        self._timeout_spinbox.setRange(0, 999999)
+        self._timeout_spinbox.setToolTip('<html>The timeout value, in seconds, to use for <i>read</i> and <i>readline</i> commands</html>')
+        self._timeout_spinbox.setSuffix(' s')
+        self._timeout_spinbox.valueChanged.connect(self._update_timeout)
+        self._timeout_spinbox.setValue(10.0)
 
         self._use_rows = QtWidgets.QLineEdit()
         self._use_rows.setToolTip('Enter the rows to execute or leave blank to execute all rows.\nFor example: 1,3,5-8')
@@ -97,13 +104,15 @@ class MessageBased(QtWidgets.QWidget):
 
         execute_widget = QtWidgets.QWidget()
         grid = QtWidgets.QGridLayout()
-        grid.addWidget(QtWidgets.QLabel('Rows'), 1, 0, alignment=QtCore.Qt.AlignRight)
-        grid.addWidget(self._use_rows, 1, 1, 1, 2)
-        grid.addWidget(self._execute_button, 2, 0, 1, 2)
-        grid.addWidget(self._loop_checkbox, 2, 2, 1, 1, alignment=QtCore.Qt.AlignLeft)
-        grid.addWidget(self._save_button, 3, 0, 1, 2)
-        grid.addWidget(self._status_label, 4, 0, 1, 3, alignment=QtCore.Qt.AlignBottom)
-        grid.setRowStretch(4, 1)
+        grid.addWidget(QtWidgets.QLabel('Timeout'), 1, 0, alignment=QtCore.Qt.AlignRight)
+        grid.addWidget(self._timeout_spinbox, 1, 1, 1, 2)
+        grid.addWidget(QtWidgets.QLabel('Rows'), 2, 0, alignment=QtCore.Qt.AlignRight)
+        grid.addWidget(self._use_rows, 2, 1, 1, 2)
+        grid.addWidget(self._execute_button, 3, 0, 1, 2)
+        grid.addWidget(self._loop_checkbox, 3, 2, 1, 1, alignment=QtCore.Qt.AlignLeft)
+        grid.addWidget(self._save_button, 4, 0, 1, 2)
+        grid.addWidget(self._status_label, 5, 0, 1, 3, alignment=QtCore.Qt.AlignBottom)
+        grid.setRowStretch(5, 1)
         execute_widget.setLayout(grid)
 
         self._create_row()
@@ -145,6 +154,9 @@ class MessageBased(QtWidgets.QWidget):
     def dropEvent(self, event):
         """Overrides :obj:`QtWidgets.QWidget.dropEvent`."""
         self._insert_lines(self._dropped_commands)
+
+    def _update_timeout(self, val):
+        self._conn.timeout = val
 
     def _show_vertical_popup_menu(self):
         """handles a right-click on the selected row button(s)"""
@@ -223,6 +235,8 @@ class MessageBased(QtWidgets.QWidget):
         # set the Delay tool tip
         if text == 'read':
             delay_widget.setToolTip('The time to wait, in ms, before sending the read command')
+        elif text == 'readline':
+            delay_widget.setToolTip('The time to wait, in ms, before sending the readline command')
         elif text == 'query':
             delay_widget.setToolTip('The time to wait, in ms, between sending the write and read commands')
         elif text == 'delay':
@@ -234,7 +248,7 @@ class MessageBased(QtWidgets.QWidget):
         if text == 'delay':
             message_widget.setStyleSheet('background-color: lightgray')
             reply_widget.setStyleSheet('background-color: lightgray')
-        elif text == 'read':
+        elif text == 'read' or text == 'readline':
             message_widget.setStyleSheet('background-color: lightgray')
             reply_widget.setStyleSheet('background-color: white')
         else:
@@ -255,7 +269,8 @@ class MessageBased(QtWidgets.QWidget):
 
         # create a new row if the last row is not "empty"
         index = self._table.rowCount() - 1
-        if self._table.cellWidget(index, 2).text() or self._table.cellWidget(index, 0).currentText() in ('read', 'delay'):
+        if self._table.cellWidget(index, 2).text() or \
+                        self._table.cellWidget(index, 0).currentText() in ('read', 'readline', 'delay'):
             self._create_row()
             index += 1
 
@@ -403,7 +418,7 @@ class MessageBased(QtWidgets.QWidget):
             action = self._table.cellWidget(index, 0).currentText()
             delay = self._table.cellWidget(index, 1).value() * 1e-3
             message = self._table.cellWidget(index, 2).text().strip()
-            if not message and action not in ('read', 'delay'):
+            if not message and action not in ('read', 'readline', 'delay'):
                 continue
             self._command_list.append((index, action, delay, message))
 
@@ -446,6 +461,10 @@ class _Execute(QtCore.QThread):
                     if delay > 0:
                         time.sleep(delay)
                     reply = str(self.parent._conn.read())
+                elif action == 'readline':
+                    if delay > 0:
+                        time.sleep(delay)
+                    reply = str(self.parent._conn.readline())
                 elif action == 'write':
                     num_bytes = self.parent._conn.write(message)
                     reply = '<sent {} bytes>'.format(num_bytes)
