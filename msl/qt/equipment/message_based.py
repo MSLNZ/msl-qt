@@ -94,6 +94,13 @@ class MessageBased(QtWidgets.QWidget):
         self._save_button.setToolTip('Save the table to a tab-delimited file')
         self._save_button.clicked.connect(self._save)
 
+        self._info_button = QtWidgets.QPushButton(get_icon(QtWidgets.QStyle.SP_FileDialogInfoView), '')
+        self._info_button.setToolTip('Display the information about the equipment')
+        self._info_button.clicked.connect(self._show_info)
+        self._info_window = QtWidgets.QLabel()
+        self._info_window.setWindowTitle(self.windowTitle())
+        self._info_window.setText(self._conn.equipment_record.to_readable_string())
+
         self._status_label = QtWidgets.QLabel()
 
         self._execute_button = QtWidgets.QPushButton()
@@ -111,6 +118,7 @@ class MessageBased(QtWidgets.QWidget):
         grid.addWidget(self._execute_button, 3, 0, 1, 2)
         grid.addWidget(self._loop_checkbox, 3, 2, 1, 1, alignment=QtCore.Qt.AlignLeft)
         grid.addWidget(self._save_button, 4, 0, 1, 2)
+        grid.addWidget(self._info_button, 4, 2, 1, 1)
         grid.addWidget(self._status_label, 5, 0, 1, 3, alignment=QtCore.Qt.AlignBottom)
         grid.setRowStretch(5, 1)
         execute_widget.setLayout(grid)
@@ -155,8 +163,17 @@ class MessageBased(QtWidgets.QWidget):
         """Overrides :obj:`QtWidgets.QWidget.dropEvent`."""
         self._insert_lines(self._dropped_commands)
 
+    def closeEvent(self, event):
+        """Overrides :obj:`QtWidgets.QWidget.closeEvent`."""
+        self._info_window.close()
+
     def _update_timeout(self, val):
         self._conn.timeout = val
+
+    def _show_info(self):
+        self._info_window.setWindowState(QtCore.Qt.WindowActive)
+        self._info_window.activateWindow()
+        self._info_window.show()
 
     def _show_vertical_popup_menu(self):
         """handles a right-click on the selected row button(s)"""
