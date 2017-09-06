@@ -460,11 +460,11 @@ class _Execute(QtCore.QThread):
                 if action == 'read':
                     if delay > 0:
                         time.sleep(delay)
-                    reply = str(self.parent._conn.read())
+                    reply = self.parent._conn.read()
                 elif action == 'readline':
                     if delay > 0:
                         time.sleep(delay)
-                    reply = str(self.parent._conn.readline())
+                    reply = self.parent._conn.readline()
                 elif action == 'write':
                     num_bytes = self.parent._conn.write(message)
                     reply = '<sent {} bytes>'.format(num_bytes)
