@@ -47,7 +47,7 @@ class MessageBased(QtWidgets.QWidget):
         self._command_list = []
 
         self._header = ['Action', 'Delay', 'Message', 'Reply']
-        self._actions = ['write', 'read', 'readline', 'query', 'delay']
+        self._actions = ['write', 'read', 'query', 'delay']
         self._table = QtWidgets.QTableWidget(0, len(self._header), self)
         self._table.setHorizontalHeaderLabels(self._header)
         self._table.horizontalHeader().setStretchLastSection(True)
@@ -58,9 +58,10 @@ class MessageBased(QtWidgets.QWidget):
 
         self._timeout_spinbox = QtWidgets.QDoubleSpinBox()
         self._timeout_spinbox.setRange(0, 999999)
-        self._timeout_spinbox.setToolTip('<html>The timeout value, in seconds, to use for <i>read</i> and <i>readline</i> commands</html>')
-        self._timeout_spinbox.setSuffix(' s')
+        self._timeout_spinbox.setToolTip('<html>The timeout value to use for <i>read</i> commands</html>')
+        self._timeout_spinbox.setSuffix(' seconds')
         self._timeout_spinbox.valueChanged.connect(self._update_timeout)
+        self._timeout_spinbox.setDecimals(1)
         self._timeout_spinbox.setValue(10.0)
 
         self._use_rows = QtWidgets.QLineEdit()
@@ -97,9 +98,18 @@ class MessageBased(QtWidgets.QWidget):
         self._info_button = QtWidgets.QPushButton(get_icon(QtWidgets.QStyle.SP_FileDialogInfoView), '')
         self._info_button.setToolTip('Display the information about the equipment')
         self._info_button.clicked.connect(self._show_info)
-        self._info_window = QtWidgets.QLabel()
+        self._info_window = QtWidgets.QWidget()
         self._info_window.setWindowTitle(self.windowTitle())
-        self._info_window.setText(self._conn.equipment_record.to_readable_string())
+        self._info_text = QtWidgets.QTextEdit()
+        self._info_text.setReadOnly(True)
+        self._info_text.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
+        self._info_text.setText(self._conn.equipment_record.to_readable_string())
+        hbox = QtWidgets.QHBoxLayout()
+        hbox.addWidget(self._info_text)
+        self._info_window.setLayout(hbox)
+        size = self._info_text.document().size()
+        pad = self._info_text.horizontalScrollBar().size().height()
+        self._info_window.resize(int(size.width())+pad, int(size.height())+pad)
 
         self._status_label = QtWidgets.QLabel()
 
@@ -252,8 +262,6 @@ class MessageBased(QtWidgets.QWidget):
         # set the Delay tool tip
         if text == 'read':
             delay_widget.setToolTip('The time to wait, in ms, before sending the read command')
-        elif text == 'readline':
-            delay_widget.setToolTip('The time to wait, in ms, before sending the readline command')
         elif text == 'query':
             delay_widget.setToolTip('The time to wait, in ms, between sending the write and read commands')
         elif text == 'delay':
@@ -265,7 +273,7 @@ class MessageBased(QtWidgets.QWidget):
         if text == 'delay':
             message_widget.setStyleSheet('background-color: lightgray')
             reply_widget.setStyleSheet('background-color: lightgray')
-        elif text == 'read' or text == 'readline':
+        elif text == 'read':
             message_widget.setStyleSheet('background-color: lightgray')
             reply_widget.setStyleSheet('background-color: white')
         else:
@@ -287,7 +295,7 @@ class MessageBased(QtWidgets.QWidget):
         # create a new row if the last row is not "empty"
         index = self._table.rowCount() - 1
         if self._table.cellWidget(index, 2).text() or \
-                        self._table.cellWidget(index, 0).currentText() in ('read', 'readline', 'delay'):
+                        self._table.cellWidget(index, 0).currentText() in ('read', 'delay'):
             self._create_row()
             index += 1
 
@@ -435,7 +443,7 @@ class MessageBased(QtWidgets.QWidget):
             action = self._table.cellWidget(index, 0).currentText()
             delay = self._table.cellWidget(index, 1).value() * 1e-3
             message = self._table.cellWidget(index, 2).text().strip()
-            if not message and action not in ('read', 'readline', 'delay'):
+            if not message and action not in ('read', 'delay'):
                 continue
             self._command_list.append((index, action, delay, message))
 
@@ -478,10 +486,6 @@ class _Execute(QtCore.QThread):
                     if delay > 0:
                         time.sleep(delay)
                     reply = self.parent._conn.read()
-                elif action == 'readline':
-                    if delay > 0:
-                        time.sleep(delay)
-                    reply = self.parent._conn.readline()
                 elif action == 'write':
                     num_bytes = self.parent._conn.write(message)
                     reply = '<sent {} bytes>'.format(num_bytes)
