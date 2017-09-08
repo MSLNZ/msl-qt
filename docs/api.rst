@@ -29,6 +29,7 @@ the following :class:`QWidget`\'s that are compatible with the `MSL Equipment`_ 
 .. autosummary::
 
    ~msl.qt.equipment.message_based.MessageBased
+   ~msl.qt.equipment.thorlabs.integrated_stepper_motors.IntegratedStepperMotorsWidget
 
 and the following general classes
 
