@@ -209,7 +209,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         """
         # prefer for the move request to go through the move_to method
         # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Forwards)"
-        pos = self.get_position() + self.get_jog()
+        pos = self.get_position_raw() + self.get_jog()
         self.move_to(pos, wait=wait, in_device_units=False)
 
     def jog_backward(self, wait=True):
@@ -223,14 +223,14 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         """
         # prefer for the move request to go through the move_to method
         # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Reverse)"
-        pos = self.get_position() - self.get_jog()
+        pos = self.get_position_raw() - self.get_jog()
         self.move_to(pos, wait=wait, in_device_units=False)
 
     def get_position(self, in_device_units=False):
         """Get the current position (calibrated).
 
         If no calibration file has been set then this function returns
-        the same value as :meth:`get_position_uncalibrated`.
+        the same value as :meth:`get_position_raw`.
 
         Parameters
         ----------
@@ -249,8 +249,8 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
             return self._connection.get_device_unit_from_real_value(pos, UnitType.DISTANCE)
         return pos
 
-    def get_position_uncalibrated(self, in_device_units=False):
-        """Get the current position (uncalibrated).
+    def get_position_raw(self, in_device_units=False):
+        """Get the current position (raw and uncalibrated).
 
         Parameters
         ----------
@@ -261,8 +261,8 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         Returns
         -------
         :obj:`int` or :obj:`float`
-            The current position in either device units (:obj:`int`) or in millimeters
-            (:obj:`float`).
+            The current position (raw and uncalibrated) in either device units (:obj:`int`)
+            or in millimeters (:obj:`float`).
         """
         pos = self._connection.get_position()
         if in_device_units:
@@ -284,7 +284,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         """
         # prefer for the move request to go through the move_to method
         # rather than using "self._connection.move_relative(displacement)"
-        pos = self.get_position(in_device_units) + value
+        pos = self.get_position_raw(in_device_units) + value
         self.move_to(pos, wait=wait, in_device_units=in_device_units)
 
     def move_to(self, value, wait=True, in_device_units=False):
@@ -379,8 +379,8 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
             self.move_to(self.preset_positions[name], wait=False, in_device_units=False)
 
     def _update_display(self):
-        uncal_device_unit = self._connection.get_position()
-        uncal_real_value = self._connection.get_real_value_from_device_unit(uncal_device_unit, UnitType.DISTANCE)
+        raw_device_unit = self._connection.get_position()
+        raw_real_value = self._connection.get_real_value_from_device_unit(raw_device_unit, UnitType.DISTANCE)
         if self._connection.is_calibration_active():
             # When the move is finished we should get rid of rounding errors from the calculation
             # of the calibrated position so as to not confuse the user with the position value
@@ -391,15 +391,15 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
                 # the value displayed during the move is only visible for poll-time milliseconds
                 # so there is really no need to calculate the calibrated position
                 # value = self._get_calibrated_mm(uncal_real_value)
-                value = uncal_real_value
+                value = raw_real_value
             # update the tooltip text
             device_unit = self._connection.get_device_unit_from_real_value(value, UnitType.DISTANCE)
             tt = 'Device Unit: {}\n\n'.format(device_unit)
-            tt += 'Device Unit: {} (uncalibrated)\n'.format(uncal_device_unit)
-            tt += 'Position: {} mm (uncalibrated)\n\n'.format(uncal_real_value)
+            tt += 'Device Unit: {} (uncalibrated)\n'.format(raw_device_unit)
+            tt += 'Position: {} mm (uncalibrated)\n\n'.format(raw_real_value)
         else:
-            value = uncal_real_value
-            tt = 'Device Unit: {}\n\n'.format(uncal_device_unit)
+            value = raw_real_value
+            tt = 'Device Unit: {}\n\n'.format(raw_device_unit)
         self._position_display.setText('{:8.3f}'.format(value))
         self._position_display.setToolTip(tt + self._calibration_label)
 
