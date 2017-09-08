@@ -16,7 +16,7 @@ try:
     from msl.equipment.resources.thorlabs import MotionControlCallback
     from msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors import UnitType, IntegratedStepperMotors
 
-    # import numpy as np  # a dependency of MSL Equipment (comment out since currently not using the linear fit)
+    import numpy as np  # a dependency of MSL Equipment
 
     class _Signaler(QtCore.QObject):
         """Used for sending a signal of the current position."""
@@ -88,7 +88,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
 
         if self._connection.is_calibration_active():
             device_cal_path = self._connection.get_calibration_file()
-            #self._uncalibrated_mm, self._calibrated_mm = np.loadtxt(device_cal_path, unpack=True)
+            self._uncalibrated_mm, self._calibrated_mm = np.loadtxt(device_cal_path, unpack=True)
             self._calibration_label = 'Calibration file: {}'.format(os.path.basename(device_cal_path))
         else:
             self._calibration_label = 'Not using a calibration file'
@@ -388,10 +388,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
             if self._requested_mm is not None and self._connection.get_status_bits() == 2148533248:
                 value = self._requested_mm
             else:
-                # the value displayed during the move is only visible for poll-time milliseconds
-                # so there is really no need to calculate the calibrated position
-                # value = self._get_calibrated_mm(uncal_real_value)
-                value = raw_real_value
+                value = self._get_calibrated_mm(raw_real_value)
             # update the tooltip text
             device_unit = self._connection.get_device_unit_from_real_value(value, UnitType.DISTANCE)
             tt = 'Device Unit: {}\n\n'.format(device_unit)
@@ -425,18 +422,18 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         if value is not None and value != current:
             self.move_to(value, wait=False, in_device_units=False)
 
-    # def _get_calibrated_mm(self, pos):
-    #     """Perform a linear fit around the current position to determine the calibrated position"""
-    #     if pos == 0:
-    #         return 0.0
-    #     idx = np.abs(self._uncalibrated_mm - pos).argmin()
-    #     min_idx = int(max(0, idx-3))
-    #     max_idx = int(min(self._uncalibrated_mm.size, idx+3))
-    #     if max_idx - min_idx > 1:
-    #         fit = np.polyfit(self._uncalibrated_mm[min_idx:max_idx], self._calibrated_mm[min_idx:max_idx], 1)
-    #         return fit[0] * pos + fit[1]
-    #     else:
-    #         return pos
+    def _get_calibrated_mm(self, pos):
+        """Perform a linear fit around the current position to determine the calibrated position"""
+        if pos == 0:
+            return 0.0
+        idx = np.abs(self._uncalibrated_mm - pos).argmin()
+        min_idx = int(max(0, idx-3))
+        max_idx = int(min(self._uncalibrated_mm.size, idx+3))
+        if max_idx - min_idx > 1:
+            fit = np.polyfit(self._uncalibrated_mm[min_idx:max_idx], self._calibrated_mm[min_idx:max_idx], 1)
+            return fit[0] * pos + fit[1]
+        else:
+            return pos
 
     def _update_jog_tooltip(self):
         jog = self.get_jog()
