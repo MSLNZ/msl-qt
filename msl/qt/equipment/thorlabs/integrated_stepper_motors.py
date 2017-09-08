@@ -144,11 +144,11 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
                     self._connection.set_jog_step_size(jog)
 
         self._jog_forward_button = QtWidgets.QPushButton()
-        self._jog_forward_button.clicked.connect(self.jog_forward)
+        self._jog_forward_button.clicked.connect(lambda: self.jog_forward(False))
         self._jog_forward_button.setIcon(get_icon(QtWidgets.QStyle.SP_ArrowUp))
 
         self._jog_backward_button = QtWidgets.QPushButton()
-        self._jog_backward_button.clicked.connect(self.jog_backward)
+        self._jog_backward_button.clicked.connect(lambda: self.jog_backward(False))
         self._jog_backward_button.setIcon(get_icon(QtWidgets.QStyle.SP_ArrowDown))
 
         settings_button = QtWidgets.QPushButton()
@@ -192,35 +192,66 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         Parameters
         ----------
         wait : :obj:`bool`
-            Wait until the device has been homed before returning to the
-            calling program.
+            Wait until the move is finished before returning control to the calling program.
+            If :obj:`True` then this is a blocking method.
         """
         self._requested_mm = 0.0
         self._connection.home(wait)
         self._update_preset_text_blocking(0.0)
 
-    def jog_forward(self):
-        """Jog forward"""
-        position = self.get_position() + self.get_jog()
-        if position > self._max_pos_mm:
-            prompt.critical('Jog moves beyond {} mm'.format(self._max_pos_mm))
-        else:
-            self._requested_mm += self.get_jog()
-            self._connection.move_jog(MOT_TravelDirection.MOT_Forwards)
-            self._update_preset_text_blocking(position)
+    def jog_forward(self, wait=True):
+        """Jog forward.
 
-    def jog_backward(self):
-        """Jog backward"""
-        position = self.get_position() - self.get_jog()
-        if position < self._min_pos_mm:
-            prompt.critical('Jog moves beyond {} mm'.format(self._min_pos_mm))
-        else:
-            self._requested_mm -= self.get_jog()
-            self._connection.move_jog(MOT_TravelDirection.MOT_Reverse)
-            self._update_preset_text_blocking(position)
+        Parameters
+        ----------
+        wait : :obj:`bool`
+            Wait until the move is finished before returning control to the calling program.
+            If :obj:`True` then this is a blocking method.
+        """
+        # prefer for the move request to go through the move_to method
+        # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Forwards)"
+        pos = self.get_position() + self.get_jog()
+        self.move_to(pos, wait=wait, in_device_units=False)
+
+    def jog_backward(self, wait=True):
+        """Jog backward.
+
+        Parameters
+        ----------
+        wait : :obj:`bool`
+            Wait until the move is finished before returning control to the calling program.
+            If :obj:`True` then this is a blocking method.
+        """
+        # prefer for the move request to go through the move_to method
+        # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Reverse)"
+        pos = self.get_position() - self.get_jog()
+        self.move_to(pos, wait=wait, in_device_units=False)
 
     def get_position(self, in_device_units=False):
-        """Get the current position.
+        """Get the current position (calibrated).
+
+        If no calibration file has been set then this function returns
+        the same value as :meth:`get_position_uncalibrated`.
+
+        Parameters
+        ----------
+        in_device_units : :obj:`bool`, optional
+            Whether to return the current position in device units or in real-world units
+            (i.e., in millimeters). The default is to return the value in millimeters.
+
+        Returns
+        -------
+        :obj:`int` or :obj:`float`
+            The current position in either device units (:obj:`int`) or in millimeters
+            (:obj:`float`).
+        """
+        pos = float(self._position_display.text())
+        if in_device_units:
+            return self._connection.get_device_unit_from_real_value(pos, UnitType.DISTANCE)
+        return pos
+
+    def get_position_uncalibrated(self, in_device_units=False):
+        """Get the current position (uncalibrated).
 
         Parameters
         ----------
@@ -252,8 +283,10 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         in_device_units : :obj:`bool`, optional
             Whether the `value` is in device units or in real-world units (i.e., in millimeters)
         """
+        # prefer for the move request to go through the move_to method
+        # rather than using "self._connection.move_relative(displacement)"
         pos = self.get_position(in_device_units) + value
-        self.move_to(pos, wait, in_device_units)
+        self.move_to(pos, wait=wait, in_device_units=in_device_units)
 
     def move_to(self, value, wait=True, in_device_units=False):
         """Move to an absolute position.
@@ -338,7 +371,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         if name == 'Home':
             self.go_home(False)
         elif len(name) > 0:
-            self.move_to(self.preset_positions[name], wait=False)
+            self.move_to(self.preset_positions[name], wait=False, in_device_units=False)
 
     def _update_display(self):
         uncal_device_unit = self._connection.get_position()
@@ -367,7 +400,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         if position == 0:
             return 'Home'
         for name, value in self.preset_positions.items():
-            if abs(value - position) <= 0.0015:
+            if abs(value - position) < 0.0015:
                 return name
         return ''
 
@@ -382,7 +415,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         current = float(self._position_display.text())
         value = prompt.double(msg, default=current, minimum=self._min_pos_mm, maximum=self._max_pos_mm, precision=3)
         if value is not None and value != current:
-            self.move_to(value, wait=False)
+            self.move_to(value, wait=False, in_device_units=False)
 
     def _get_calibrated_mm(self, pos):
         """Perform a linear fit around the current position to determine the calibrated position"""
