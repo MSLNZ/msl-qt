@@ -30,12 +30,13 @@ def item4():
 
 def show():
     app = application()
-    b = Button(text='My button', image=32, image_size=4., left_click=left, right_click=right, tooltip='Example button')
-    b.add_menu_item('My item #1', triggered=item1, shortcut='CTRL+I', image=43, tooltip='First')
-    b.add_menu_item('My item #2', triggered=item2, shortcut='CTRL+H', image=47, tooltip='Second')
+    b = Button(text='My button', image=32, image_size=4., left_click=left, tooltip='Example button')
+    b.set_right_click(right)
+    b.add_menu_item('My item #1', triggered=item1, shortcut='CTRL+I', image=43)
+    b.add_menu_item('My item #2', triggered=item2, image=47, tooltip='Second')
     b.add_menu_item('My item #3', shortcut='CTRL+Z', image=46, tooltip='Visible but disabled (triggered not set)')
     b.add_menu_separator()
-    b.add_menu_item('My item #4', triggered=item4, shortcut='CTRL+X', image=60, tooltip='Fourth')
+    b.add_menu_item('My item #4', triggered=item4, tooltip='Fourth')
     b.show()
     app.exec_()
 
