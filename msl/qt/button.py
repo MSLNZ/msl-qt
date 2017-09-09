@@ -18,7 +18,7 @@ class Button(QtWidgets.QToolButton):
             The text to display on the Button; default = ""
         image : :obj:`object`, optional
             Any image object that is supported by :func:`~msl.qt.io.get_icon`.
-        image_size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
+        image_size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
             Rescale the image to the specified `size`.
             If the value is :obj:`None` then do not rescale the image.
             If an :obj:`int` then set the width and the height to be the `size` value.

@@ -72,7 +72,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
               # and the following is a simplified way to load an icon in an EXE file
               get_icon('explorer|0')
 
-    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
+    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
         Rescale the icon to the specified `size`.
         If the value is :obj:`None` then do not rescale the icon.
         If an :obj:`int` then set the width and the height to be the `size` value.
@@ -163,7 +163,7 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
         An image with a data type that is handled by :func:`get_icon`. If :obj:`None`
         then a dialog window is created to allow the user to select an image file
         that is saved in a folder.
-    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
+    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
         Rescale the image to the specified `size` before converting it to Base64_.
         If the value is :obj:`None` then do not rescale the image.
         If an :obj:`int` then set the width and the height to be the `size` value.
