@@ -221,7 +221,7 @@ def text(message, default='', multi_line=False, title=None):
     return value.strip() if ok else None
 
 
-def save(initial=None, filters=None, title='Save As'):
+def save(initial=None, filters=None, title='Save As', options=None):
     """Request to select the name of a file to save.
 
     Parameters
@@ -240,6 +240,10 @@ def save(initial=None, filters=None, title='Save As'):
 
     title : :obj:`str`, optional
         The text to display in the title bar of the pop-up window.
+    options : :obj:`QFileDialog.Option`, optional
+        Specify additional options_ about how to run the dialog.
+
+        .. _options: http://doc.qt.io/qt-5/qfiledialog.html#Option-enum
 
     Returns
     -------
@@ -249,7 +253,10 @@ def save(initial=None, filters=None, title='Save As'):
     """
     app, title = _get_app_and_title(title)
     filters = _get_file_filters(filters)
-    name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, initial, filters)
+    if options is None:
+        name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, initial, filters)
+    else:
+        name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, initial, filters, options=options)
     return name if len(name) > 0 else None
 
 
