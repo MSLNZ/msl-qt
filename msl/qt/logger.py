@@ -2,6 +2,7 @@
 A :class:`QWidget` to display :mod:`logging` messages.
 """
 import logging
+import datetime
 
 from PyQt5 import QtWidgets, QtGui, Qt
 
@@ -144,6 +145,26 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         vsb = self._text_browser.verticalScrollBar()
         vsb.setValue(vsb.maximum())
 
+    def save(self, path, level=logging.INFO):
+        """Save log records to a file.
+
+        Parameters
+        ----------
+        path : :obj:`str`
+            The path to save the log records to. Appends the records to the file
+            if the file already exists, otherwise creates a new log file. It is
+            recommended that the file extension be ``.log``, but not mandatory.
+        level : :obj:`int`, optional
+            All :obj:`~logging.LogRecord`\'s with a logging level >= `level`
+            will be saved.
+        """
+        with open(path, 'a') as fp:
+            self._write_header(fp)
+            for record in self._records:
+                if record.levelno >= level:
+                    fp.write(self.format(record) + '\n')
+            fp.write('\n')
+
     def _append_record(self, record):
         """Append a LogRecord to the QTextBrowser."""
         if self._level_checkbox.isChecked() and record.levelno != self._level_combobox.currentData():
@@ -172,11 +193,17 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         if len(self._records) == 0:
             prompt.information('There are no log records to save.')
             return
-        path = prompt.save(filters={'Log Files': '*.log'}, title='Save the Log Records')
+        option = QtWidgets.QFileDialog.DontConfirmOverwrite
+        title = 'Save the Log Records (appends to an existing file)'
+        path = prompt.save(filters={'Log Files': '*.log'}, title=title, options=option)
         if path is None:
             return
-        with open(path, 'w') as fp:
+        if not path.endswith('.log'):
+            path += '.log'
+        with open(path, 'a') as fp:
+            self._write_header(fp)
             fp.writelines(self._text_browser.toPlainText())
+            fp.write('\n\n')
 
     def _level_checkbox_changed(self, state):
         self._update_records(self._level_combobox.currentText())
@@ -191,3 +218,6 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             self._label.setText('Displaying all log records')
         else:
             self._label.setText('Displaying {} of {} log records'.format(self._num_displayed, len(self._records)))
+
+    def _write_header(self, fp):
+        fp.write('#\n# Saved {}\n#\n'.format(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
