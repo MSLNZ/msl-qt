@@ -56,3 +56,4 @@ def application(args=None):
 from .logger import Logger
 from .loop_until_abort import LoopUntilAbort
 from .toggle_switch import ToggleSwitch
+from .button import Button
