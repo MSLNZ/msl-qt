@@ -12,7 +12,9 @@ app = application()
 def test_get_icon():
     assert isinstance(io.get_icon(QtGui.QIcon()), QtGui.QIcon)
     assert isinstance(io.get_icon(QtGui.QPixmap()), QtGui.QIcon)
+    assert isinstance(io.get_icon(QtGui.QImage()), QtGui.QIcon)
     assert isinstance(io.get_icon(QtWidgets.QStyle.SP_TitleBarMenuButton), QtGui.QIcon)
+    assert isinstance(io.get_icon(14), QtGui.QIcon)
 
     base64 = 'iVBORw0KGgoAAAANSUhEUgAAACgAAABCCAYAAAAlkZRRAAAACXBIWXMAAAsTAAALEwEAmpwYAAABpElEQVR' \
              'oge2ZT07CQBSHf29kLXKOsnApBEx7DAl3sT2BZzAx6C1ahYBLFzRxyQ1Q12SeiwoSQonjzMiLmW9Fh+nMlz' \
@@ -32,8 +34,8 @@ def test_get_icon():
     with pytest.raises(TypeError):
         io.get_icon(None)
 
-    with pytest.raises(TypeError):
-        io.get_icon(99999)
+    with pytest.raises(IOError):
+        io.get_icon(99999)  # not a valid QStyle.StandardPixmap enum value
 
     with pytest.raises(IOError):
         io.get_icon('this is not an image')

@@ -9,31 +9,33 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 
 from msl.qt import application, prompt
 
-__all__ = ['get_drag_enter_paths', 'get_icon', 'image_to_base64']
+__all__ = ['get_drag_enter_paths', 'get_icon', 'image_to_base64', 'rescale_image']
 
 
-def get_icon(obj):
-    """Convert the input object to a :obj:`QIcon`.
+def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
+    """Convert the input object to a :obj:`~QtGui.QIcon`.
 
     Parameters
     ----------
     obj : :obj:`object`
-        The object to be converted to a :obj:`QIcon`. The data type of `obj` can be one of:
+        The object to be converted to a :obj:`~QtGui.QIcon`. The data type of `obj` can be one of:
 
-        * :obj:`QIcon`
-        * :obj:`QPixmap`
-        * :obj:`QStyle.StandardPixmap`:
+        * :obj:`~QtGui.QIcon`
+        * :obj:`~QtGui.QPixmap`
+        * :obj:`~QtGui.QImage`
+        * :obj:`QStyle.StandardPixmap` or :obj:`int`:
           See `StandardPixmap <http://doc.qt.io/qt-5/qstyle.html#StandardPixmap-enum>`_
           for the possible enum values. Example::
 
-              get_icon(PyQt5.QtWidgets.QStyle.SP_TitleBarMenuButton)
+              get_icon(QStyle.SP_TitleBarMenuButton)
+              get_icon(14)  # the QStyle.SP_TrashIcon enum value
 
         * :class:`~QtCore.QByteArray`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_
           representation of an encoded image.
 
           See :func:`image_to_base64`.
 
-        * :obj:`str`: The path to an image file or an icon embedded in a Windows DLL/EXE file.
+        * :obj:`str`: The path to an image file or an icon embedded in a DLL or EXE file.
 
           If `obj` is a path to an image file and only the filename is specified then the
           directories in :obj:`sys.path` and :obj:`os.environ['PATH'] <os.environ>` are also
@@ -70,17 +72,29 @@ def get_icon(obj):
               # and the following is a simplified way to load an icon in an EXE file
               get_icon('explorer|0')
 
+    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
+        Rescale the icon to the specified `size`.
+        If the value is :obj:`None` then do not rescale the icon.
+        If an :obj:`int` then set the width and the height to be the `size` value.
+        If a :obj:`float` then a scaling factor.
+        If a :obj:`tuple` then the (width, height) values.
+    mode : :obj:`Qt.AspectRatioMode`, optional
+        How to maintain the aspect ratio if rescaling. Allowed values are
+        :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
+        :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
+        aspect ratio.
+
     Returns
     -------
-    :obj:`QIcon`
-        The input object converted to a :obj:`QIcon`.
+    :obj:`~QtGui.QIcon`
+        The input object converted to a :obj:`~QtGui.QIcon`.
 
     Raises
     ------
-    :obj:`IOError`
-        If `obj` is of type :obj:`str` and the file cannot be found.
-    :obj:`TypeError`
-        If the data type of `obj` is not supported.
+    :exc:`IOError`
+        If the icon cannot be found.
+    :exc:`TypeError`
+        If the data type of `obj` or `size` is not supported.
 
     Example
     -------
@@ -89,56 +103,77 @@ def get_icon(obj):
     >>> from msl.examples.qt import ShowStandardIcons
     >>> ShowStandardIcons() # doctest: +SKIP
     """
+    _icon = None
     if isinstance(obj, QtGui.QIcon):
-        return obj
+        _icon = obj
     elif isinstance(obj, str):
         if '|' in obj:  # then loading an icon from a Windows DLL/EXE file
-            return get_icon(image_to_base64(obj))
-        # otherwise loading an icon from an image file
-        if os.path.isfile(obj):
-            return QtGui.QIcon(obj)
-        search_paths = sys.path + os.environ['PATH'].split(os.pathsep)
-        for path in search_paths:
-            full_path = os.path.join(path, obj)
-            if os.path.isfile(full_path):
-                return QtGui.QIcon(full_path)
-        raise IOError("Cannot find image file '{}'".format(obj))
+            _icon = get_icon(image_to_base64(obj))
+        elif os.path.isfile(obj):
+            _icon = QtGui.QIcon(obj)
+        else:
+            search_paths = sys.path + os.environ['PATH'].split(os.pathsep)
+            for path in search_paths:
+                full_path = os.path.join(path, obj)
+                if os.path.isfile(full_path):
+                    _icon = QtGui.QIcon(full_path)
+                    break
+            if _icon is None:
+                raise IOError("Cannot find image file '{}'".format(obj))
     elif isinstance(obj, QtWidgets.QStyle.StandardPixmap):
-        return QtGui.QIcon(application().style().standardIcon(obj))
+        _icon = QtGui.QIcon(application().style().standardIcon(obj))
+    elif isinstance(obj, int):
+        std_icons = [value for name, value in vars(QtWidgets.QStyle).items() if name.startswith('SP_')]
+        if obj in std_icons:
+            _icon = QtGui.QIcon(application().style().standardIcon(obj))
+        else:
+            raise IOError('Invalid QStyle.StandardPixmap enum value of {}'.format(obj))
     elif isinstance(obj, QtGui.QPixmap):
-        return QtGui.QIcon(obj)
+        _icon = QtGui.QIcon(obj)
+    elif isinstance(obj, QtGui.QImage):
+        _icon = QtGui.QIcon(QtGui.QPixmap.fromImage(obj))
     elif isinstance(obj, (bytes, bytearray, QtCore.QByteArray)):
         img = QtGui.QImage()
         img.loadFromData(QtCore.QByteArray.fromBase64(obj))
-        return QtGui.QIcon(QtGui.QPixmap.fromImage(img))
-    else:
-        raise TypeError('Argument has unexpected type {}'.format(type(obj)))
+        _icon = QtGui.QIcon(QtGui.QPixmap.fromImage(img))
+
+    if _icon is None:
+        raise TypeError('Icon object has unsupported data type {}'.format(type(obj)))
+
+    if size is None:
+        return _icon
+    return QtGui.QIcon(rescale_image(_icon, size, mode))
 
 
 def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
-    """The image as a :class:`~QtCore.QByteArray` encoded as Base64_.
+    """Convert the image to a :class:`~QtCore.QByteArray` encoded as Base64_.
 
-    This function is useful if you want to save images in a database or if you
-    want to use images in your GUI and rather than loading images from a
-    file on the hard disk you define your images in a Python module as a Base64_
-    variable. Loading the images from the hard disk means that you must also distribute
-    the images with your Python code if you share your code.
+    This function is useful if you want to save images in a database, use it in a
+    data URI scheme_, or if you want to use images in your GUI and rather than loading
+    images from a file on the hard disk you define your images in a Python module as
+    Base64_ variables. Loading the images from the hard disk means that you must also
+    distribute the images with your Python code if you share your code.
 
     .. _Base64: https://en.wikipedia.org/wiki/Base64
+    .. _scheme: https://en.wikipedia.org/wiki/Data_URI_scheme
 
     Parameters
     ----------
     image : :obj:`object`, optional
-        An image with a data type that is handled by :func:`get_icon`. If :obj:`None` then
-        a dialog window is created to allow the user to select an image file.
-    size : :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`QSize`, optional
+        An image with a data type that is handled by :func:`get_icon`. If :obj:`None`
+        then a dialog window is created to allow the user to select an image file
+        that is saved in a folder.
+    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
         Rescale the image to the specified `size` before converting it to Base64_.
-        If :obj:`None` then do not rescale the image. If a :obj:`float` then a scaling
-        factor, if a :obj:`tuple` then the (width, height) values.
+        If the value is :obj:`None` then do not rescale the image.
+        If an :obj:`int` then set the width and the height to be the `size` value.
+        If a :obj:`float` then a scaling factor.
+        If a :obj:`tuple` then the (width, height) values.
     mode : :obj:`Qt.AspectRatioMode`, optional
         How to maintain the aspect ratio if rescaling. Allowed values are
         :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
-        :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is :obj:`Qt.KeepAspectRatio`.
+        :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
+        aspect ratio.
     fmt : :obj:`str`, optional
         The image format to use when converting. The supported values are: ``BMP``,
         ``JPG``, ``JPEG`` and ``PNG``.
@@ -150,9 +185,9 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
 
     Raises
     ------
-    :obj:`IOError`
+    :exc:`IOError`
         If the image file cannot be found.
-    :obj:`ValueError`
+    :exc:`ValueError`
         If the image format, `fmt`, to use for converting is not supported.
     """
     fmt = fmt.upper()
@@ -180,7 +215,7 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
         path = s[0]
         icon_index = int(s[1])
         if icon_index < 0:
-            raise ValueError('The icon index must be >= 0')
+            raise IOError('The icon index must be >= 0')
 
         if not os.path.isfile(path):
             err_msg = "Cannot find DLL/EXE file '{}'".format(s[0])
@@ -237,24 +272,10 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
     except IndexError:
         prompt.critical('Invalid image file.')
         return QtCore.QByteArray()
+
     pixmap = icon.pixmap(default_size)
-
-    if size is None:
-        size = default_size
-    elif isinstance(size, int):
-        size = QtCore.QSize(size, size)
-    elif isinstance(size, float):
-        size = QtCore.QSize(int(default_size.width()*size), int(default_size.height()*size))
-    elif isinstance(size, (list, tuple)):
-        if len(size) == 0:
-            size = default_size
-        elif len(size) == 1:
-            size = QtCore.QSize(size[0], size[0])
-        else:
-            size = QtCore.QSize(size[0], size[1])
-
-    if (size.width() != default_size.width()) or (size.height() != default_size.height()):
-        pixmap = pixmap.scaled(size, aspectRatioMode=mode)
+    if size is not None:
+        pixmap = rescale_image(pixmap, size, mode)
 
     array = QtCore.QByteArray()
     buffer = QtCore.QBuffer(array)
@@ -288,3 +309,62 @@ def get_drag_enter_paths(event, pattern=None):
             return paths
         return fnmatch.filter(paths, pattern)
     return []
+
+
+def rescale_image(image, size, mode=QtCore.Qt.KeepAspectRatio):
+    """Rescale an image.
+
+    Parameters
+    ----------
+    image : :obj:`object`
+        Any object that is supported by :func:`~msl.qt.io.get_icon`.
+    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
+        Rescale the image to the specified `size`.
+        If the value is :obj:`None` then do not rescale the image.
+        If an :obj:`int` then set the width and the height to be the `size` value.
+        If a :obj:`float` then a scaling factor.
+        If a :obj:`tuple` then the (width, height) values.
+    mode : :obj:`Qt.AspectRatioMode`, optional
+        How to maintain the aspect ratio when rescaling. Allowed values are
+        :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
+        :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
+        aspect ratio.
+
+    Returns
+    -------
+    :class:`~QtGui.QPixmap`
+        The rescaled image.
+    """
+    if isinstance(image, QtGui.QIcon):
+        try:
+            max_size = image.availableSizes()[-1]
+        except IndexError:
+            max_size = QtCore.QSize(16, 16)
+        pixmap = image.pixmap(max_size)
+    elif isinstance(image, QtGui.QPixmap):
+        pixmap = image
+    else:
+        return rescale_image(get_icon(image), size, mode)
+
+    if size is None:
+        return pixmap
+
+    default_size = pixmap.size()
+    if isinstance(size, int):
+        size = QtCore.QSize(size, size)
+    elif isinstance(size, float):
+        size = QtCore.QSize(int(default_size.width()*size), int(default_size.height()*size))
+    elif isinstance(size, (list, tuple)):
+        if len(size) == 0:
+            size = default_size
+        elif len(size) == 1:
+            size = QtCore.QSize(size[0], size[0])
+        else:
+            size = QtCore.QSize(size[0], size[1])
+    elif not isinstance(size, QtCore.QSize):
+        raise TypeError('Unsupported "size" data type of "{}"'.format(type(size)))
+
+    if (size.width() != default_size.width()) or (size.height() != default_size.height()):
+        pixmap = pixmap.scaled(size, aspectRatioMode=mode)
+
+    return pixmap
