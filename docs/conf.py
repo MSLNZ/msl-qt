@@ -24,6 +24,14 @@ if on_rtd:
             pass
         QAbstractButton = QAbstractButton
 
+        class QToolButton(object):
+            pass
+        QToolButton = QToolButton
+
+        class QDialog(object):
+            pass
+        QDialog = QDialog
+
     class QtCore(object):
         class Qt(object):
             KeepAspectRatio = 1
@@ -37,6 +45,10 @@ if on_rtd:
         def pyqtSignal(*args, **kwargs):
             pass
         pyqtSignal = pyqtSignal
+
+        class QObject(object):
+            pass
+        QObject = QObject
 
     class Mock(MagicMock):
         @classmethod

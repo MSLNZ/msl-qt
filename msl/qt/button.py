@@ -15,7 +15,7 @@ class Button(QtWidgets.QToolButton):
         Parameters
         ----------
         text : :obj:`str`, optional
-            The text to display on the Button; default = ""
+            The text to display on the button.
         image : :obj:`object`, optional
             Any image object that is supported by :func:`~msl.qt.io.get_icon`.
         image_size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
@@ -24,10 +24,10 @@ class Button(QtWidgets.QToolButton):
             If an :obj:`int` then set the width and the height to be the `size` value.
             If a :obj:`float` then a scaling factor.
             If a :obj:`tuple` then the (width, height) values.
-        left_click : :obj:`function`, optional
-            The function to call for a mouse left-click event.
-        right_click : :obj:`function`, optional
-            The function to call for a mouse right-click event.
+        left_click : :obj:`callable`, optional
+            The function to be called for a mouse left-click event.
+        right_click : :obj:`callable`, optional
+            The function to be called for a mouse right-click event.
         is_text_under_image : :obj:`bool`, optional
             If displaying an image and text then whether to place the text
             under, :obj:`True`, or beside, :obj:`False`, the image.
@@ -71,22 +71,22 @@ class Button(QtWidgets.QToolButton):
             self.setToolTip(tooltip)
 
     def set_left_click(self, fcn):
-        """The function to call for a mouse left-click event.
+        """The function to be called for a mouse left-click event.
 
         Parameters
         ----------
-        fcn : :obj:`function`
-            The function to call for a mouse left-click event.
+        fcn : :obj:`callable`
+            The function to be called for a mouse left-click event.
         """
         self.clicked.connect(fcn)
 
     def set_right_click(self, fcn):
-        """The function to call for a mouse right-click event.
+        """The function to be called for a mouse right-click event.
 
         Parameters
         ----------
-        fcn : :obj:`function`
-            The function to call for a mouse right-click event.
+        fcn : :obj:`callable`
+            The function to be called for a mouse right-click event.
         """
         self.customContextMenuRequested.connect(fcn)
 
@@ -95,16 +95,16 @@ class Button(QtWidgets.QToolButton):
 
         Parameters
         ----------
-        text : obj:`str`, optional
+        text : :obj:`str`, optional
             The text to display for this item.
-        triggered : :obj:`function`, optional
-            The function to call when this item is selected.
+        triggered : :obj:`callable`, optional
+            The function to be called when this item is selected.
             If :obj:`None` then the item is displayed but it is disabled.
         image : :obj:`object`, optional
             Any image object that is supported by :func:`~msl.qt.io.get_icon`.
-        shortcut : obj:`str`, optional
-          The keyboard shortcut to use to select this item.
-        tooltip : obj:`str`, optional
+        shortcut : :obj:`str`, optional
+          The keyboard shortcut to use to select this item, e.g., ``CTRL+A``
+        tooltip : :obj:`str`, optional
           The tooltip to display for this item.
         """
         if self._menu is None:

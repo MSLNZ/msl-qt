@@ -21,6 +21,7 @@ the following general :class:`QWidget`\'s
 
 .. autosummary::
 
+   ~msl.qt.button.Button
    ~msl.qt.logger.Logger
    ~msl.qt.toggle_switch.ToggleSwitch
 
@@ -45,6 +46,7 @@ Package Structure
 
    msl.qt <_api/msl.qt>
    msl.qt.io <_api/msl.qt.io>
+   msl.qt.button <_api/msl.qt.button>
    msl.qt.logger <_api/msl.qt.logger>
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
    msl.qt.prompt <_api/msl.qt.prompt>
