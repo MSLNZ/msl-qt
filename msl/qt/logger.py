@@ -70,10 +70,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         }
 
         # the MSL-Equipment package has a logging.DEMO level
-        self._has_demo_level = hasattr(logging, 'DEMO')
-        if self._has_demo_level:
-            self.color_map[logging.DEMO] = QtGui.QColor(93, 170, 78)
-            self._level_names['DEMO'] = logging.DEMO
+        self._create_demo_map()
 
         #
         # configure logging
@@ -172,7 +169,13 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         if self._level_checkbox.isChecked() and record.levelno != self._level_combobox.currentData():
             return
         msg = self.format(record)
-        self._text_browser.setTextColor(self.color_map[record.levelno])
+        try:
+            self._text_browser.setTextColor(self.color_map[record.levelno])
+        except KeyError:
+            # ensure that a logging.DEMO key exists
+            self._create_demo_map()
+            # try again...
+            self._text_browser.setTextColor(self.color_map[record.levelno])
         self._text_browser.append(msg)
         self._num_displayed += 1
         self._update_label()
@@ -223,3 +226,8 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
     def _write_header(self, fp):
         fp.write('# Saved {}\n'.format(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
+
+    def _create_demo_map(self):
+        if hasattr(logging, 'DEMO'):
+            self.color_map[logging.DEMO] = QtGui.QColor(93, 170, 78)
+            self._level_names['DEMO'] = logging.DEMO
