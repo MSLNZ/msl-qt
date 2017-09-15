@@ -1,5 +1,5 @@
 """
-A :class:`QWidget` to display :mod:`logging` messages.
+A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 """
 import logging
 import datetime
@@ -17,7 +17,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
                  fmt='%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s',
                  datefmt=None,
                  ):
-        """A :class:`QWidget` to display :mod:`logging` messages.
+        """A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 
         Parameters
         ----------
@@ -222,4 +222,4 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             self._label.setText('Displaying {} of {} log records'.format(self._num_displayed, len(self._records)))
 
     def _write_header(self, fp):
-        fp.write('#\n# Saved {}\n#\n'.format(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
+        fp.write('# Saved {}\n'.format(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
