@@ -121,7 +121,9 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         top = QtWidgets.QHBoxLayout()
         top.addWidget(self._level_combobox)
         top.addWidget(self._level_checkbox)
-        top.addWidget(self._label, stretch=1)
+        top.addStretch()
+        top.addWidget(self._label)
+        top.addStretch()
         top.addWidget(self._save_button)
 
         layout = QtWidgets.QVBoxLayout()
