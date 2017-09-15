@@ -40,22 +40,19 @@ class Button(QtWidgets.QToolButton):
 
         self._menu = None
 
-        if image is not None:
-            image = rescale_image(image, image_size)
-
         if text and image:
             if is_text_under_image:
                 self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
             else:
                 self.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
             self.setText(text)
-            self._set_icon(image)
+            self._set_icon(image, image_size)
         elif text and not image:
             self.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
             self.setText(text)
         elif not text and image:
             self.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-            self._set_icon(image)
+            self._set_icon(image, image_size)
 
         # the left-click event handler
         if left_click is not None:
@@ -141,6 +138,9 @@ class Button(QtWidgets.QToolButton):
         self.setMenu(self._menu)
         self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
 
-    def _set_icon(self, image):
+    def _set_icon(self, image, image_size):
+        if image_size is not None:
+            image = rescale_image(image, image_size)
         self.setIcon(get_icon(image))
-        self.setIconSize(image.size())
+        if image_size is not None:
+            self.setIconSize(image.size())
