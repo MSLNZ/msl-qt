@@ -23,4 +23,5 @@ Submodules
 
 .. toctree::
 
+   msl.qt.equipment.configuration_viewer
    msl.qt.equipment.message_based

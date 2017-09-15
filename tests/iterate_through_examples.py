@@ -5,6 +5,7 @@ from msl.qt.prompt import question
 import msl.examples.qt as ex
 
 examples = [
+    ex.equipment.configuration_viewer.show,
     ex.button.show,
     ex.equipment.message_based.show,
     ex.logger.show,

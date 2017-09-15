@@ -32,6 +32,14 @@ if on_rtd:
             pass
         QDialog = QDialog
 
+        class QTableWidget(object):
+            pass
+        QTableWidget = QTableWidget
+
+        class QTreeWidget(object):
+            pass
+        QTreeWidget = QTreeWidget
+
     class QtCore(object):
         class Qt(object):
             KeepAspectRatio = 1

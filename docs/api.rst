@@ -29,6 +29,7 @@ the following :class:`QWidget`\'s that are compatible with the `MSL Equipment`_ 
 
 .. autosummary::
 
+   ~msl.qt.equipment.configuration_viewer.ConfigurationViewer
    ~msl.qt.equipment.message_based.MessageBased
    ~msl.qt.equipment.thorlabs.integrated_stepper_motors.IntegratedStepperMotorsWidget
 
