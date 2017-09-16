@@ -1,6 +1,7 @@
 """
 A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 """
+import random
 import logging
 import datetime
 
@@ -69,9 +70,6 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             'DEBUG': logging.DEBUG
         }
 
-        # the MSL-Equipment package has a logging.DEMO level
-        self._create_demo_map()
-
         #
         # configure logging
         #
@@ -102,6 +100,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._update_level_checkbox_tooltip()
 
         self._label = QtWidgets.QLabel()
+        self._update_label()
 
         self._save_button = QtWidgets.QPushButton()
         self._save_button.setIcon(get_icon(Qt.QStyle.SP_DialogSaveButton))
@@ -138,6 +137,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._records.append(record)
         if record.levelno >= self._level_combobox.currentData():
             self._append_record(record)
+        self._update_label()
 
     def show_latest(self):
         """Move the vertical scrollbar to show the latest logging record."""
@@ -172,13 +172,10 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         try:
             self._text_browser.setTextColor(self.color_map[record.levelno])
         except KeyError:
-            # ensure that a logging.DEMO key exists
-            self._create_demo_map()
-            # try again...
+            self._add_new_level(record)
             self._text_browser.setTextColor(self.color_map[record.levelno])
         self._text_browser.append(msg)
         self._num_displayed += 1
-        self._update_label()
 
     def _update_records(self, name):
         """
@@ -192,6 +189,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         for record in self._records:
             if record.levelno >= levelno:
                 self._append_record(record)
+        self._update_label()
 
     def _save_records(self, checked):
         """Save the LogRecords that are currently displayed in the QTextBrowser to a file."""
@@ -219,7 +217,9 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
     def _update_label(self):
         """Update the label that shows the number of LogRecords that are visible."""
-        if self._num_displayed == len(self._records):
+        if not self._records:
+            self._label.setText('There are no log records')
+        elif self._num_displayed == len(self._records):
             self._label.setText('Displaying all log records')
         else:
             self._label.setText('Displaying {} of {} log records'.format(self._num_displayed, len(self._records)))
@@ -227,7 +227,19 @@ class Logger(logging.Handler, QtWidgets.QWidget):
     def _write_header(self, fp):
         fp.write('# Saved {}\n'.format(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
 
-    def _create_demo_map(self):
-        if hasattr(logging, 'DEMO'):
-            self.color_map[logging.DEMO] = QtGui.QColor(93, 170, 78)
-            self._level_names['DEMO'] = logging.DEMO
+    def _add_new_level(self, record):
+        # the MSL-Equipment package has a logging.DEMO level
+        if record.levelname == 'DEMO':
+            color = QtGui.QColor(93, 170, 78)
+        else:
+            color = QtGui.QColor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+        self.color_map[record.levelno] = color
+        self._level_names[record.levelname] = record.levelno
+
+        for i in range(self._level_combobox.count()):
+            if record.levelno < self._level_combobox.itemData(i):
+                self._level_combobox.insertItem(i, record.levelname, userData=record.levelno)
+                return
+
+        self._level_combobox.addItem(record.levelname, userData=record.levelno)
