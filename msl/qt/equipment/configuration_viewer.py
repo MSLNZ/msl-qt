@@ -12,10 +12,9 @@ try:
 except ImportError:
     has_msl_equipment = False
 
-from msl.qt import prompt
-from msl.qt import Button
-from msl.qt import Logger
+from msl.qt import prompt, Button, Logger
 from msl.qt.io import get_drag_enter_paths
+from msl.qt.equipment import show_record
 
 
 class ConfigurationViewer(QtWidgets.QWidget):
@@ -103,7 +102,7 @@ class ConfigurationViewer(QtWidgets.QWidget):
         splitter.addWidget(self._tree)
         splitter.addWidget(tab)
         splitter.setStretchFactor(1, 1)  # the tab expands to fill the full width
-        splitter.setSizes((150, 1))  # only set the tree width to a value and the tab expands the rest
+        splitter.setSizes((self._tree.sizeHint().width()*1.1, 1))
 
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.addLayout(select_layout)
@@ -334,24 +333,7 @@ class _RecordTable(QtWidgets.QTableWidget):
                     break
             if found_record:
                 break
-
-        dialog = QtWidgets.QDialog()
-        dialog.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
-        dialog.setWindowTitle(record.__class__.__name__)
-
-        widget = QtWidgets.QTextEdit()
-        widget.setReadOnly(True)
-        widget.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
-        widget.setText(record.to_readable_string())
-
-        hbox = QtWidgets.QHBoxLayout()
-        hbox.addWidget(widget)
-        dialog.setLayout(hbox)
-
-        size = widget.document().size()
-        pad = widget.horizontalScrollBar().size().height()
-        dialog.resize(int(size.width()) + pad, int(size.height()) + pad)
-        dialog.exec_()
+        show_record(record)
 
 
 class _Tree(QtWidgets.QTreeWidget):
@@ -423,7 +405,7 @@ class _Tree(QtWidgets.QTreeWidget):
                 for record in self.equipment_table.records_all:
                     bools[str(record.connection is not None)] += 1
                 item.setText(0, name + ' (2)')
-                for key in bools:
+                for key in sorted(bools):
                     QtWidgets.QTreeWidgetItem(item, [key])
             elif name == 'Calibration Cycle':
                 cycles = []
@@ -437,7 +419,7 @@ class _Tree(QtWidgets.QTreeWidget):
                     if cycle not in cycles:
                         cycles.append(cycle)
                 item.setText(0, name + ' ({})'.format(len(cycles)))
-                for c in cycles:
+                for c in sorted(cycles):
                     QtWidgets.QTreeWidgetItem(item, [str(c)])
             else:
                 if name == 'Backend' or name == 'Interface':

@@ -10,6 +10,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 from msl.qt import prompt
 from msl.qt.io import get_icon, get_drag_enter_paths
+from msl.qt.equipment import show_record
 
 
 class MessageBased(QtWidgets.QWidget):
@@ -97,19 +98,7 @@ class MessageBased(QtWidgets.QWidget):
 
         self._info_button = QtWidgets.QPushButton(get_icon(QtWidgets.QStyle.SP_FileDialogInfoView), '')
         self._info_button.setToolTip('Display the information about the equipment')
-        self._info_button.clicked.connect(self._show_info)
-        self._info_window = QtWidgets.QWidget()
-        self._info_window.setWindowTitle(self.windowTitle())
-        self._info_text = QtWidgets.QTextEdit()
-        self._info_text.setReadOnly(True)
-        self._info_text.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
-        self._info_text.setText(self._conn.equipment_record.to_readable_string())
-        hbox = QtWidgets.QHBoxLayout()
-        hbox.addWidget(self._info_text)
-        self._info_window.setLayout(hbox)
-        size = self._info_text.document().size()
-        pad = self._info_text.horizontalScrollBar().size().height()
-        self._info_window.resize(int(size.width())+pad, int(size.height())+pad)
+        self._info_button.clicked.connect(lambda clicked, record=r: show_record(record))
 
         self._status_label = QtWidgets.QLabel()
 
@@ -117,7 +106,9 @@ class MessageBased(QtWidgets.QWidget):
         self._execute_button.clicked.connect(self._execute_start)
         self._show_execute_icon()
 
-        self._status_label.setText('Create a new Execution Table or\nDrag & Drop or Copy & Paste\na previous Execution Table')
+        self._status_label.setText('Create a new Execution Table or\n'
+                                   'Drag & Drop or Copy & Paste\n'
+                                   'a previous Execution Table')
 
         execute_widget = QtWidgets.QWidget()
         grid = QtWidgets.QGridLayout()
@@ -173,17 +164,8 @@ class MessageBased(QtWidgets.QWidget):
         """Overrides :obj:`QtWidgets.QWidget.dropEvent`."""
         self._insert_lines(self._dropped_commands)
 
-    def closeEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.closeEvent`."""
-        self._info_window.close()
-
     def _update_timeout(self, val):
         self._conn.timeout = val
-
-    def _show_info(self):
-        self._info_window.setWindowState(QtCore.Qt.WindowActive)
-        self._info_window.activateWindow()
-        self._info_window.show()
 
     def _show_vertical_popup_menu(self):
         """handles a right-click on the selected row button(s)"""
@@ -449,13 +431,15 @@ class MessageBased(QtWidgets.QWidget):
 
         return True
 
-    def _highlight_row(self, index):
-        self._table.cellWidget(index, 2).setStyleSheet('background-color: yellow')
-        self._table.cellWidget(index, 3).setStyleSheet('background-color: yellow')
-        self._status_label.setText('Executing row {} of {}'.format(index+1, self._table.rowCount()))
+    def _highlight_row(self, row):
+        """Change the background color of the specified row index"""
+        self._table.cellWidget(row, 2).setStyleSheet('background-color: yellow')
+        self._table.cellWidget(row, 3).setStyleSheet('background-color: yellow')
+        self._status_label.setText('Executing row {} of {}'.format(row+1, self._table.rowCount()))
 
-    def _update_reply(self, index, reply):
-        self._table.cellWidget(index, 3).setText(reply)
+    def _update_reply(self, row, reply):
+        """Update the cell text with the response from the equipment"""
+        self._table.cellWidget(row, 3).setText(reply)
 
 
 class _Execute(QtCore.QThread):
