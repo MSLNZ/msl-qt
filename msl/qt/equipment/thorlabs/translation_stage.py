@@ -1,7 +1,5 @@
 """
-A :class:`~QtWidgets.QWidget` for interacting with
-:class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors`
-from Thorlabs.
+A :class:`~QtWidgets.QWidget` for interacting with a translation stage from Thorlabs.
 """
 import os
 
@@ -14,7 +12,7 @@ from msl.qt.equipment.thorlabs import show_hardware_info
 try:
     from msl.equipment import Config
     from msl.equipment.resources.thorlabs import MotionControlCallback
-    from msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors import UnitType, IntegratedStepperMotors
+    from msl.equipment.resources.thorlabs.kinesis.enums import UnitType
 
     import numpy as np  # a dependency of MSL Equipment
 
@@ -32,87 +30,93 @@ except ImportError:
     signaler = None
 
 
-class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
+class TranslationStage(QtWidgets.QWidget):
 
     def __init__(self, connection, config=None, parent=None):
-        """A :class:`~QtWidgets.QWidget` for interacting with
-        :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors`
-        from Thorlabs.
+        """A :class:`~QtWidgets.QWidget` for interacting with a translation stage from Thorlabs.
 
         Parameters
         ----------
-        connection : :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors`
-            The connection to the Integrated Stepper Motor equipment.
+        connection : :class:`~msl.equipment.connection.Connection`
+            The connection to the translational stage motor controller (e.g., LTS150, LTS300, KST101, KDC101, ...).
         config : :class:`~msl.equipment.config.Config`, optional
             A configuration file.
 
             The following elements can be defined in a :obj:`~msl.equipment.config.Config` file to
-            initialize a :class:`IntegratedStepperMotorsWidget`:
+            initialize a :class:`TranslationalStage`:
 
             .. code-block:: xml
 
-                <!-- If the 'units' attribute is omitted then the default value is "mm" -->
-                <ISM_preset name='InGaAs-PD' units="mm">75.2</ISM_preset>
-                <ISM_preset name='Si-PD'>54.232</ISM_preset>
-                <ISM_preset name='Reference' units="device">10503037</ISM_preset>
-                <ISM_jog_size>2.0</ISM_jog_size>
-                <ISM_calibration_path>path/to/calibration/file</ISM_calibration_path>
+                <!--
+                  The following attributes can be defined for a "preset" and a "jog size" element:
+                    units - can be either "mm" or "device". If omitted then the default unit value is "mm"
+                  For a "preset" you must define a name attribute:
+                    name - the text that will displayed in the GUI as the name of the preset
+                  If multiple translation stages are being used then you can uniquely identefy which stage will
+                  have its properties updated by including on of the following attributes:
+                    serial - the serial number of the translation stage motor controller
+                    alias - the same alias that is used in the <equipment> XML tag
+                  If you do not include one of 'serial' or 'alias' then all stages will be updated to the XML element value.
+                -->
+
+                <thorlabs_translation_stage_preset name='Si-PD' serial="123456789">54.232</thorlabs_translation_stage_preset>
+                <thorlabs_translation_stage_preset name='InGaAs-PD' units="mm" serial="123456789">75.2</thorlabs_translation_stage_preset>
+                <thorlabs_translation_stage_preset name='Reference' units="device" serial="123456789">10503037</thorlabs_translation_stage_preset>
+
+                <!-- Note: In the following you can also specify the calibration path to be a path relative to the configuration file -->
+                <thorlabs_translation_stage_calibration_path serial="123456789">path/to/calibration/file.dat</thorlabs_translation_stage_calibration_path>
+
+                <!-- Since the 'serial', 'alias' and 'unit' attributes are not defined then all stages will have the jog size set to 2.0 mm -->
+                <thorlabs_translation_stage_jog_size>2.0</thorlabs_translation_stage_jog_size>
 
         parent : :class:`~QtWidgets.QWidget`, optional
             The parent widget.
         """
-        super(IntegratedStepperMotorsWidget, self).__init__(parent)
+        super(TranslationStage, self).__init__(parent)
 
         if signaler is None:
             raise ImportError('This widget requires that the MSL-Equipment package is installed')
-
-        if not issubclass(connection.__class__, IntegratedStepperMotors):
-            raise TypeError('Must pass in an IntegratedStepperMotors connection. Received {}'.format(connection))
 
         if config is not None and not issubclass(config.__class__, Config):
             raise TypeError('Must pass in a MSL Equipment configuration object. Received {}'.format(config.__class__))
 
         self._connection = connection
 
-        if config is not None:
-            path = config.value('ISM_calibration_path')
-            if path is not None:
-                try:
-                    self._connection.set_calibration_file(path, True)
-                except IOError:
-                    try:
-                        rel_path = os.path.join(os.path.dirname(config.path), path)
-                        self._connection.set_calibration_file(rel_path, True)
-                    except IOError:
-                        prompt.critical('Cannot find calibration file\n' + path)
+        self._supports_calibration = hasattr(self._connection, 'set_calibration_file')
+        self._uncalibrated_mm = np.array([])
+        self._calibrated_mm = np.array([])
+        self._calibration_label = ''
 
-        if self._connection.is_calibration_active():
-            device_cal_path = self._connection.get_calibration_file()
-            self._uncalibrated_mm, self._calibrated_mm = np.loadtxt(device_cal_path, unpack=True)
-            self._calibration_label = 'Calibration file: {}'.format(os.path.basename(device_cal_path))
-        else:
-            self._calibration_label = 'Not using a calibration file'
+        # set the calibration file
+        if config is not None and self._supports_calibration:
+            elements = self._find_xml_elements(config, 'thorlabs_translation_stage_calibration_path')
+            if elements:
+                cal_path = elements[0].text
+                rel_path = os.path.join(os.path.dirname(config.path), cal_path)
+                if os.path.isfile(cal_path):
+                    self.set_calibration_file(cal_path)
+                elif os.path.isfile(rel_path):
+                    self.set_calibration_file(rel_path)
+                else:
+                    prompt.critical('Cannot find calibration file\n' + cal_path)
 
+        # set the presets
         self._preset_combobox = QtWidgets.QComboBox()
         self._preset_combobox.setToolTip('Preset positions')
         self._preset_combobox.addItems(['', 'Home'])
         self.preset_positions = {}
         if config is not None:
-            for element in config.root.findall('ISM_preset'):
-                if element.attrib.get('units', 'mm') == 'mm':
-                    value = float(element.text)
-                else:
-                    device_unit = int(float(element.text))
-                    value = self._connection.get_real_value_from_device_unit(device_unit, UnitType.DISTANCE)
-                self.preset_positions[element.attrib['name']] = value
-                self._preset_combobox.addItem(element.attrib['name'])
+            for element in self._find_xml_elements(config, 'thorlabs_translation_stage_preset'):
+                self.add_preset(element.attrib['name'], float(element.text), element.attrib.get('units', 'mm') == 'mm')
+
+        self._min_pos_mm, self._max_pos_mm = self._connection.get_motor_travel_limits()
 
         self._position_display = QtWidgets.QLineEdit()
         self._position_display.setReadOnly(True)
         self._position_display.setFont(QtGui.QFont('Helvetica', 24))
         self._position_display.mouseDoubleClickEvent = self._ask_move_to
         fm = QtGui.QFontMetrics(self._position_display.font())
-        self._position_display.setFixedWidth(fm.width('0123.456'))
+        self._position_display.setFixedWidth(fm.width(' {}.xxx'.format(int(self._max_pos_mm))))
 
         self._home_button = QtWidgets.QPushButton()
         self._home_button.setToolTip('Go to the Home position')
@@ -124,11 +128,10 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         self._stop_button.clicked.connect(self._connection.stop_immediate)
         self._stop_button.setIcon(get_icon('wmploc|155'))
 
-        self._min_pos_mm, self._max_pos_mm = self._connection.get_motor_travel_limits()
-
         if config is not None:
-            element = config.root.find('ISM_jog_size')
-            if element is not None:
+            elements = self._find_xml_elements(config, 'thorlabs_translation_stage_jog_size')
+            if elements:
+                element = elements[0]
                 if element.attrib.get('units', 'mm') == 'mm':
                     jog_mm = float(element.text)
                     jog = self._connection.get_device_unit_from_real_value(jog_mm, UnitType.DISTANCE)
@@ -181,9 +184,89 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         self._preset_combobox.setCurrentText(self._get_preset_name(self._requested_mm))
         self._preset_combobox.currentIndexChanged[str].connect(self._go_to_preset)
 
+    def add_preset(self, name, position, millimeters=True):
+        """Add a preset position.
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name of the preset.
+        position : :obj:`float` or obj:`int`
+            The position.
+        millimeters : :obj:`bool`
+            Whether the value of the `position` is in millimeters or in ``device units``.
+        """
+        if not millimeters:
+            position = self._connection.get_real_value_from_device_unit(int(position), UnitType.DISTANCE)
+        self.preset_positions[name] = float(position)
+        self._preset_combobox.addItem(name)
+
     def closeEvent(self, event):
         """Overrides :obj:`QtWidgets.QWidget.closeEvent`."""
         self._connection.stop_polling()
+
+    def get_jog(self, millimeters=True):
+        """Get the jog step size.
+
+        Parameters
+        ----------
+        millimeters : :obj:`bool`, optional
+            Whether to return the jog step size in ``device units`` or in ``real-world units``
+            (i.e., in millimeters). The default is to return the value in millimeters.
+
+        Returns
+        -------
+        :obj:`int` or :obj:`float`
+            The jog step size in either device units (:obj:`int`) or in millimeters
+            (:obj:`float`).
+        """
+        size = self._connection.get_jog_step_size()
+        if not millimeters:
+            return size
+        return self._connection.get_real_value_from_device_unit(size, UnitType.DISTANCE)
+
+    def get_position(self, millimeters=True):
+        """Get the current position (calibrated).
+
+        If no calibration file has been set then this function returns
+        the same value as :meth:`get_position_raw`.
+
+        Parameters
+        ----------
+        millimeters : :obj:`bool`, optional
+            Whether to return the current position in ``device units`` or in ``real-world units``
+            (i.e., in millimeters). The default is to return the value in millimeters.
+
+        Returns
+        -------
+        :obj:`int` or :obj:`float`
+            The current position in either device units (:obj:`int`) or in millimeters
+            (:obj:`float`).
+        """
+        pos = float(self._position_display.text())
+        if not millimeters:
+            return self._connection.get_device_unit_from_real_value(pos, UnitType.DISTANCE)
+        return pos
+
+    def get_position_raw(self, millimeters=True):
+        """Get the current position (raw and uncalibrated).
+
+        Parameters
+        ----------
+        millimeters : :obj:`bool`, optional
+            Whether to return the current position in ``device units`` or in ``real-world units``
+            (i.e., in millimeters). The default is to return the value in millimeters.
+
+        Returns
+        -------
+        :obj:`int` or :obj:`float`
+            The current position (raw and uncalibrated) in either device units (:obj:`int`)
+            or in millimeters (:obj:`float`).
+        """
+        pos = self._connection.get_position()
+        if not millimeters:
+            return pos
+        return self._connection.get_real_value_from_device_unit(pos, UnitType.DISTANCE)
 
     def go_home(self, wait=True):
         """Send the motor home.
@@ -198,20 +281,6 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         self._connection.home(wait)
         self._update_preset_text_blocking(0.0)
 
-    def jog_forward(self, wait=True):
-        """Jog forward.
-
-        Parameters
-        ----------
-        wait : :obj:`bool`
-            Wait until the move is finished before returning control to the calling program.
-            If :obj:`True` then this is a blocking method.
-        """
-        # prefer for the move request to go through the move_to method
-        # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Forwards)"
-        pos = self.get_position_raw() + self.get_jog()
-        self.move_to(pos, wait=wait, in_device_units=False)
-
     def jog_backward(self, wait=True):
         """Jog backward.
 
@@ -223,53 +292,24 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         """
         # prefer for the move request to go through the move_to method
         # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Reverse)"
-        pos = self.get_position_raw() - self.get_jog()
-        self.move_to(pos, wait=wait, in_device_units=False)
+        pos = self.get_position() - self.get_jog()
+        self.move_to(pos, wait=wait, millimeters=True)
 
-    def get_position(self, in_device_units=False):
-        """Get the current position (calibrated).
-
-        If no calibration file has been set then this function returns
-        the same value as :meth:`get_position_raw`.
+    def jog_forward(self, wait=True):
+        """Jog forward.
 
         Parameters
         ----------
-        in_device_units : :obj:`bool`, optional
-            Whether to return the current position in device units or in real-world units
-            (i.e., in millimeters). The default is to return the value in millimeters.
-
-        Returns
-        -------
-        :obj:`int` or :obj:`float`
-            The current position in either device units (:obj:`int`) or in millimeters
-            (:obj:`float`).
+        wait : :obj:`bool`
+            Wait until the move is finished before returning control to the calling program.
+            If :obj:`True` then this is a blocking method.
         """
-        pos = float(self._position_display.text())
-        if in_device_units:
-            return self._connection.get_device_unit_from_real_value(pos, UnitType.DISTANCE)
-        return pos
+        # prefer for the move request to go through the move_to method
+        # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Forwards)"
+        pos = self.get_position() + self.get_jog()
+        self.move_to(pos, wait=wait, millimeters=True)
 
-    def get_position_raw(self, in_device_units=False):
-        """Get the current position (raw and uncalibrated).
-
-        Parameters
-        ----------
-        in_device_units : :obj:`bool`, optional
-            Whether to return the current position in device units or in real-world units
-            (i.e., in millimeters). The default is to return the value in millimeters.
-
-        Returns
-        -------
-        :obj:`int` or :obj:`float`
-            The current position (raw and uncalibrated) in either device units (:obj:`int`)
-            or in millimeters (:obj:`float`).
-        """
-        pos = self._connection.get_position()
-        if in_device_units:
-            return pos
-        return self._connection.get_real_value_from_device_unit(pos, UnitType.DISTANCE)
-
-    def move_by(self, value, wait=True, in_device_units=False):
+    def move_by(self, value, wait=True, millimeters=True):
         """Move by a relative value.
 
         Parameters
@@ -279,15 +319,15 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         wait : :obj:`bool`
             Wait until the move is finished before returning control to the calling program.
             If :obj:`True` then this is a blocking method.
-        in_device_units : :obj:`bool`, optional
-            Whether the `value` is in device units or in real-world units (i.e., in millimeters)
+        millimeters : :obj:`bool`, optional
+            Whether the `value` is in ``device units`` or in ``real-world units`` (i.e., in millimeters).
         """
         # prefer for the move request to go through the move_to method
         # rather than using "self._connection.move_relative(displacement)"
-        pos = self.get_position_raw(in_device_units) + value
-        self.move_to(pos, wait=wait, in_device_units=in_device_units)
+        pos = self.get_position(millimeters) + value
+        self.move_to(pos, wait=wait, millimeters=millimeters)
 
-    def move_to(self, value, wait=True, in_device_units=False):
+    def move_to(self, value, wait=True, millimeters=True):
         """Move to an absolute position.
 
         Parameters
@@ -297,15 +337,15 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         wait : :obj:`bool`
             Wait until the move is finished before returning control to the calling program.
             If :obj:`True` then this is a blocking method.
-        in_device_units : :obj:`bool`, optional
-            Whether the `value` is in device units or in real-world units (i.e., in millimeters)
+        millimeters : :obj:`bool`, optional
+            Whether the `value` is in ``device units`` or in ``real-world units`` (i.e., in millimeters).
         """
         if isinstance(value, str):
             if value not in self.preset_positions:
                 prompt.critical('{} is not a preset. Must be one of: ' + ','.join(self.preset_positions.keys()))
                 return
             value = self.preset_positions[value]
-            in_device_units = False  # the preset values are in real-world units
+            millimeters = True  # the preset values are in real-world units
 
         if not self._connection.can_move_without_homing_first():
             res = prompt.question('The motor should be homed before a move can be performed.\n\nHome the motor?')
@@ -313,7 +353,7 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
                 self.go_home(False)
                 return
 
-        if in_device_units:
+        if not millimeters:
             value_du = value
             value_mm = self._connection.get_real_value_from_device_unit(value, UnitType.DISTANCE)
         else:
@@ -328,37 +368,44 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
             m = 'Invalid move request.\n\n{} is outside the allowed range [{}, {}]'
             prompt.critical(m.format(value, self._min_pos_mm, self._max_pos_mm))
 
-    def get_jog(self, in_device_units=False):
-        """Get the jog step size.
+    def set_calibration_file(self, path, enabled=True):
+        """Set the calibration file.
 
         Parameters
         ----------
-        in_device_units : :obj:`bool`, optional
-            Whether to return the jog step size in device units or in real-world units
-            (i.e., in millimeters). The default is to return the value in millimeters.
-
-        Returns
-        -------
-        :obj:`int` or :obj:`float`
-            The jog step size in either device units (:obj:`int`) or in millimeters
-            (:obj:`float`).
+        path : :obj:`str`
+            The path to the calibration file.
+        enabled : :obj:`bool`, optional
+            Whether to enable or disable the calibration file.
         """
-        size = self._connection.get_jog_step_size()
-        if in_device_units:
-            return size
-        return self._connection.get_real_value_from_device_unit(size, UnitType.DISTANCE)
+        if not self._supports_calibration:
+            prompt.critical('The translation stage, {}, does not support a calibration file'.format(self._connection))
+            return
 
-    def set_jog(self, value, in_device_units=False):
+        try:
+            self._connection.set_calibration_file(path, enabled)
+        except IOError:
+            prompt.critical('Cannot find calibration file\n' + path)
+
+        if self._connection.is_calibration_active():
+            device_cal_path = self._connection.get_calibration_file()
+            self._uncalibrated_mm, self._calibrated_mm = np.loadtxt(device_cal_path, unpack=True)
+            self._calibration_label = 'Calibration file: {}'.format(os.path.basename(device_cal_path))
+        else:
+            self._uncalibrated_mm, self._calibrated_mm = np.array([]), np.array([])
+            self._calibration_label = ''
+
+    def set_jog(self, value, millimeters=True):
         """Set the jog step size.
 
         Parameters
         ----------
         value : :obj:`int` or :obj:`float`
             The jog step size.
-        in_device_units : :obj:`bool`, optional
-            Whether the `value` is in device units or in real-world units (i.e., in millimeters)
+        millimeters : :obj:`bool`, optional
+            Whether the `value` is in ``device units`` or in ``real-world units`` (i.e., in millimeters).
         """
-        if in_device_units:
+        if not millimeters:
             jog = int(value)
             jog_mm = self._connection.get_real_value_from_device_unit(jog, UnitType.DISTANCE)
             msg = '{} device units'.format(jog)
@@ -372,19 +419,64 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
             self._connection.set_jog_step_size(jog)
             self._update_jog_tooltip()
 
+    def _ask_move_to(self, event):
+        msg = 'Move to position (min:{} max:{})'.format(self._min_pos_mm, self._max_pos_mm)
+        current = float(self._position_display.text())
+        value = prompt.double(msg, default=current, minimum=self._min_pos_mm, maximum=self._max_pos_mm, precision=3)
+        if value is not None and value != current:
+            self.move_to(value, wait=False, millimeters=True)
+
+    def _find_xml_elements(self, config, element_name):
+        elements = []
+        record = self._connection.equipment_record
+        for element in config.root.findall(element_name):
+            serial = element.attrib.get('serial')
+            alias = element.attrib.get('alias')
+            if (serial is None) and (alias is None):
+                elements.append(element)
+            if (serial == record.serial) or (alias == record.alias):
+                elements.append(element)
+        return elements
+
+    def _get_calibrated_mm(self, pos):
+        """Perform a linear fit around the current position to determine the calibrated position"""
+        if pos == 0:
+            return 0.0
+        idx = np.abs(self._uncalibrated_mm - pos).argmin()
+        min_idx = int(max(0, idx-3))
+        max_idx = int(min(self._uncalibrated_mm.size, idx+3))
+        if max_idx - min_idx > 1:
+            fit = np.polyfit(self._uncalibrated_mm[min_idx:max_idx], self._calibrated_mm[min_idx:max_idx], 1)
+            return fit[0] * pos + fit[1]
+        else:
+            return pos
+
+    def _get_preset_name(self, position):
+        """Returns the preset name or '' if the position does not correspond to a preset position"""
+        if position == 0:
+            return 'Home'
+        for name, value in self.preset_positions.items():
+            if abs(value - position) < 0.0015:
+                return name
+        return ''
+
     def _go_to_preset(self, name):
         if name == 'Home':
             self.go_home(False)
         elif len(name) > 0:
-            self.move_to(self.preset_positions[name], wait=False, in_device_units=False)
+            self.move_to(self.preset_positions[name], wait=False, millimeters=True)
+
+    def _show_settings(self):
+        settings = _Settings(self)
+        settings.sig_update_jog_tooltip.connect(self._update_jog_tooltip)
+        settings.exec_()
 
     def _update_display(self):
         raw_device_unit = self._connection.get_position()
         raw_real_value = self._connection.get_real_value_from_device_unit(raw_device_unit, UnitType.DISTANCE)
-        if self._connection.is_calibration_active():
-            # When the move is finished we should get rid of rounding errors from the calculation
-            # of the calibrated position so as to not confuse the user with the position value
-            # that is displayed.
+        if self._supports_calibration and self._connection.is_calibration_active():
+            # When the move is finished we should get rid of rounding errors from the calculation of the
+            # calibrated position so as to not confuse the user with the position value that is displayed
             if self._requested_mm is not None and self._connection.get_status_bits() == 2148533248:
                 value = self._requested_mm
             else:
@@ -400,50 +492,16 @@ class IntegratedStepperMotorsWidget(QtWidgets.QWidget):
         self._position_display.setText('{:8.3f}'.format(value))
         self._position_display.setToolTip(tt + self._calibration_label)
 
-    def _get_preset_name(self, position):
-        """Returns the preset name or '' if the position does not correspond to a preset position"""
-        if position == 0:
-            return 'Home'
-        for name, value in self.preset_positions.items():
-            if abs(value - position) < 0.0015:
-                return name
-        return ''
+    def _update_jog_tooltip(self):
+        jog = self.get_jog()
+        self._jog_forward_button.setToolTip('Jog forward [{:.3f} mm]'.format(jog))
+        self._jog_backward_button.setToolTip('Jog backward [{:.3f} mm]'.format(jog))
 
     def _update_preset_text_blocking(self, position):
         """Update the preset combobox without emitting the signal"""
         self._preset_combobox.blockSignals(True)
         self._preset_combobox.setCurrentText(self._get_preset_name(position))
         self._preset_combobox.blockSignals(False)
-
-    def _ask_move_to(self, event):
-        msg = 'Move to position (min:{} max:{})'.format(self._min_pos_mm, self._max_pos_mm)
-        current = float(self._position_display.text())
-        value = prompt.double(msg, default=current, minimum=self._min_pos_mm, maximum=self._max_pos_mm, precision=3)
-        if value is not None and value != current:
-            self.move_to(value, wait=False, in_device_units=False)
-
-    def _get_calibrated_mm(self, pos):
-        """Perform a linear fit around the current position to determine the calibrated position"""
-        if pos == 0:
-            return 0.0
-        idx = np.abs(self._uncalibrated_mm - pos).argmin()
-        min_idx = int(max(0, idx-3))
-        max_idx = int(min(self._uncalibrated_mm.size, idx+3))
-        if max_idx - min_idx > 1:
-            fit = np.polyfit(self._uncalibrated_mm[min_idx:max_idx], self._calibrated_mm[min_idx:max_idx], 1)
-            return fit[0] * pos + fit[1]
-        else:
-            return pos
-
-    def _update_jog_tooltip(self):
-        jog = self.get_jog()
-        self._jog_forward_button.setToolTip('Jog forward [{:.3f} mm]'.format(jog))
-        self._jog_backward_button.setToolTip('Jog backward [{:.3f} mm]'.format(jog))
-
-    def _show_settings(self):
-        settings = _Settings(self)
-        settings.sig_update_jog_tooltip.connect(self._update_jog_tooltip)
-        settings.exec_()
 
 
 class _Settings(QtWidgets.QDialog):

@@ -39,8 +39,9 @@ def show_hardware_info(connection):
     dialog.setLayout(hbox)
 
     size = widget.document().size()
-    pad = widget.horizontalScrollBar().size().height()
-    dialog.resize(int(size.width()) + pad, int(size.height()) + pad)
+    pad = widget.horizontalScrollBar().size().height() * 1.1
+    dialog.resize(int(size.width() + pad), int(size.height() + pad))
     dialog.exec_()
 
-from .integrated_stepper_motors import IntegratedStepperMotorsWidget
+
+from .translation_stage import TranslationStage
