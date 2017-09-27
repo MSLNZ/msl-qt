@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 class ToggleSwitch(QtWidgets.QAbstractButton):
 
-    def __init__(self, parent=None, checked_color='#009688', unchecked_color='#B4B4B4'):
+    def __init__(self, parent=None, height=None, checked_color='#009688', unchecked_color='#B4B4B4'):
         """Constructs a toggle switch, |toggle_switch|
 
         .. |toggle_switch| image:: ../../docs/_static/toggle_switch.gif
@@ -16,6 +16,8 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         ----------
         parent : :obj:`QWidget`, optional
             The parent :obj:`QWidget`.
+        height : :obj:`int`, optional
+            The height, in pixels, of the toggle switch.
         checked_color : :obj:`str` or :obj:`QColor`, optional
             The color to draw the switch when it is in the checked state.
         unchecked_color : :obj:`str` or :obj:`QColor`, optional
@@ -30,6 +32,8 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         """
         super(ToggleSwitch, self).__init__(parent)
 
+        screen_height = QtWidgets.QDesktopWidget().availableGeometry(self).height()
+        self._height = height if height is not None else int(screen_height*0.03)
         self._pad = 4
         self._checked_brush = QtGui.QBrush(QtGui.QColor(checked_color))
         self._unchecked_brush = QtGui.QBrush(QtGui.QColor(unchecked_color))
@@ -37,7 +41,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
     def paintEvent(self, event):
         """Overrides :obj:`QAbstractButton.paintEvent`."""
-        diameter = self.height() - 2 * self._pad
+        diameter = self._height - 2 * self._pad
         radius = diameter * 0.5
 
         if self.isChecked():
@@ -75,4 +79,4 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
     def sizeHint(self):
         """Overrides :obj:`QWidget.sizeHint`."""
-        return QtCore.QSize(2 * (self.height() + self._pad), self.height() + 2 * self._pad)
+        return QtCore.QSize(2 * (self._height + self._pad), self._height + 2 * self._pad)
