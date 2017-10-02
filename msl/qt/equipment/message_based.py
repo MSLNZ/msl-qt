@@ -58,12 +58,16 @@ class MessageBased(QtWidgets.QWidget):
         self._table.verticalHeader().customContextMenuRequested.connect(self._show_vertical_popup_menu)
 
         self._timeout_spinbox = QtWidgets.QDoubleSpinBox()
-        self._timeout_spinbox.setRange(0, 999999)
         self._timeout_spinbox.setToolTip('<html>The timeout value to use for <i>read</i> commands</html>')
-        self._timeout_spinbox.setSuffix(' seconds')
+        self._timeout_spinbox.setRange(0, 999999999)
+        if 'ConnectionPyVISA' in '{}'.format(connection.__class__.__bases__):  # a PyVISA connection
+            self._timeout_spinbox.setSuffix(' ms')
+            self._timeout_spinbox.setDecimals(0)
+        else:
+            self._timeout_spinbox.setSuffix(' s')
+            self._timeout_spinbox.setDecimals(2)
+        self._timeout_spinbox.setValue(self._conn.timeout)
         self._timeout_spinbox.valueChanged.connect(self._update_timeout)
-        self._timeout_spinbox.setDecimals(1)
-        self._timeout_spinbox.setValue(10.0)
 
         self._use_rows = QtWidgets.QLineEdit()
         self._use_rows.setToolTip('Enter the rows to execute or leave blank to execute all rows.\nFor example: 1,3,5-8')
