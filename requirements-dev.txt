@@ -1,7 +1,0 @@
-pytest
-pytest-cov
-pytest-runner
-sphinx
-sphinx_rtd_theme
-pyqt5 ; python_version > '3.4'
-pythonnet>=2.3 ; platform_system == 'Windows'
