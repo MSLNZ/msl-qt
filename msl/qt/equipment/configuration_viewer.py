@@ -281,7 +281,7 @@ class _RecordTable(QtWidgets.QTableWidget):
         records = []
         text_split = [item.strip() for item in text.lower().split(',') if item.strip()]
         for record in self.records_all:
-            string = record.to_readable_string().lower()
+            string = record.to_yaml().lower()
             for item in text_split:
                 if item in string:
                     records.append(record)

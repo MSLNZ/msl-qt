@@ -19,7 +19,7 @@ def show_record(record):
     widget = QtWidgets.QTextEdit()
     widget.setReadOnly(True)
     widget.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
-    widget.setText(record.to_readable_string())
+    widget.setText(record.to_yaml())
 
     hbox = QtWidgets.QHBoxLayout()
     hbox.addWidget(widget)
