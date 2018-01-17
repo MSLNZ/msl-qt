@@ -319,7 +319,7 @@ def filename(initial=None, filters=None, multiple=False, title='Select File'):
 
 
 def _get_app_and_title(title):
-    """Returns a tuple of the QApplication instance and the title bar text."""
+    """Returns a tuple of the QApplication instance and the title bar text of the active window."""
     app = application()
     if title is None:
         w = app.activeWindow()
@@ -332,17 +332,17 @@ def _get_file_filters(filters):
     def _check_extn(ex):
         """Check the format of the file extension."""
         if ex is None:
-            return ALL_FILES
+            return all_files
         if '*' in ex:
             return ex
         if ex.startswith('.'):
             return '*' + ex
         return '*.' + ex
 
-    ALL_FILES = 'All Files (*)'
+    all_files = 'All Files (*)'
 
     if filters is None:
-        return ALL_FILES
+        return all_files
 
     if isinstance(filters, dict):
         f = ''
@@ -354,7 +354,7 @@ def _get_file_filters(filters):
         return f[:-2]
 
     if isinstance(filters, (list, tuple)):
-        return ';;'.join(f if f is not None else ALL_FILES for f in filters)
+        return ';;'.join(f if f is not None else all_files for f in filters)
 
     if filters.endswith(';;'):
         return filters[:-2]
