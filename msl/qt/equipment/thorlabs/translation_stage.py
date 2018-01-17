@@ -2,6 +2,7 @@
 A :class:`~QtWidgets.QWidget` for interacting with a translation stage from Thorlabs.
 """
 import os
+import time
 
 from msl.qt import QtWidgets, QtCore, QtGui
 from msl.qt import prompt
@@ -47,12 +48,12 @@ class TranslationStage(QtWidgets.QWidget):
             .. code-block:: xml
 
                 <!--
-                  The following attributes can be defined for a "preset" and a "jog size" element:
-                    units - can be either "mm" or "device". If omitted then the default unit value is "mm"
+                  The following attributes can be defined for a "preset" and a "jog size" element.
                   For a "preset" you must define a name attribute:
+                    units - can be either "mm" or "device". If omitted then the default unit value is "mm"
                     name - the text that will displayed in the GUI as the name of the preset
-                  If multiple translation stages are being used then you can uniquely identefy which stage will
-                  have its properties updated by including on of the following attributes:
+                  If multiple translation stages are being used then you can uniquely identify which stage will
+                  have its properties updated by including one of the additional attributes:
                     serial - the serial number of the translation stage motor controller
                     alias - the same alias that is used in the <equipment> XML tag
                   If you do not include one of 'serial' or 'alias' then all stages will be updated to the XML element value.
@@ -172,6 +173,7 @@ class TranslationStage(QtWidgets.QWidget):
         self.setLayout(grid)
 
         self._connection.start_polling(200)
+        self._polling_duration = self._connection.polling_duration() * 1e-3
         self._connection.register_message_callback(callback)
         signaler.signal.connect(self._update_display)
 
@@ -277,8 +279,10 @@ class TranslationStage(QtWidgets.QWidget):
             If :obj:`True` then this is a blocking method.
         """
         self._requested_mm = 0.0
-        self._connection.home(wait)
-        self._update_preset_text_blocking(0.0)
+        self._connection.home()
+        if wait:
+            self._wait(0)
+        self._update_preset_text_block_signals(0.0)
 
     def jog_backward(self, wait=True):
         """Jog backward.
@@ -361,8 +365,10 @@ class TranslationStage(QtWidgets.QWidget):
 
         if self._min_pos_mm <= value_mm <= self._max_pos_mm:
             self._requested_mm = value_mm
-            self._connection.move_to_position(value_du, wait)
-            self._update_preset_text_blocking(value)
+            self._connection.move_to_position(value_du)
+            if wait:
+                self._wait(value_du)
+            self._update_preset_text_block_signals(value)
         else:
             m = 'Invalid move request.\n\n{} is outside the allowed range [{}, {}]'
             prompt.critical(m.format(value, self._min_pos_mm, self._max_pos_mm))
@@ -496,11 +502,15 @@ class TranslationStage(QtWidgets.QWidget):
         self._jog_forward_button.setToolTip('Jog forward [{:.3f} mm]'.format(jog))
         self._jog_backward_button.setToolTip('Jog backward [{:.3f} mm]'.format(jog))
 
-    def _update_preset_text_blocking(self, position):
+    def _update_preset_text_block_signals(self, position):
         """Update the preset combobox without emitting the signal"""
         self._preset_combobox.blockSignals(True)
         self._preset_combobox.setCurrentText(self._get_preset_name(position))
         self._preset_combobox.blockSignals(False)
+
+    def _wait(self, device_unit):
+        while self.get_position_raw(millimeters=False) != device_unit:
+            time.sleep(self._polling_duration)
 
 
 class _Settings(QtWidgets.QDialog):
