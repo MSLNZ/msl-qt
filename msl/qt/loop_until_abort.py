@@ -93,6 +93,7 @@ class LoopUntilAbort(object):
         vbox.addWidget(self._runtime_label)
         vbox.addWidget(self._counter_label)
         vbox.addWidget(self._user_label)
+        vbox.setStretchFactor(self._user_label, 1)
         self._central_widget.setLayout(vbox)
 
         self._runtime_timer = QtCore.QTimer()
@@ -110,7 +111,10 @@ class LoopUntilAbort(object):
         try:
             self.setup()
             self._runtime_timer.start(1000)
-            self._loop_timer.start(max(0, int(loop_delay)))
+            loop_delay = max(0, int(loop_delay))
+            if loop_delay > 0:
+                self._call_loop()
+            self._loop_timer.start(loop_delay)
             self._main_window.show()
             self._app.exec_()
         except:
