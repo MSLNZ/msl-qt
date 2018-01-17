@@ -4,7 +4,7 @@ Exception handling used by **MSL-Qt**.
 import logging
 import traceback
 
-from . import QtWidgets, Qt
+from . import QtWidgets, Qt, application
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ def excepthook(exc_type, exc_obj, exc_traceback):
 
     """
     def event_handler(e):
-        """Resize the MessageBox"""
+        """Resize the QMessageBox"""
         result = QtWidgets.QMessageBox.event(msg, e)
 
         detailed_text = msg.findChild(QtWidgets.QTextEdit)
@@ -46,7 +46,14 @@ def excepthook(exc_type, exc_obj, exc_traceback):
         [exc_obj.__class__.__name__ + ': ' + str(exc_obj)]
     )
 
-    logger.exception(details)
+    logger.error(details)
+
+    # ensure that a QApplication exists
+    app = application()
+
+    # add a prefix to the title bar
+    w = app.activeWindow()
+    prefix = 'MSL' if w is None or not w.windowTitle() else w.windowTitle()
 
     msg = QtWidgets.QMessageBox()
 
@@ -56,7 +63,7 @@ def excepthook(exc_type, exc_obj, exc_traceback):
     msg.event = event_handler
 
     msg.setSizeGripEnabled(True)
-    msg.setWindowTitle('Unhandled Exception')
+    msg.setWindowTitle(prefix + ' || Unhandled Exception')
     msg.setIcon(QtWidgets.QMessageBox.Critical)
     msg.setText(exc_obj.__class__.__name__ + ':')
     msg.setInformativeText(str(exc_obj))
