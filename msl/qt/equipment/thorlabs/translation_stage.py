@@ -3,8 +3,7 @@ A :class:`~QtWidgets.QWidget` for interacting with a translation stage from Thor
 """
 import os
 
-from PyQt5 import QtWidgets, QtCore, QtGui
-
+from msl.qt import QtWidgets, QtCore, QtGui
 from msl.qt import prompt
 from msl.qt.io import get_icon
 from msl.qt.equipment.thorlabs import show_hardware_info

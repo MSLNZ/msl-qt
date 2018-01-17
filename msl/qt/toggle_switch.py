@@ -1,7 +1,7 @@
 """
 A toggle switch :class:`QWidget`.
 """
-from PyQt5 import QtWidgets, QtCore, QtGui
+from . import QtWidgets, QtCore, QtGui
 
 
 class ToggleSwitch(QtWidgets.QAbstractButton):

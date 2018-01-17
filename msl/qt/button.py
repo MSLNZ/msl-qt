@@ -1,9 +1,7 @@
 """
 A button that can display text and/or an icon, with an optional action menu.
 """
-from PyQt5 import QtWidgets, QtCore, QtGui
-
-from msl.qt.io import get_icon, rescale_image
+from . import QtWidgets, QtCore, QtGui, io
 
 
 class Button(QtWidgets.QToolButton):
@@ -116,7 +114,7 @@ class Button(QtWidgets.QToolButton):
         if shortcut is not None:
             action.setShortcut(shortcut)
         if image is not None:
-            action.setIcon(get_icon(image))
+            action.setIcon(io.get_icon(image))
         if tooltip is not None:
             action.setToolTip(tooltip)
             action.setStatusTip(tooltip)
@@ -140,7 +138,6 @@ class Button(QtWidgets.QToolButton):
 
     def _set_icon(self, image, image_size):
         if image_size is not None:
-            image = rescale_image(image, image_size)
-        self.setIcon(get_icon(image))
-        if image_size is not None:
+            image = io.rescale_image(image, image_size)
             self.setIconSize(image.size())
+        self.setIcon(io.get_icon(image))

@@ -2,10 +2,7 @@
 Display all the icons available in :obj:`QStyle.StandardPixmap` and in
 the *standard* Windows DLL/EXE files.
 """
-from PyQt5 import QtWidgets, QtCore
-
-from msl.qt import application
-from msl.qt.io import get_icon
+from msl.qt import QtWidgets, QtCore, application, io
 
 try:
     # check if pythonnet is installed
@@ -101,7 +98,7 @@ class ShowStandardIcons(object):
         num_cols = 4
         for i in icons:
             button = QtWidgets.QPushButton(i)
-            ico = get_icon(getattr(QtWidgets.QStyle, i))
+            ico = io.get_icon(getattr(QtWidgets.QStyle, i))
             button.setIcon(ico)
             button.clicked.connect(lambda dummy, ic=ico, n=i: self.zoom(dummy, ic, n))
 
@@ -130,7 +127,7 @@ class ShowStandardIcons(object):
             button = QtWidgets.QPushButton(str(index))
             try:
                 name = '{}|{}'.format(filename, str(index))
-                ico = get_icon(name)
+                ico = io.get_icon(name)
             except IOError:
                 break
 

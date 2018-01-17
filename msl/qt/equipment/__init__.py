@@ -1,7 +1,7 @@
 """
 Custom :class:`~QtWidgets.QWidget`\'s for the `MSL Equipment <http://msl-equipment.readthedocs.io/en/latest>`_ package.
 """
-from PyQt5 import QtWidgets, QtCore
+from msl.qt import QtWidgets, QtCore
 
 
 def show_record(record):

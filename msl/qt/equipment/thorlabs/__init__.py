@@ -1,7 +1,7 @@
 """
 Custom :class:`~QtWidgets.QWidget`'\s for equipment from Thorlabs.
 """
-from PyQt5 import QtWidgets, QtCore
+from msl.qt import QtWidgets, QtCore
 
 
 def show_hardware_info(connection):

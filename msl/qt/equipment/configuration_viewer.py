@@ -4,14 +4,13 @@ A :class:`~QtWidgets.QWidget` to view the information within a
 """
 import re
 
-from PyQt5 import QtWidgets, QtCore
-
 try:
     from msl.equipment import Config, EquipmentRecord, ConnectionRecord
     has_msl_equipment = True
 except ImportError:
     has_msl_equipment = False
 
+from msl.qt import QtWidgets, QtCore
 from msl.qt import prompt, Button, Logger
 from msl.qt.io import get_drag_enter_paths
 from msl.qt.equipment import show_record

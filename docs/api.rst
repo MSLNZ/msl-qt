@@ -16,6 +16,7 @@ which has the following modules
 
    msl.qt.io
    msl.qt.prompt
+   msl.qt.exception
 
 the following general :class:`QWidget`\'s
 
@@ -31,7 +32,7 @@ the following :class:`QWidget`\'s that are compatible with the `MSL Equipment`_ 
 
    ~msl.qt.equipment.configuration_viewer.ConfigurationViewer
    ~msl.qt.equipment.message_based.MessageBased
-   ~msl.qt.equipment.thorlabs.integrated_stepper_motors.IntegratedStepperMotorsWidget
+   ~msl.qt.equipment.thorlabs.translation_stage.TranslationStage
 
 and the following general classes
 
@@ -48,6 +49,7 @@ Package Structure
    msl.qt <_api/msl.qt>
    msl.qt.io <_api/msl.qt.io>
    msl.qt.button <_api/msl.qt.button>
+   msl.qt.exception <_api/msl.qt.exception>
    msl.qt.logger <_api/msl.qt.logger>
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
    msl.qt.prompt <_api/msl.qt.prompt>

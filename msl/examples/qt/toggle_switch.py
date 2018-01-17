@@ -1,9 +1,7 @@
 """
 Example showing the :obj:`ToggleSwitch <msl.qt.toggle_switch.ToggleSwitch>`.
 """
-from PyQt5 import QtWidgets
-
-from msl.qt import application, ToggleSwitch
+from msl.qt import QtWidgets, application, ToggleSwitch
 
 
 def print_state(checked):
@@ -21,6 +19,7 @@ def show():
     window.setLayout(hbox)
     window.show()
     app.exec_()
+
 
 if __name__ == '__main__':
     show()

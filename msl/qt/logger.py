@@ -5,10 +5,7 @@ import random
 import logging
 import datetime
 
-from PyQt5 import QtWidgets, QtGui, Qt
-
-from msl.qt import prompt
-from msl.qt.io import get_icon
+from . import QtWidgets, QtGui, Qt, prompt, io
 
 
 class Logger(logging.Handler, QtWidgets.QWidget):
@@ -103,7 +100,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._update_label()
 
         self._save_button = QtWidgets.QPushButton()
-        self._save_button.setIcon(get_icon(Qt.QStyle.SP_DialogSaveButton))
+        self._save_button.setIcon(io.get_icon(Qt.QStyle.SP_DialogSaveButton))
         self._save_button.clicked.connect(self._save_records)
         self._save_button.setToolTip('Save the log records')
 

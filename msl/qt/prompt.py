@@ -6,9 +6,7 @@ event that happened or to request information from the user.
 """
 import traceback
 
-from PyQt5 import QtWidgets, QtCore
-
-from msl.qt import application
+from . import QtWidgets, QtCore, application
 
 
 def critical(message, title=None):

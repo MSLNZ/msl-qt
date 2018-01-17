@@ -5,9 +5,7 @@ import os
 import sys
 import fnmatch
 
-from PyQt5 import QtWidgets, QtGui, QtCore
-
-from msl.qt import application, prompt
+from . import QtWidgets, QtGui, QtCore, application, prompt
 
 __all__ = ['get_drag_enter_paths', 'get_icon', 'image_to_base64', 'rescale_image']
 

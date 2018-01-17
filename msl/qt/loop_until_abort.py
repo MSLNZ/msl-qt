@@ -4,9 +4,7 @@ Repeatedly perform a task until aborted by the user.
 import datetime
 import traceback
 
-from PyQt5 import QtWidgets, QtCore, QtGui
-
-from msl.qt import application, prompt
+from . import QtWidgets, QtCore, QtGui, application, prompt
 
 
 class LoopUntilAbort(object):

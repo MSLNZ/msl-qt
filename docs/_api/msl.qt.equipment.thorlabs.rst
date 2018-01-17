@@ -11,5 +11,5 @@ Submodules
 
 .. toctree::
 
-   msl.qt.equipment.thorlabs.integrated_stepper_motors
+   msl.qt.equipment.thorlabs.translation_stage
 

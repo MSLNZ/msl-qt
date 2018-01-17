@@ -6,9 +6,7 @@ This widget allows for reading/writing messages from/to equipment.
 import time
 import traceback
 
-from PyQt5 import QtWidgets, QtCore, QtGui
-
-from msl.qt import prompt
+from msl.qt import QtWidgets, QtCore, QtGui, prompt
 from msl.qt.io import get_icon, get_drag_enter_paths
 from msl.qt.equipment import show_record
 
@@ -66,7 +64,10 @@ class MessageBased(QtWidgets.QWidget):
         else:
             self._timeout_spinbox.setSuffix(' s')
             self._timeout_spinbox.setDecimals(2)
-        self._timeout_spinbox.setValue(self._conn.timeout)
+        try:
+            self._timeout_spinbox.setValue(self._conn.timeout)
+        except TypeError:  # in case the connection is established in demo mode
+            self._timeout_spinbox.setValue(0)
         self._timeout_spinbox.valueChanged.connect(self._update_timeout)
 
         self._use_rows = QtWidgets.QLineEdit()
