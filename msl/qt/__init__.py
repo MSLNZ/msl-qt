@@ -53,7 +53,7 @@ def application(args=None):
 
 from ._qt import *
 from .button import Button
-from .exception import excepthook
+from .exceptions import excepthook
 from . import io
 from .logger import Logger
 from .loop_until_abort import LoopUntilAbort

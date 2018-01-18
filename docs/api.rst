@@ -16,7 +16,7 @@ which has the following modules
 
    msl.qt.io
    msl.qt.prompt
-   msl.qt.exception
+   msl.qt.exceptions
 
 the following general :class:`QWidget`\'s
 
@@ -49,7 +49,7 @@ Package Structure
    msl.qt <_api/msl.qt>
    msl.qt.io <_api/msl.qt.io>
    msl.qt.button <_api/msl.qt.button>
-   msl.qt.exception <_api/msl.qt.exception>
+   msl.qt.exceptions <_api/msl.qt.exceptions>
    msl.qt.logger <_api/msl.qt.logger>
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
    msl.qt.prompt <_api/msl.qt.prompt>
