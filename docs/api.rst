@@ -17,6 +17,7 @@ which has the following modules
    msl.qt.io
    msl.qt.prompt
    msl.qt.exceptions
+   msl.qt.utils
 
 the following general :class:`QWidget`\'s
 
@@ -34,11 +35,12 @@ the following :class:`QWidget`\'s that are compatible with the `MSL Equipment`_ 
    ~msl.qt.equipment.message_based.MessageBased
    ~msl.qt.equipment.thorlabs.translation_stage.TranslationStage
 
-and the following general classes
+and the following convenience classes
 
 .. autosummary::
 
    ~msl.qt.loop_until_abort.LoopUntilAbort
+   ~msl.qt.utils.Sleep
 
 Package Structure
 -----------------
@@ -54,6 +56,7 @@ Package Structure
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
    msl.qt.prompt <_api/msl.qt.prompt>
    msl.qt.toggle_switch <_api/msl.qt.toggle_switch>
+   msl.qt.utils <_api/msl.qt.utils>
    msl.qt.equipment <_api/msl.qt.equipment>
 
 .. |toggle_switch| image:: _static/toggle_switch.gif
