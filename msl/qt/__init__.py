@@ -46,8 +46,7 @@ def application(args=None):
                'wg+l4cFJPH1ynI9qM6dLwwPPIPecsKvBXytvXi4U9vpc8oaMfFSbeQ1QaeixEyCP2Yfnahe+KA0PPm9SCeP' \
                'ns7XZd0pDR49A8qrM3Eht5lgF/H9lKAuFC5KM1me5V48ZAVgBwJTNgwLD3/f3Q2sm57LA/SbCSuMiUggKpK' \
                'QbQN4KwgXy9AA4r13gAhPhxfL6T8y/FrQlyIjl7wYAAAAASUVORK5CYII='
-        from msl.qt.io import get_icon
-        app.setWindowIcon(get_icon(QtCore.QByteArray(logo.encode())))
+        app.setWindowIcon(io.get_icon(QtCore.QByteArray(logo.encode())))
 
     return app
 
@@ -55,6 +54,8 @@ def application(args=None):
 from ._qt import *
 from .button import Button
 from .exception import excepthook
+from . import io
 from .logger import Logger
 from .loop_until_abort import LoopUntilAbort
+from . import prompt
 from .toggle_switch import ToggleSwitch

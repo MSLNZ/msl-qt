@@ -1,23 +1,23 @@
 """
 Run each example script one at a time.
 """
-from msl.qt.prompt import question
-import msl.examples.qt as ex
+from msl import qt
+import msl.examples.qt as example
 
 examples = [
-    ex.equipment.configuration_viewer.show,
-    ex.button.show,
-    ex.equipment.message_based.show,
-    ex.logger.show,
-    ex.toggle_switch.show,
-    ex.LoopExample,
-    ex.ShowStandardIcons,
+    example.equipment.configuration_viewer.show,
+    example.button.show,
+    example.equipment.message_based.show,
+    example.logger.show,
+    example.toggle_switch.show,
+    example.LoopExample,
+    example.ShowStandardIcons,
 ]
 
 count = 1
 n = len(examples)
 for e in examples:
     e()
-    if n-count > 0 and not question('{} examples remain.\nContinue?'.format(n-count)):
+    if n-count > 0 and not qt.prompt.question('{} examples remain.\nContinue?'.format(n-count)):
         break
     count += 1
