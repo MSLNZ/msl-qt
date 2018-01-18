@@ -1,5 +1,12 @@
 """
-Custom :class:`~QtWidgets.QWidget`\'s for the `MSL Equipment <http://msl-equipment.readthedocs.io/en/latest>`_ package.
+Custom :class:`~QtWidgets.QWidget`\'s that are compatible with the `MSL Equipment`_ package.
+
+.. attention::
+
+   All subpackages and submodules within the ``msl.qt.equipment`` package require that
+   `MSL Equipment`_ is installed.
+
+.. _`MSL Equipment`: http://msl-equipment.readthedocs.io/en/latest
 """
 from msl.qt import QtWidgets, QtCore
 

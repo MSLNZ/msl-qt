@@ -6,11 +6,6 @@ msl\.qt\.equipment package
     :undoc-members:
     :show-inheritance:
 
-.. attention::
-
-   All subpackages and submodules within the **msl.qt.equipment** package require that the
-   `MSL Equipment`_ package is installed.
-
 Subpackages
 -----------
 
