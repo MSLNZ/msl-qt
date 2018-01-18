@@ -11,7 +11,8 @@ class LoopExample(LoopUntilAbort):
     def __init__(self):
         """Initialize the dialog window.
 
-        Use a 250 ms delay between successive calls to the `loop` method."""
+        Use a 250 ms delay between successive calls to the `loop` method.
+        """
         super(LoopExample, self).__init__(loop_delay=250)
 
     def setup(self):
