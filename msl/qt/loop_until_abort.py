@@ -159,11 +159,12 @@ class LoopUntilAbort(object):
 
     @property
     def user_label(self):
-        """:obj:`QLabel`: The reference to a label that the user can modify the text of.
+        """:obj:`QLabel`: The reference to a label object that the user can modify the text of.
 
         See Also
         --------
         :obj:`update_label`
+            To simply set the text of the :obj:`QLabel`.
         """
         return self._user_label
 
@@ -197,10 +198,10 @@ class LoopUntilAbort(object):
         raise NotImplementedError("You must override the 'loop' method.")
 
     def teardown(self):
-        """This method gets called after the :meth:`loop` stops.
+        """This method gets called after the :meth:`loop` has stopped looping.
 
-        You can override this method to properly tear down the task that you
-        want to perform. For example, to close a file.
+        You can override this method to properly teardown the task that you
+        want to loop over. For example, to close a file.
         """
         pass
 
@@ -231,6 +232,7 @@ class LoopUntilAbort(object):
         See Also
         --------
         :obj:`user_label`
+            For the reference to the :obj:`QLabel` object.
         """
         self._user_label.setText(text)
 
