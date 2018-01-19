@@ -137,7 +137,17 @@ class LoopUntilAbort(object):
     @property
     def elapsed_time(self):
         """:obj:`datetime.datetime`: The elapsed time since the :meth:`loop` started."""
-        return datetime.datetime.now() - self._start_time
+        return self.current_time - self._start_time
+
+    @property
+    def max_iterations(self):
+        """:obj:`int` or :obj:`None`: The maximum number of times that the :meth:`loop` will be called."""
+        return self._max_iterations
+
+    @property
+    def loop_delay(self):
+        """:obj:`int`: The time delay, in milliseconds, between successive calls to the :meth:`loop`."""
+        return self._loop_delay
 
     @property
     def user_label(self):
@@ -151,14 +161,14 @@ class LoopUntilAbort(object):
         return self._user_label
 
     @property
-    def max_iterations(self):
-        """:obj:`int` or :obj:`None`: The maximum number of times that the :meth:`loop` will be called."""
-        return self._max_iterations
+    def main_window(self):
+        """:obj:`~QtWidgets.QMainWindow`: The reference to the main window."""
+        return self._main_window
 
     @property
-    def loop_delay(self):
-        """:obj:`int`: The time delay, in milliseconds, between successive calls to the :meth:`loop`."""
-        return self._loop_delay
+    def loop_timer(self):
+        """:obj:`~QtCore.QTimer`: The reference to the loop timer."""
+        return self._loop_timer
 
     def start(self):
         """Start looping."""
@@ -242,7 +252,7 @@ class LoopUntilAbort(object):
 
     def _update_elapsed_time_label(self):
         """update the 'Elapsed time' label"""
-        dt = datetime.datetime.now() - self.start_time
+        dt = self.elapsed_time
         hours, remainder = divmod(dt.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         base = 'Elapsed time {:02d}:{:02d}:{:02d} '.format(hours, minutes, seconds)
@@ -254,7 +264,7 @@ class LoopUntilAbort(object):
             self._elapsed_time_label.setText(base + '(+{} days)'.format(dt.days))
 
     def _update_iteration_label(self):
-        """update the `Iterations` label"""
+        """update the `Iteration` label"""
         self._iteration_label.setText('Iteration {}'.format(self._iteration))
 
     def _call_loop(self):

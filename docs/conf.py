@@ -41,6 +41,10 @@ if on_rtd:
             pass
         QTreeWidget = QTreeWidget
 
+        class QMainWindow(object):
+            pass
+        QMainWindow = QMainWindow
+
     class QtCore(object):
         class Qt(object):
             KeepAspectRatio = 1
