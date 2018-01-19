@@ -11,7 +11,7 @@ class LoopUntilAbort(object):
 
     def __init__(self, loop_delay=0, max_iterations=None, single_shot=False,
                  title=None, bg_color='#DFDFDF', text_color='#20548B',
-                 font_family='Helvetica', font_size=14, **kwargs):
+                 font_family='Helvetica', font_size=14):
         """Repeatedly perform a task until aborted by the user.
 
         This class provides an interface to show the status of a task (e.g., read
@@ -30,7 +30,8 @@ class LoopUntilAbort(object):
         To view this example run:
 
         >>> from msl.examples.qt import LoopExample
-        >>> LoopExample() # doctest: +SKIP
+        >>> loop = LoopExample() # doctest: +SKIP
+        >>> loop.start() # doctest: +SKIP
 
         Parameters
         ----------
@@ -57,20 +58,24 @@ class LoopUntilAbort(object):
         title : :obj:`str`, optional
             The text to display in the title bar of the dialog window.
             If :obj:`None` then uses the name of the subclass as the title.
-        bg_color : :obj:`str` or :obj:`QColor`, optional
-            The background color of the dialog window.
-        text_color : :obj:`str` or :obj:`QColor`, optional
-            The color of the **Elapsed time** and **Iterations** text.
-        font_family : :obj:`str`, optional
-            The font family to use for the text.
+        bg_color : :obj:`QColor`, optional
+            The background color of the dialog window. Can be any value that
+            the constructor of a :obj:`QColor` accepts.
+        text_color : :obj:`QColor`, optional
+            The color of the **Elapsed time** and **Iteration** text. Can be
+            any value that the constructor of a :obj:`QColor` accepts.
+        font_family : :obj:`QFont`, optional
+            The font family to use for the text. Can be any value that the
+            constructor of a :obj:`QFont` accepts.
         font_size : :obj:`int`, optional
             The font size of the text.
-        **kwargs : :obj:`dict`
-            All additional keyword arguments will be passed to the
-            :meth:`setup` method.
         """
         self._iteration = 0
         self._loop_error = False
+        self._start_time = None
+        self._loop_delay = loop_delay
+        self._single_shot = single_shot
+
         self._max_iterations = int(max_iterations) if max_iterations else None
 
         self._app = application()
@@ -90,9 +95,9 @@ class LoopUntilAbort(object):
         font = QtGui.QFont(font_family, pointSize=font_size)
         text_hex_color = QtGui.QColor(text_color).name()
 
-        self._runtime_label = QtWidgets.QLabel()
-        self._runtime_label.setFont(font)
-        self._runtime_label.setStyleSheet('color:{};'.format(text_hex_color))
+        self._elapsed_time_label = QtWidgets.QLabel()
+        self._elapsed_time_label.setFont(font)
+        self._elapsed_time_label.setStyleSheet('color:{};'.format(text_hex_color))
 
         self._iteration_label = QtWidgets.QLabel()
         self._iteration_label.setFont(font)
@@ -102,40 +107,17 @@ class LoopUntilAbort(object):
         self._user_label.setFont(font)
 
         vbox = QtWidgets.QVBoxLayout()
-        vbox.addWidget(self._runtime_label)
+        vbox.addWidget(self._elapsed_time_label)
         vbox.addWidget(self._iteration_label)
         vbox.addWidget(self._user_label)
         vbox.setStretchFactor(self._user_label, 1)
         self._central_widget.setLayout(vbox)
 
-        self._runtime_timer = QtCore.QTimer()
-        self._runtime_timer.timeout.connect(self._update_runtime_label)
+        self._elapsed_time_timer = QtCore.QTimer()
+        self._elapsed_time_timer.timeout.connect(self._update_elapsed_time_label)
 
         self._loop_timer = QtCore.QTimer()
         self._loop_timer.timeout.connect(self._call_loop)
-
-        self._start_time = self.current_time
-        s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
-        self._main_window.statusBar().showMessage('Started ' + s)
-        self._update_runtime_label()
-        self._update_iteration_label()
-
-        try:
-            self.setup(**kwargs)
-        except:
-            msg = 'The following exception occurred in the setup() method:\n\n'
-            prompt.critical(msg + traceback.format_exc())
-            self._stop_timers()
-
-        if self._loop_timer:
-            self._loop_delay = max(0, int(loop_delay)) if not single_shot else 0
-            if self._loop_delay > 0:
-                self._call_loop()
-            self._loop_timer.setSingleShot(single_shot)
-            self._loop_timer.start(self._loop_delay)
-            self._runtime_timer.start(1000)
-            self._main_window.show()
-            self._app.exec_()
 
     @property
     def iteration(self):
@@ -178,16 +160,21 @@ class LoopUntilAbort(object):
         """:obj:`int`: The time delay, in milliseconds, between successive calls to the :meth:`loop`."""
         return self._loop_delay
 
-    def setup(self, **kwargs):
-        """This method gets called before the :meth:`loop` starts.
-
-        You can override this method to properly set up the task that you
-        want to perform. For example, to open a file.
-
-        The ``**kwargs`` that this method can receive are the additional keyword
-        arguments that were passed in to :class:`LoopUntilAbort` class.
-        """
-        pass
+    def start(self):
+        """Start looping."""
+        self._start_time = self.current_time
+        s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
+        self._main_window.statusBar().showMessage('Started ' + s)
+        self._update_elapsed_time_label()
+        self._update_iteration_label()
+        self._loop_delay = max(0, int(self._loop_delay)) if not self._single_shot else 0
+        if self._loop_delay > 0:
+            self._call_loop()
+        self._loop_timer.setSingleShot(self._single_shot)
+        self._loop_timer.start(self._loop_delay)
+        self._elapsed_time_timer.start(1000)
+        self._main_window.show()
+        self._app.exec_()
 
     def loop(self):
         """The task to perform in a repeated loop.
@@ -196,14 +183,6 @@ class LoopUntilAbort(object):
             You **MUST** override this method.
         """
         raise NotImplementedError("You must override the 'loop' method.")
-
-    def teardown(self):
-        """This method gets called after the :meth:`loop` has stopped looping.
-
-        You can override this method to properly teardown the task that you
-        want to loop over. For example, to close a file.
-        """
-        pass
 
     def loop_once(self):
         """Run the :meth:`loop` method once.
@@ -220,6 +199,14 @@ class LoopUntilAbort(object):
             raise RuntimeError('Single shots are not enabled')
 
         self._loop_timer.start(0)
+
+    def cleanup(self):
+        """This method gets called when the :class:`~QtWidgets.QMainWindow` is closing.
+
+        You can override this method to properly cleanup any tasks.
+        For example, to close a file that is open.
+        """
+        pass
 
     def update_label(self, text):
         """Update the text of the label that the user has access to.
@@ -239,47 +226,36 @@ class LoopUntilAbort(object):
     def _shutdown(self, event):
         """Abort the loop"""
 
-        # check whether max_iterations was reached
-        if self._is_max_reached():
-            event.accept()
-            return
-
         # check that it is okay to abort
-        if not self._loop_error and not prompt.question('Are you sure that you want to abort the loop?'):
-            # need to check again whether max_iterations was reached while the prompt window was displayed
-            if self._is_max_reached():
-                prompt.information('The maximum number of iterations was already reached.\nLoop already aborted.')
-                event.accept()
-            else:
+        if not self._is_max_reached() and not self._loop_error:
+            if not prompt.question('Are you sure that you want to abort the loop?'):
+                # check again whether max_iterations was reached while the prompt window was displayed
+                if self._is_max_reached():
+                    prompt.information('The maximum number of iterations was already reached.\n'
+                                       'Loop already aborted.')
                 event.ignore()
-            return
+                return
 
-        # need to check again whether max_iterations was reached after the prompt window was displayed
-        if self._is_max_reached():
-            event.accept()
-            return
-
-        self._main_window.statusBar().showMessage('Stopping the loop...')
         self._stop_timers()
-        self._teardown()
+        self._cleanup()
         event.accept()
 
-    def _update_runtime_label(self):
+    def _update_elapsed_time_label(self):
         """update the 'Elapsed time' label"""
         dt = datetime.datetime.now() - self.start_time
         hours, remainder = divmod(dt.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         base = 'Elapsed time {:02d}:{:02d}:{:02d} '.format(hours, minutes, seconds)
         if dt.days == 0:
-            self._runtime_label.setText(base)
+            self._elapsed_time_label.setText(base)
         elif dt.days == 1:
-            self._runtime_label.setText(base + '(+1 day)')
+            self._elapsed_time_label.setText(base + '(+1 day)')
         else:
-            self._runtime_label.setText(base + '(+{} days)'.format(dt.days))
+            self._elapsed_time_label.setText(base + '(+{} days)'.format(dt.days))
 
     def _update_iteration_label(self):
         """update the `Iterations` label"""
-        self._iteration_label.setText('Iteration: {}'.format(self._iteration))
+        self._iteration_label.setText('Iteration {}'.format(self._iteration))
 
     def _call_loop(self):
         """call the loop method once"""
@@ -288,7 +264,6 @@ class LoopUntilAbort(object):
             msg = 'Maximum number of iterations reached ({})'.format(self._iteration)
             self._main_window.statusBar().showMessage(msg)
             prompt.information(msg)
-            self._teardown()
         else:
             try:
                 self._iteration += 1
@@ -306,12 +281,12 @@ class LoopUntilAbort(object):
         """Whether the maximum number of iterations was reached"""
         return self._max_iterations is not None and self._iteration == self._max_iterations
 
-    def _teardown(self):
-        """Wraps the teardown method in a try..except block."""
+    def _cleanup(self):
+        """Wraps the cleanup method in a try..except block."""
         try:
-            self.teardown()
+            self.cleanup()
         except:
-            msg = 'The following exception occurred in the teardown() method:\n\n'
+            msg = 'The following exception occurred in the cleanup() method:\n\n'
             prompt.critical(msg + traceback.format_exc())
             self._stop_timers()
 
@@ -319,6 +294,6 @@ class LoopUntilAbort(object):
         if self._loop_timer:
             self._loop_timer.stop()
             self._loop_timer = None
-        if self._runtime_timer:
-            self._runtime_timer.stop()
-            self._runtime_timer = None
+        if self._elapsed_time_timer:
+            self._elapsed_time_timer.stop()
+            self._elapsed_time_timer = None

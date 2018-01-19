@@ -10,14 +10,14 @@ examples = [
     example.equipment.message_based.show,
     example.logger.show,
     example.toggle_switch.show,
-    example.LoopExample,
+    example.loop_until_abort.main,
     example.ShowStandardIcons,
 ]
 
 count = 1
 n = len(examples)
-for e in examples:
-    e()
+for run in examples:
+    run()
     if n-count > 0 and not qt.prompt.question('{} examples remain.\nContinue?'.format(n-count)):
         break
     count += 1
