@@ -11,7 +11,7 @@ class LoopUntilAbort(object):
 
     def __init__(self, loop_delay=0, max_iterations=None, single_shot=False,
                  title=None, bg_color='#DFDFDF', text_color='#20548B',
-                 font_family='Helvetica', font_size=14):
+                 font_family='Helvetica', font_size=14, **kwargs):
         """Repeatedly perform a task until aborted by the user.
 
         This class provides an interface to show the status of a task (e.g., read
@@ -65,8 +65,11 @@ class LoopUntilAbort(object):
             The font family to use for the text.
         font_size : :obj:`int`, optional
             The font size of the text.
+        **kwargs : :obj:`dict`
+            All additional keyword arguments will be passed to the
+            :meth:`setup` method.
         """
-        self._counter = 0
+        self._iteration = 0
         self._loop_error = False
         self._max_iterations = int(max_iterations) if max_iterations else None
 
@@ -91,16 +94,16 @@ class LoopUntilAbort(object):
         self._runtime_label.setFont(font)
         self._runtime_label.setStyleSheet('color:{};'.format(text_hex_color))
 
-        self._counter_label = QtWidgets.QLabel()
-        self._counter_label.setFont(font)
-        self._counter_label.setStyleSheet('color:{};'.format(text_hex_color))
+        self._iteration_label = QtWidgets.QLabel()
+        self._iteration_label.setFont(font)
+        self._iteration_label.setStyleSheet('color:{};'.format(text_hex_color))
 
         self._user_label = QtWidgets.QLabel()
         self._user_label.setFont(font)
 
         vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self._runtime_label)
-        vbox.addWidget(self._counter_label)
+        vbox.addWidget(self._iteration_label)
         vbox.addWidget(self._user_label)
         vbox.setStretchFactor(self._user_label, 1)
         self._central_widget.setLayout(vbox)
@@ -118,7 +121,7 @@ class LoopUntilAbort(object):
         self._update_iteration_label()
 
         try:
-            self.setup()
+            self.setup(**kwargs)
         except:
             msg = 'The following exception occurred in the setup() method:\n\n'
             prompt.critical(msg + traceback.format_exc())
@@ -135,9 +138,9 @@ class LoopUntilAbort(object):
             self._app.exec_()
 
     @property
-    def counter(self):
+    def iteration(self):
         """:obj:`int`: The number of times that the :meth:`loop` method has been called."""
-        return self._counter
+        return self._iteration
 
     @property
     def start_time(self):
@@ -166,19 +169,22 @@ class LoopUntilAbort(object):
 
     @property
     def max_iterations(self):
-        """:obj:`int` or :obj:`None`: The maximum number of times to call the :meth:`loop` method."""
+        """:obj:`int` or :obj:`None`: The maximum number of times that the :meth:`loop` will be called."""
         return self._max_iterations
 
     @property
     def loop_delay(self):
-        """:obj:`int`: The time delay, in milliseconds, between successive calls to the loop method."""
+        """:obj:`int`: The time delay, in milliseconds, between successive calls to the :meth:`loop`."""
         return self._loop_delay
 
-    def setup(self):
+    def setup(self, **kwargs):
         """This method gets called before the :meth:`loop` starts.
 
         You can override this method to properly set up the task that you
         want to perform. For example, to open a file.
+
+        The ``**kwargs`` that this method can receive are the additional keyword
+        arguments that were passed in to :class:`LoopUntilAbort` class.
         """
         pass
 
@@ -271,19 +277,19 @@ class LoopUntilAbort(object):
 
     def _update_iteration_label(self):
         """update the `Iterations` label"""
-        self._counter_label.setText('Iteration: {}'.format(self._counter))
+        self._iteration_label.setText('Iteration: {}'.format(self._iteration))
 
     def _call_loop(self):
         """call the loop method once"""
         if self._is_max_reached():
             self._stop_timers()
-            msg = 'Maximum number of iterations reached ({})'.format(self._counter)
+            msg = 'Maximum number of iterations reached ({})'.format(self._iteration)
             self._main_window.statusBar().showMessage(msg)
             prompt.information(msg)
             self._teardown()
         else:
             try:
-                self._counter += 1
+                self._iteration += 1
                 self.loop()
                 self._update_iteration_label()
             except:
@@ -296,7 +302,7 @@ class LoopUntilAbort(object):
 
     def _is_max_reached(self):
         """Whether the maximum number of iterations was reached"""
-        return self._max_iterations is not None and self._counter == self._max_iterations
+        return self._max_iterations is not None and self._iteration == self._max_iterations
 
     def _teardown(self):
         """Wraps the teardown method in a try..except block."""

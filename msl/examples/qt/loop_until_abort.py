@@ -23,8 +23,8 @@ class LoopExample(LoopUntilAbort):
 
     def loop(self):
         """This method gets called repeatedly in a loop (every `loop_delay` ms)."""
-        self.f.write('Counter: {}\n'.format(self.counter))
-        self.f.write('Elapsed: {}\n'.format(self.elapsed_time))
+        self.f.write('Iteration: {}\n'.format(self.iteration))
+        self.f.write('Elapsed time: {}\n'.format(self.elapsed_time))
         self.update_label('The current time is\n{}'.format(self.current_time))
 
     def teardown(self):
