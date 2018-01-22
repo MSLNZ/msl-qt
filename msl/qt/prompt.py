@@ -318,6 +318,49 @@ def filename(initial=None, filters=None, multiple=False, title='Select File'):
     return name if len(name) > 0 else None
 
 
+def notes(json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EAF2F8'):
+    """Ask the user to enter notes.
+
+    Opens a :class:`~QtWidgets.QDialog` to allow for a user to enter a detailed
+    description of a task that they are performing. The :class:`~QtWidgets.QDialog`
+    provides a table of all the previous notes that have been used. Notes that are
+    in the table can be deleted by selecting the desired row(s) and pressing the
+    ``delete`` key or the note in a row can be copied to the editor by
+    double-clicking on a row.
+
+    This function is useful when acquiring data and you want to include notes
+    about how the data was acquired. Using a prompt to enter notes forces you
+    to manually enter the notes every time you acquire data rather than having
+    the notes typed directly onto the graphical user interface, which you might
+    forget to update before acquiring the next data set.
+
+    .. _JSON: https://www.json.org/
+
+    Parameters
+    ----------
+    json_path : :obj:`str`, optional
+        The path to a JSON_ file that contains the history of the notes that have
+        been used. If :obj:`None` then the default file is used. The file will
+        automatically be created if it does not exist.
+    title : :obj:`str`, optional
+        The text to display in the title bar of the pop-up window.
+    even_row_color : :obj:`~QtGui.QColor`
+        The background color of the even-numbered rows in the history table.
+    odd_row_color
+        The background color of the odd-numbered rows in the history table.
+
+    Returns
+    -------
+    :obj:`str`
+        The note that was entered.
+    """
+    from .notes_history import NotesHistory
+    app, title = _get_app_and_title(title)
+    nh = NotesHistory(app.activeWindow(), json_path, title, even_row_color, odd_row_color)
+    nh.exec_()
+    return nh.text()
+
+
 def _get_app_and_title(title):
     """Returns a tuple of the QApplication instance and the title bar text of the active window."""
     app = application()
