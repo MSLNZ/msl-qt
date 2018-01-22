@@ -46,7 +46,7 @@ class ConfigurationViewer(QtWidgets.QWidget):
         #
         # selecting a configuration file
         #
-        browse = Button(image=QtWidgets.QStyle.SP_DialogOpenButton)
+        browse = Button(icon=QtWidgets.QStyle.SP_DialogOpenButton)
         browse.setToolTip('Select a configuration file')
         browse.set_left_click(self._browse_file)
 
@@ -66,10 +66,10 @@ class ConfigurationViewer(QtWidgets.QWidget):
         self._filter.setToolTip('Search filter for the database')
         self._filter.returnPressed.connect(self._apply_filter)
 
-        filter_button = Button(image=QtWidgets.QStyle.SP_FileDialogContentsView, tooltip='Apply filter')
+        filter_button = Button(icon=QtWidgets.QStyle.SP_FileDialogContentsView, tooltip='Apply filter')
         filter_button.set_left_click(self._apply_filter)
 
-        clear_button = Button(image=QtWidgets.QStyle.SP_LineEditClearButton, tooltip='Clear filter')
+        clear_button = Button(icon=QtWidgets.QStyle.SP_LineEditClearButton, tooltip='Clear filter')
         clear_button.set_left_click(self._clear_filter)
 
         filter_layout = QtWidgets.QHBoxLayout()

@@ -38,7 +38,7 @@ def test_get_icon():
         io.get_icon(99999)  # not a valid QStyle.StandardPixmap enum value
 
     with pytest.raises(IOError):
-        io.get_icon('this is not an image')
+        io.get_icon('this is not an icon')
 
     assert isinstance(io.get_icon(os.path.join(os.path.dirname(__file__), 'gamma.png')), QtGui.QIcon)
 
@@ -72,47 +72,47 @@ def test_get_icon():
             io.get_icon('shell32|9999')  # the maximum icon index should be much less than 9999
 
 
-def test_image_to_base64():
-    assert isinstance(io.image_to_base64('explorer|0'), QtCore.QByteArray)
-    assert isinstance(io.image_to_base64(QtWidgets.QStyle.SP_TitleBarMenuButton), QtCore.QByteArray)
+def test_icon_to_base64():
+    assert isinstance(io.icon_to_base64('explorer|0'), QtCore.QByteArray)
+    assert isinstance(io.icon_to_base64(QtWidgets.QStyle.SP_TitleBarMenuButton), QtCore.QByteArray)
 
-    image = io.get_icon('gamma.png')
+    icon = io.get_icon('gamma.png')
     default_size = QtCore.QSize(191, 291)
     assert default_size.width() == 191
     assert default_size.height() == 291
 
-    assert isinstance(io.image_to_base64(image), QtCore.QByteArray)
+    assert isinstance(io.icon_to_base64(icon), QtCore.QByteArray)
 
-    new_size = io.get_icon(io.image_to_base64(image)).availableSizes()[0]
+    new_size = io.get_icon(io.icon_to_base64(icon)).availableSizes()[0]
     assert new_size.width() == default_size.width()
     assert new_size.height() == default_size.height()
 
     factor = 2.6
-    new_size = io.get_icon(io.image_to_base64(image, size=factor)).availableSizes()[0]
+    new_size = io.get_icon(io.icon_to_base64(icon, size=factor)).availableSizes()[0]
     assert new_size.width() == int(default_size.width()*factor)
     assert new_size.height() == int(default_size.height()*factor)
 
     y = 150
-    new_size = io.get_icon(io.image_to_base64(image, size=y)).availableSizes()[0]
+    new_size = io.get_icon(io.icon_to_base64(icon, size=y)).availableSizes()[0]
     assert new_size.width() == int(y*191./291.)
     assert new_size.height() == y
 
     x = 300
-    new_size = io.get_icon(io.image_to_base64(image, size=x, mode=QtCore.Qt.KeepAspectRatioByExpanding)).availableSizes()[0]
+    new_size = io.get_icon(io.icon_to_base64(icon, size=x, mode=QtCore.Qt.KeepAspectRatioByExpanding)).availableSizes()[0]
     assert new_size.width() == x
     assert new_size.height() == int(x*291./191.)
 
     size = (150, 200)
-    new_size = io.get_icon(io.image_to_base64(image, size=size, mode=QtCore.Qt.IgnoreAspectRatio)).availableSizes()[0]
+    new_size = io.get_icon(io.icon_to_base64(icon, size=size, mode=QtCore.Qt.IgnoreAspectRatio)).availableSizes()[0]
     assert new_size.width() == size[0]
     assert new_size.height() == size[1]
 
-    new_size = io.get_icon(io.image_to_base64(image, size=size)).availableSizes()[0]
+    new_size = io.get_icon(io.icon_to_base64(icon, size=size)).availableSizes()[0]
     assert new_size.width() == int(size[1]*191./291.)
     assert new_size.height() == size[1]
 
     for fmt in ['BMP', 'JPG', 'JPEG', 'PNG']:
-        io.image_to_base64(image, fmt=fmt)
+        io.icon_to_base64(icon, fmt=fmt)
 
     with pytest.raises(ValueError):
-        io.image_to_base64(image, fmt='GIF')
+        io.icon_to_base64(icon, fmt='GIF')

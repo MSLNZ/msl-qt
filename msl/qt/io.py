@@ -7,7 +7,7 @@ import fnmatch
 
 from . import QtWidgets, QtGui, QtCore, application, prompt
 
-__all__ = ['get_drag_enter_paths', 'get_icon', 'image_to_base64', 'rescale_image']
+__all__ = ['get_drag_enter_paths', 'get_icon', 'icon_to_base64', 'rescale_icon']
 
 
 def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
@@ -29,22 +29,22 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
               get_icon(14)  # the QStyle.SP_TrashIcon enum value
 
         * :class:`~QtCore.QByteArray`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_
-          representation of an encoded image.
+          representation of an encoded icon.
 
-          See :func:`image_to_base64`.
+          See :func:`icon_to_base64`.
 
-        * :obj:`str`: The path to an image file or an icon embedded in a DLL or EXE file.
+        * :obj:`str`: The path to an icon file or an icon embedded in a DLL or EXE file.
 
-          If `obj` is a path to an image file and only the filename is specified then the
+          If `obj` is a path to an icon file and only the filename is specified then the
           directories in :obj:`sys.path` and :obj:`os.environ['PATH'] <os.environ>` are also
-          used to search for the image file. If `obj` refers to an icon in a Windows DLL/EXE
+          used to search for the icon file. If `obj` refers to an icon in a Windows DLL/EXE
           file then `obj` is the path to the DLL/EXE file and the icon index separated by the
           ``|`` character.
 
           The following examples illustrate the various ways to request an icon by passing
           in a :obj:`str` argument::
 
-              # provide the full path to image files
+              # provide the full path to icon files
               get_icon('D:/code/resources/icons/msl.png')
               get_icon('D:/code/resources/icons/photon.png')
 
@@ -106,7 +106,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
         _icon = obj
     elif isinstance(obj, str):
         if '|' in obj:  # then loading an icon from a Windows DLL/EXE file
-            _icon = get_icon(image_to_base64(obj))
+            _icon = get_icon(icon_to_base64(obj))
         elif os.path.isfile(obj):
             _icon = QtGui.QIcon(obj)
         else:
@@ -117,7 +117,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
                     _icon = QtGui.QIcon(full_path)
                     break
             if _icon is None:
-                raise IOError("Cannot find image file '{}'".format(obj))
+                raise IOError("Cannot find icon file '{}'".format(obj))
     elif isinstance(obj, QtWidgets.QStyle.StandardPixmap):
         _icon = QtGui.QIcon(application().style().standardIcon(obj))
     elif isinstance(obj, int):
@@ -140,30 +140,30 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
 
     if size is None:
         return _icon
-    return QtGui.QIcon(rescale_image(_icon, size, mode))
+    return QtGui.QIcon(rescale_icon(_icon, size, mode))
 
 
-def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
-    """Convert the image to a :class:`~QtCore.QByteArray` encoded as Base64_.
+def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
+    """Convert the icon to a :class:`~QtCore.QByteArray` encoded as Base64_.
 
-    This function is useful if you want to save images in a database, use it in a
-    data URI scheme_, or if you want to use images in your GUI and rather than loading
-    images from a file on the hard disk you define your images in a Python module as
-    Base64_ variables. Loading the images from the hard disk means that you must also
-    distribute the images with your Python code if you share your code.
+    This function is useful if you want to save icons in a database, use it in a
+    data URI scheme_, or if you want to use icons in your GUI and rather than loading
+    icons from a file on the hard disk you define your icons in a Python module as
+    Base64_ variables. Loading the icons from the hard disk means that you must also
+    distribute the icons with your Python code if you share your code.
 
     .. _Base64: https://en.wikipedia.org/wiki/Base64
     .. _scheme: https://en.wikipedia.org/wiki/Data_URI_scheme
 
     Parameters
     ----------
-    image : :obj:`object`, optional
-        An image with a data type that is handled by :func:`get_icon`. If :obj:`None`
-        then a dialog window is created to allow the user to select an image file
+    icon : :obj:`object`, optional
+        An icon with a data type that is handled by :func:`get_icon`. If :obj:`None`
+        then a dialog window is created to allow the user to select an icon file
         that is saved in a folder.
     size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
-        Rescale the image to the specified `size` before converting it to Base64_.
-        If the value is :obj:`None` then do not rescale the image.
+        Rescale the icon to the specified `size` before converting it to Base64_.
+        If the value is :obj:`None` then do not rescale the icon.
         If an :obj:`int` then set the width and the height to be the `size` value.
         If a :obj:`float` then a scaling factor.
         If a :obj:`tuple` then the (width, height) values.
@@ -173,27 +173,27 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
         :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
         aspect ratio.
     fmt : :obj:`str`, optional
-        The image format to use when converting. The supported values are: ``BMP``,
+        The icon format to use when converting. The supported values are: ``BMP``,
         ``JPG``, ``JPEG`` and ``PNG``.
 
     Returns
     -------
     :class:`~QtCore.QByteArray`
-        The Base64_ representation of the image.
+        The Base64_ representation of the icon.
 
     Raises
     ------
     :exc:`IOError`
-        If the image file cannot be found.
+        If the icon file cannot be found.
     :exc:`ValueError`
-        If the image format, `fmt`, to use for converting is not supported.
+        If the icon format, `fmt`, to use for converting is not supported.
     """
     fmt = fmt.upper()
     ALLOWED_FORMATS = ['BMP', 'JPG', 'JPEG', 'PNG']
     if fmt not in ALLOWED_FORMATS:
         raise ValueError('Invalid format {}. Must be one of: {}'.format(fmt, ', '.join(ALLOWED_FORMATS)))
 
-    if isinstance(image, str) and '|' in image:
+    if isinstance(icon, str) and '|' in icon:
         # extract an icon from a Windows DLL/EXE file
         # uses ctypes and the .NET Framework to convert the icon to base64
         # import here in case pythonnet is not installed
@@ -209,7 +209,7 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
             'PNG':  clr.System.Drawing.Imaging.ImageFormat.Png,
         }
 
-        s = image.split('|')
+        s = icon.split('|')
         path = s[0]
         icon_index = int(s[1])
         if icon_index < 0:
@@ -256,24 +256,24 @@ def image_to_base64(image=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='
     # ensure that a QApplication exists in order to access Qt classes
     app = application()
 
-    if image is None:
-        title = 'Select an image file to convert to Base64'
+    if icon is None:
+        title = 'Select an icon file to convert to Base64'
         filters = {'Images': ('bmp', 'jpg', 'jpeg', 'png'), 'All files': '*'}
-        image = prompt.filename(title=title, filters=filters)
-        if image is None:
+        icon = prompt.filename(title=title, filters=filters)
+        if icon is None:
             return QtCore.QByteArray()
-        image = str(image)
+        icon = str(icon)
 
-    icon = get_icon(image)
+    icon = get_icon(icon)
     try:
         default_size = icon.availableSizes()[-1]  # use the largest size as the default size
     except IndexError:
-        prompt.critical('Invalid image file.')
+        prompt.critical('Invalid icon file.')
         return QtCore.QByteArray()
 
     pixmap = icon.pixmap(default_size)
     if size is not None:
-        pixmap = rescale_image(pixmap, size, mode)
+        pixmap = rescale_icon(pixmap, size, mode)
 
     array = QtCore.QByteArray()
     buffer = QtCore.QBuffer(array)
@@ -309,16 +309,16 @@ def get_drag_enter_paths(event, pattern=None):
     return []
 
 
-def rescale_image(image, size, mode=QtCore.Qt.KeepAspectRatio):
-    """Rescale an image.
+def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
+    """Rescale an icon.
 
     Parameters
     ----------
-    image : :obj:`object`
+    icon : :obj:`object`
         Any object that is supported by :func:`~msl.qt.io.get_icon`.
     size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
-        Rescale the image to the specified `size`.
-        If the value is :obj:`None` then do not rescale the image.
+        Rescale the icon to the specified `size`.
+        If the value is :obj:`None` then do not rescale the icon.
         If an :obj:`int` then set the width and the height to be the `size` value.
         If a :obj:`float` then a scaling factor.
         If a :obj:`tuple` then the (width, height) values.
@@ -331,18 +331,18 @@ def rescale_image(image, size, mode=QtCore.Qt.KeepAspectRatio):
     Returns
     -------
     :class:`~QtGui.QPixmap`
-        The rescaled image.
+        The rescaled icon.
     """
-    if isinstance(image, QtGui.QIcon):
+    if isinstance(icon, QtGui.QIcon):
         try:
-            max_size = image.availableSizes()[-1]
+            max_size = icon.availableSizes()[-1]
         except IndexError:
             max_size = QtCore.QSize(16, 16)
-        pixmap = image.pixmap(max_size)
-    elif isinstance(image, QtGui.QPixmap):
-        pixmap = image
+        pixmap = icon.pixmap(max_size)
+    elif isinstance(icon, QtGui.QPixmap):
+        pixmap = icon
     else:
-        return rescale_image(get_icon(image), size, mode)
+        return rescale_icon(get_icon(icon), size, mode)
 
     if size is None:
         return pixmap
