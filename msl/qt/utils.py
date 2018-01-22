@@ -10,7 +10,7 @@ class Sleep(QtCore.QObject):
 
     def __init__(self):
         """
-        Suspends execution for a certain number of milliseconds without
+        Suspend execution for a certain number of milliseconds without
         freezing the user interface.
         """
         QtCore.QObject.__init__(self)
