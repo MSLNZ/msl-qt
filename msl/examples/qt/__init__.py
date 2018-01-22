@@ -4,3 +4,4 @@ from . import equipment
 from . import logger
 from . import toggle_switch
 from . import button
+from . import notes_history
