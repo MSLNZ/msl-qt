@@ -22,7 +22,7 @@ record = EquipmentRecord(
 def show():
     app = application()
     mb = MessageBased(record.connect(True))
-    mb.resize(1000, 600)
+    mb.resize(app.desktop().width() // 2, app.desktop().height() // 2)
     mb.show()
     app.exec_()
 
