@@ -10,6 +10,7 @@ def show():
     app = application()
     w = ConfigurationViewer()
     w.setWindowTitle('MSL-Equipment Configuration Viewer')
+    w.resize(app.desktop().width()//2, app.desktop().height()//2)
     w.show()
     app.exec_()
 
