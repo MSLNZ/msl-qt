@@ -174,7 +174,7 @@ class LoopUntilAbort(object):
         """Start looping."""
         self._start_time = self.current_time
         s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
-        self._main_window.statusBar().showMessage('Started ' + s)
+        self.set_status_bar_message('Started ' + s)
         self._update_elapsed_time_label()
         self._update_iteration_label()
         self._loop_delay = max(0, int(self._loop_delay)) if not self._single_shot else 0
@@ -233,6 +233,16 @@ class LoopUntilAbort(object):
         """
         self._user_label.setText(text)
 
+    def set_status_bar_message(self, message):
+        """Set the message to display in the status bar.
+
+        Parameters
+        ----------
+        message : :obj:`str`
+            The text to display in the status bar of the :class:`~QtWidgets.QMainWindow`.
+        """
+        self._main_window.statusBar().showMessage(message)
+
     def _shutdown(self, event):
         """Abort the loop"""
 
@@ -272,7 +282,7 @@ class LoopUntilAbort(object):
         if self._is_max_reached():
             self._stop_timers()
             msg = 'Maximum number of iterations reached ({})'.format(self._iteration)
-            self._main_window.statusBar().showMessage(msg)
+            self.set_status_bar_message(msg)
             prompt.information(msg)
         else:
             try:
@@ -285,7 +295,7 @@ class LoopUntilAbort(object):
                 self._loop_error = True
                 self._stop_timers()
                 err_time = self.current_time.strftime('%d %B %Y at %H:%M:%S')
-                self._main_window.statusBar().showMessage('Error occurred on ' + err_time)
+                self.set_status_bar_message('Error occurred on ' + err_time)
 
     def _is_max_reached(self):
         """Whether the maximum number of iterations was reached"""
