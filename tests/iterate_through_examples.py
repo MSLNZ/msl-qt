@@ -5,6 +5,7 @@ from msl import qt
 import msl.examples.qt as example
 
 examples = [
+    example.loop_until_abort_sleep.main,
     example.notes_history.show,
     example.equipment.configuration_viewer.show,
     example.button.show,

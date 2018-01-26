@@ -14,12 +14,13 @@ which has the following modules
 
 .. autosummary::
 
+   msl.qt.constants
+   msl.qt.exceptions
    msl.qt.io
    msl.qt.prompt
-   msl.qt.exceptions
-   msl.qt.utils
+   msl.qt.threading
 
-the following general :class:`QWidget`\'s
+the following general :class:`QWidgets.QWidget`\'s
 
 .. autosummary::
 
@@ -27,7 +28,7 @@ the following general :class:`QWidget`\'s
    ~msl.qt.logger.Logger
    ~msl.qt.toggle_switch.ToggleSwitch
 
-the following :class:`QWidget`\'s that are compatible with the `MSL Equipment`_ package
+the following :class:`QWidgets.QWidget`\'s that are compatible with the `MSL Equipment`_ package
 
 .. autosummary::
 
@@ -40,7 +41,7 @@ and the following convenience classes
 .. autosummary::
 
    ~msl.qt.loop_until_abort.LoopUntilAbort
-   ~msl.qt.utils.Sleep
+   ~msl.qt.sleep.Sleep
 
 Package Structure
 -----------------
@@ -51,12 +52,14 @@ Package Structure
    msl.qt <_api/msl.qt>
    msl.qt.io <_api/msl.qt.io>
    msl.qt.button <_api/msl.qt.button>
+   msl.qt.constants <_api/msl.qt.constants>
    msl.qt.exceptions <_api/msl.qt.exceptions>
    msl.qt.logger <_api/msl.qt.logger>
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
    msl.qt.prompt <_api/msl.qt.prompt>
+   msl.qt.sleep <_api/msl.qt.sleep>
+   msl.qt.threading <_api/msl.qt.threading>
    msl.qt.toggle_switch <_api/msl.qt.toggle_switch>
-   msl.qt.utils <_api/msl.qt.utils>
    msl.qt.equipment <_api/msl.qt.equipment>
 
 .. |toggle_switch| image:: _static/toggle_switch.gif

@@ -13,17 +13,17 @@ version_info = namedtuple('version_info', 'major minor micro')(*map(int, __versi
 
 
 def application(args=None):
-    """Returns the :obj:`~QtWidgets.QApplication` instance (creating one if necessary).
+    """Returns the :class:`QtWidgets.QApplication` instance (creating one if necessary).
 
     Parameters
     ----------
-    args : :obj:`list` of :obj:`str`, optional
-        A list of arguments to initialize the :obj:`~QtWidgets.QApplication`.
+    args : :class:`list` of :class:`str`, optional
+        A list of arguments to initialize the :class:`QtWidgets.QApplication`.
         If :obj:`None` then uses :obj:`sys.argv`.
 
     Returns
     -------
-    :obj:`~QtWidgets.QApplication`
+    :class:`QtWidgets.QApplication`
         The QApplication instance.
     """
     app = QtWidgets.QApplication.instance()
@@ -59,4 +59,4 @@ from .logger import Logger
 from .loop_until_abort import LoopUntilAbort
 from . import prompt
 from .toggle_switch import ToggleSwitch
-from . import utils
+from .sleep import Sleep

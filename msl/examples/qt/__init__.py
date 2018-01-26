@@ -5,3 +5,4 @@ from . import logger
 from . import toggle_switch
 from . import button
 from . import notes_history
+from .loop_until_abort_sleep import LoopExampleSleep

@@ -15,7 +15,7 @@ class LoopExample(LoopUntilAbort):
         """
         super(LoopExample, self).__init__(loop_delay=250)
 
-        self.output_path = tempfile.gettempdir() + '/loop_until_abort.txt'
+        self.output_path = tempfile.gettempdir() + '/msl-qt-loop-until-abort.txt'
         self.f = open(self.output_path, 'w')
         self.f.write('Started at {}\n'.format(self.current_time))
 
@@ -23,7 +23,7 @@ class LoopExample(LoopUntilAbort):
         """This method gets called repeatedly in a loop (every `loop_delay` ms)."""
         self.f.write('Iteration: {}\n'.format(self.iteration))
         self.f.write('Elapsed time: {}\n'.format(self.elapsed_time))
-        self.update_label('The current time is\n' + str(self.current_time))
+        self.set_label_text('The current time is\n' + str(self.current_time))
 
     def cleanup(self):
         """This method gets called when the LoopExample window is closing."""

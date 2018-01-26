@@ -1,7 +1,7 @@
 MSL-Qt
 ======
 
-This package provides custom Qt_ components that can be used for the user interface.
+This package provides custom Qt_ components that can be used for the graphical user interface.
 
 .. _Qt: https://www.qt.io/
 
