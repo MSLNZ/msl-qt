@@ -1,7 +1,7 @@
-msl\.qt\.utils module
+msl\.qt\.sleep module
 =====================
 
-.. automodule:: msl.qt.utils
+.. automodule:: msl.qt.sleep
     :members:
     :undoc-members:
     :show-inheritance:
