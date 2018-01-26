@@ -45,6 +45,10 @@ if on_rtd:
             pass
         QMainWindow = QMainWindow
 
+        class QMenu(object):
+            pass
+        QMenu = QMenu
+
     class QtCore(object):
         class Qt(object):
             KeepAspectRatio = 1
