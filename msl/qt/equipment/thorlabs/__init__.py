@@ -1,13 +1,15 @@
 """
-Custom :class:`~QtWidgets.QWidget`'\s for equipment from Thorlabs.
+Custom :class:`QtWidgets.QWidget`'\s for equipment from Thorlabs_.
+
+.. _Thorlabs: https://www.thorlabs.com/index.cfm
 """
 from msl.qt import QtWidgets, QtCore
 
 
 def show_hardware_info(connection):
-    """Displays the hardware information about a Thorlabs
+    """Displays the hardware information about a Thorlabs_
     :class:`~msl.equipment.resources.thorlabs.kinesis.motion_control.MotionControl` device
-    in a :class:`QtWidgets.QDialog`
+    in a :class:`QtWidgets.QDialog`.
 
     Parameters
     ----------

@@ -1,5 +1,5 @@
 """
-A :class:`~QtWidgets.QWidget` for :class:`~msl.equipment.connection_msl.ConnectionMessageBased`.
+A :class:`QtWidgets.QWidget` for :class:`~msl.equipment.connection_msl.ConnectionMessageBased`.
 
 This widget allows for reading/writing messages from/to equipment.
 """
@@ -15,7 +15,7 @@ class MessageBased(QtWidgets.QWidget):
 
     def __init__(self, connection, parent=None):
         """
-        A :class:`~QtWidgets.QWidget` for :class:`~msl.equipment.connection_msl.ConnectionMessageBased`.
+        A :class:`QtWidgets.QWidget` for :class:`~msl.equipment.connection_msl.ConnectionMessageBased`.
 
         This widget allows for reading/writing messages from/to equipment.
 
@@ -23,7 +23,7 @@ class MessageBased(QtWidgets.QWidget):
         ----------
         connection : :class:`~msl.equipment.connection_msl.ConnectionMessageBased`
             The connection to the equipment.
-        parent : :class:`~QtWidgets.QWidget`
+        parent : :class:`QtWidgets.QWidget`
             The parent widget.
 
         Example
@@ -144,13 +144,13 @@ class MessageBased(QtWidgets.QWidget):
         self.setLayout(hbox)
 
     def keyPressEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.keyPressEvent`."""
+        """Overrides :meth:`QtWidgets.QWidget.keyPressEvent`."""
         if event.matches(QtGui.QKeySequence.Paste):
             lines = QtWidgets.QApplication.clipboard().text().splitlines()
             self._insert_lines(lines)
 
     def dragEnterEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.dragEnterEvent`."""
+        """Overrides :meth:`QtWidgets.QWidget.dragEnterEvent`."""
         self._dropped_commands = []
         paths = get_drag_enter_paths(event, '*.txt')
         if paths:
@@ -162,18 +162,18 @@ class MessageBased(QtWidgets.QWidget):
             event.ignore()
 
     def dragMoveEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.dragMoveEvent`."""
+        """Overrides :meth:`QtWidgets.QWidget.dragMoveEvent`."""
         event.accept()
 
     def dropEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.dropEvent`."""
+        """Overrides :meth:`QtWidgets.QWidget.dropEvent`."""
         self._insert_lines(self._dropped_commands)
 
     def _update_timeout(self, val):
         self._conn.timeout = val
 
     def _show_vertical_popup_menu(self):
-        """handles a right-click on the selected row button(s)"""
+        """Handles a right-click on the selected row button(s)"""
         selected = self._table.selectionModel().selectedRows()
         if selected:
             r = 'row' if len(selected) == 1 else 'rows'
@@ -216,7 +216,7 @@ class MessageBased(QtWidgets.QWidget):
 
         Parameters
         ----------
-        index : :obj:`int` or :obj:`None`
+        index : :class:`int` or :obj:`None`
             If :obj:`None` then append a row, else the index number (0 based) for
             where to create and insert the row.
         """

@@ -1,5 +1,5 @@
 """
-A :class:`~QtWidgets.QWidget` to view the information within a
+A :class:`QtWidgets.QWidget` to view the information within a
 `Configuration File <http://msl-equipment.readthedocs.io/en/latest/config.html#configuration>`_.
 """
 import re
@@ -19,13 +19,13 @@ from msl.qt.equipment import show_record
 class ConfigurationViewer(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
-        """A :class:`~QtWidgets.QWidget` to view the information within a
-        `Configuration File <http://msl-equipment.readthedocs.io/en/latest/config.html#configuration>`_.
+        """A :class:`QtWidgets.QWidget` to view the information within a
+        :ref:`Configuration File <msl.equipment:configuration_file>`.
 
         Parameters
         ----------
-        parent : :class:`~QtWidgets.QWidget`, optional
-            The parent :class:`~QtWidgets.QWidget`.
+        parent : :class:`QtWidgets.QWidget`, optional
+            The parent :class:`QtWidgets.QWidget`.
 
         Example
         -------

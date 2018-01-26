@@ -1,5 +1,5 @@
 """
-A toggle switch :class:`QWidget`.
+A toggle switch :class:`QtWidgets.QWidget`.
 """
 from . import QtWidgets, QtCore, QtGui
 
@@ -14,17 +14,21 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
         Parameters
         ----------
-        parent : :obj:`QWidget`, optional
-            The parent :obj:`QWidget`.
-        height : :obj:`int`, optional
+        parent : :class:`QtWidgets.QWidget`, optional
+            The parent :class:`QtWidgets.QWidget`.
+        height : :class:`int`, optional
             The height, in pixels, of the toggle switch.
-        checked_color : :obj:`str` or :obj:`QColor`, optional
+        checked_color : :class:`QtGui.QColor`, optional
             The color to draw the switch when it is in the checked state.
-        unchecked_color : :obj:`str` or :obj:`QColor`, optional
+            Can be any data type and value that the constructor of a
+            :class:`QtGui.QColor` accepts.
+        unchecked_color : :class:`QtGui.QColor`, optional
             The color to draw the switch when it is **not** in the checked state.
+            Can be any data type and value that the constructor of a
+            :class:`QtGui.QColor` accepts.
 
-        Examples
-        --------
+        Example
+        -------
         To view an example with the :class:`ToggleSwitch` run:
 
         >>> from msl.examples.qt import toggle_switch
@@ -39,8 +43,12 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         self._unchecked_brush = QtGui.QBrush(QtGui.QColor(unchecked_color))
         self.setCheckable(True)
 
+    def enterEvent(self, event):
+        """Overrides :meth:`QtWidgets.QAbstractButton.enterEvent`."""
+        self.setCursor(QtCore.Qt.PointingHandCursor)
+
     def paintEvent(self, event):
-        """Overrides :obj:`QAbstractButton.paintEvent`."""
+        """Overrides :meth:`QtWidgets.QAbstractButton.paintEvent`."""
         diameter = self._height - 2 * self._pad
         radius = diameter * 0.5
 
@@ -73,10 +81,6 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             p.setBrush(QtGui.QColor('#BDBDBD'))
             p.drawEllipse(ellipse)
 
-    def enterEvent(self, event):
-        """Overrides :obj:`QAbstractButton.enterEvent`."""
-        self.setCursor(QtCore.Qt.PointingHandCursor)
-
     def sizeHint(self):
-        """Overrides :obj:`QWidget.sizeHint`."""
+        """Overrides :meth:`QtWidgets.QWidget.sizeHint`."""
         return QtCore.QSize(2 * (self._height + self._pad), self._height + 2 * self._pad)

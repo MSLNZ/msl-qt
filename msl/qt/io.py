@@ -11,29 +11,29 @@ __all__ = ['get_drag_enter_paths', 'get_icon', 'icon_to_base64', 'rescale_icon']
 
 
 def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
-    """Convert the input object to a :obj:`~QtGui.QIcon`.
+    """Convert the input object to a :class:`QtGui.QIcon`.
 
     Parameters
     ----------
-    obj : :obj:`object`
-        The object to be converted to a :obj:`~QtGui.QIcon`. The data type of `obj` can be one of:
+    obj : :class:`object`
+        The object to be converted to a :class:`QtGui.QIcon`. The data type of `obj` can be one of:
 
-        * :obj:`~QtGui.QIcon`
-        * :obj:`~QtGui.QPixmap`
-        * :obj:`~QtGui.QImage`
-        * :obj:`QStyle.StandardPixmap` or :obj:`int`:
+        * :class:`QtGui.QIcon`
+        * :class:`QtGui.QPixmap`
+        * :class:`QtGui.QImage`
+        * :obj:`QtWidgets.QStyle.StandardPixmap` or :class:`int`:
           See `StandardPixmap <http://doc.qt.io/qt-5/qstyle.html#StandardPixmap-enum>`_
           for the possible enum values. Example::
 
               get_icon(QStyle.SP_TitleBarMenuButton)
               get_icon(14)  # the QStyle.SP_TrashIcon enum value
 
-        * :class:`~QtCore.QByteArray`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_
+        * :class:`QtCore.QByteArray`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_
           representation of an encoded icon.
 
           See :func:`icon_to_base64`.
 
-        * :obj:`str`: The path to an icon file or an icon embedded in a DLL or EXE file.
+        * :class:`str`: The path to an icon file or an icon embedded in a DLL or EXE file.
 
           If `obj` is a path to an icon file and only the filename is specified then the
           directories in :obj:`sys.path` and :obj:`os.environ['PATH'] <os.environ>` are also
@@ -42,7 +42,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
           ``|`` character.
 
           The following examples illustrate the various ways to request an icon by passing
-          in a :obj:`str` argument::
+          in a :class:`str` argument::
 
               # provide the full path to icon files
               get_icon('D:/code/resources/icons/msl.png')
@@ -70,12 +70,12 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
               # and the following is a simplified way to load an icon in an EXE file
               get_icon('explorer|0')
 
-    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
+    size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
         Rescale the icon to the specified `size`.
         If the value is :obj:`None` then do not rescale the icon.
-        If an :obj:`int` then set the width and the height to be the `size` value.
-        If a :obj:`float` then a scaling factor.
-        If a :obj:`tuple` then the (width, height) values.
+        If an :class:`int` then set the width and the height to be the `size` value.
+        If a :class:`float` then a scaling factor.
+        If a :class:`tuple` then the (width, height) values.
     mode : :obj:`Qt.AspectRatioMode`, optional
         How to maintain the aspect ratio if rescaling. Allowed values are
         :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
@@ -84,8 +84,8 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
 
     Returns
     -------
-    :obj:`~QtGui.QIcon`
-        The input object converted to a :obj:`~QtGui.QIcon`.
+    :class:`QtGui.QIcon`
+        The input object converted to a :class:`QtGui.QIcon`.
 
     Raises
     ------
@@ -144,7 +144,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
 
 
 def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
-    """Convert the icon to a :class:`~QtCore.QByteArray` encoded as Base64_.
+    """Convert the icon to a :class:`QtCore.QByteArray` encoded as Base64_.
 
     This function is useful if you want to save icons in a database, use it in a
     data URI scheme_, or if you want to use icons in your GUI and rather than loading
@@ -157,28 +157,28 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
 
     Parameters
     ----------
-    icon : :obj:`object`, optional
+    icon : :class:`object`, optional
         An icon with a data type that is handled by :func:`get_icon`. If :obj:`None`
         then a dialog window is created to allow the user to select an icon file
         that is saved in a folder.
-    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
+    size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
         Rescale the icon to the specified `size` before converting it to Base64_.
         If the value is :obj:`None` then do not rescale the icon.
-        If an :obj:`int` then set the width and the height to be the `size` value.
-        If a :obj:`float` then a scaling factor.
-        If a :obj:`tuple` then the (width, height) values.
+        If an :class:`int` then set the width and the height to be the `size` value.
+        If a :class:`float` then a scaling factor.
+        If a :class:`tuple` then the (width, height) values.
     mode : :obj:`Qt.AspectRatioMode`, optional
         How to maintain the aspect ratio if rescaling. Allowed values are
         :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
         :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
         aspect ratio.
-    fmt : :obj:`str`, optional
+    fmt : :class:`str`, optional
         The icon format to use when converting. The supported values are: ``BMP``,
         ``JPG``, ``JPEG`` and ``PNG``.
 
     Returns
     -------
-    :class:`~QtCore.QByteArray`
+    :class:`QtCore.QByteArray`
         The Base64_ representation of the icon.
 
     Raises
@@ -284,20 +284,20 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
 
 
 def get_drag_enter_paths(event, pattern=None):
-    """Returns the list of file paths from a :obj:`QDragEnterEvent`.
+    """Returns the list of file paths from a :class:`QtGui.QDragEnterEvent`.
 
     Parameters
     ----------
-    event : :obj:`QDragEnterEvent`
+    event : :class:`QtGui.QDragEnterEvent`
         A drag-enter event.
-    pattern : :obj:`str`, optional
+    pattern : :class:`str`, optional
         Include only the file paths that match the `pattern`.
 
         See :func:`fnmatch.fnmatch`.
 
     Returns
     -------
-    :obj:`list` of :obj:`str`
+    :class:`list` of :class:`str`
         The list of file paths.
     """
     if event.mimeData().hasUrls():
@@ -314,14 +314,14 @@ def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
 
     Parameters
     ----------
-    icon : :obj:`object`
+    icon : :class:`object`
         Any object that is supported by :func:`~msl.qt.io.get_icon`.
-    size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`
+    size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`
         Rescale the icon to the specified `size`.
         If the value is :obj:`None` then do not rescale the icon.
-        If an :obj:`int` then set the width and the height to be the `size` value.
-        If a :obj:`float` then a scaling factor.
-        If a :obj:`tuple` then the (width, height) values.
+        If an :class:`int` then set the width and the height to be the `size` value.
+        If a :class:`float` then a scaling factor.
+        If a :class:`tuple` then the (width, height) values.
     mode : :obj:`Qt.AspectRatioMode`, optional
         How to maintain the aspect ratio when rescaling. Allowed values are
         :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
@@ -330,7 +330,7 @@ def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
 
     Returns
     -------
-    :class:`~QtGui.QPixmap`
+    :class:`QtGui.QPixmap`
         The rescaled icon.
     """
     if isinstance(icon, QtGui.QIcon):

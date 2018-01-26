@@ -1,5 +1,5 @@
 """
-Custom :class:`~QtWidgets.QWidget`\'s that are compatible with the `MSL Equipment`_ package.
+Custom :class:`QtWidgets.QWidget`\'s that are compatible with the `MSL Equipment`_ package.
 
 .. attention::
 
@@ -12,11 +12,11 @@ from msl.qt import QtWidgets, QtCore
 
 
 def show_record(record):
-    """Create a :class:`~QtWidgets.QDialog` to display the information about a record.
+    """Create a :class:`QtWidgets.QDialog` to display the information about a record.
 
     Parameters
     ----------
-    record : :obj:`~msl.equipment.record_types.EquipmentRecord` or :obj:`~msl.equipment.record_types.ConnectionRecord`
+    record : :class:`~msl.equipment.record_types.EquipmentRecord` or :class:`~msl.equipment.record_types.ConnectionRecord`
         An Equipment Record or a Connection Record.
     """
     dialog = QtWidgets.QDialog()

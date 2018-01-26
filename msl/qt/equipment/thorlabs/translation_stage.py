@@ -1,5 +1,7 @@
 """
-A :class:`~QtWidgets.QWidget` for interacting with a translation stage from Thorlabs.
+A :class:`QtWidgets.QWidget` for interacting with a translation stage from Thorlabs_.
+
+.. _Thorlabs: https://www.thorlabs.com/navigation.cfm?guide_id=2060
 """
 import os
 import time
@@ -33,17 +35,18 @@ except ImportError:
 class TranslationStage(QtWidgets.QWidget):
 
     def __init__(self, connection, config=None, parent=None):
-        """A :class:`~QtWidgets.QWidget` for interacting with a translation stage from Thorlabs.
+        """A :class:`QtWidgets.QWidget` for interacting with a translation stage from Thorlabs.
 
         Parameters
         ----------
         connection : :class:`~msl.equipment.connection.Connection`
-            The connection to the translational stage motor controller (e.g., LTS150, LTS300, KST101, KDC101, ...).
+            The connection to the translational stage motor controller
+            (e.g., LTS150, LTS300, KST101, KDC101, ...).
         config : :class:`~msl.equipment.config.Config`, optional
             A configuration file.
 
-            The following elements can be defined in a :obj:`~msl.equipment.config.Config` file to
-            initialize a :class:`TranslationalStage`:
+            The following elements can be defined in a :class:`~msl.equipment.config.Config` file to
+            initialize a :class:`TranslationStage`:
 
             .. code-block:: xml
 
@@ -69,7 +72,7 @@ class TranslationStage(QtWidgets.QWidget):
                 <!-- Since the 'serial', 'alias' and 'unit' attributes are not defined then all stages will have the jog size set to 2.0 mm -->
                 <thorlabs_translation_stage_jog_size>2.0</thorlabs_translation_stage_jog_size>
 
-        parent : :class:`~QtWidgets.QWidget`, optional
+        parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
         """
         super(TranslationStage, self).__init__(parent)
@@ -192,7 +195,7 @@ class TranslationStage(QtWidgets.QWidget):
         ----------
         name : :obj:`str`
             The name of the preset.
-        position : :obj:`float` or obj:`int`
+        position : :obj:`float` or :obj:`int`
             The position.
         millimeters : :obj:`bool`
             Whether the value of the `position` is in millimeters or in ``device units``.

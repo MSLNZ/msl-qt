@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def excepthook(exc_type, exc_obj, exc_traceback):
-    """Displays unhandled exceptions in a :class:`~QtWidgets.QMessageBox`.
+    """Displays unhandled exceptions in a :class:`QtWidgets.QMessageBox`.
 
     See :func:`sys.excepthook` for more details.
 

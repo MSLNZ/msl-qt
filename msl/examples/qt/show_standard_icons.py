@@ -1,5 +1,5 @@
 """
-Display all the icons available in :obj:`QStyle.StandardPixmap` and in
+Display all the icons available in :obj:`QtWidgets.QStyle.StandardPixmap` and in
 the *standard* Windows DLL/EXE files.
 """
 from msl.qt import QtWidgets, QtCore, application, io

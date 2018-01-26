@@ -1,5 +1,5 @@
 """
-A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
+A :class:`QtWidgets.QWidget` to display :mod:`logging` messages.
 """
 import random
 import logging
@@ -15,26 +15,18 @@ class Logger(logging.Handler, QtWidgets.QWidget):
                  fmt='%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s',
                  datefmt=None,
                  ):
-        """A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
+        """A :class:`QtWidgets.QWidget` to display :mod:`logging` messages.
 
         Parameters
         ----------
-        level : :obj:`int`, optional
-            The default `logging level`_ to use to display the :obj:`~logging.LogRecord`
+        level : :class:`int`, optional
+            The default `logging level`_ to use to display the :class:`~logging.LogRecord`
             (e.g., ``logging.INFO``).
-
-            .. _logging level: https://docs.python.org/3/library/logging.html#logging-levels
-
-        fmt : :obj:`str`, optional
-            The `string format`_ to use to display the :obj:`~logging.LogRecord`.
-
-            .. _string format: https://docs.python.org/3/library/logging.html#logrecord-attributes
-
-        datefmt : :obj:`str` or :obj:`None`, optional
+        fmt : :class:`str`, optional
+            The `string format`_ to use to display the :class:`~logging.LogRecord`.
+        datefmt : :class:`str` or :obj:`None`, optional
             The `date format`_ to use for the time stamp. If :obj:`None` then the ``ISO8601``
-            date format is used.
-
-            .. _date format: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+            date format is used, ``YYYY-mm-dd HH:MM:SS.ssssss``.
 
         Example
         -------
@@ -42,6 +34,10 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
         >>> from msl.examples.qt import logger
         >>> logger.show() # doctest: +SKIP
+
+        .. _logging level: https://docs.python.org/3/library/logging.html#logging-levels
+        .. _string format: https://docs.python.org/3/library/logging.html#logrecord-attributes
+        .. _date format: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         """
         logging.Handler.__init__(self)
         QtWidgets.QWidget.__init__(self)
@@ -126,32 +122,27 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
     @property
     def records(self):
-        """:obj:`list` of :obj:`~logging.LogRecord`: The history of all the log records."""
+        """:class:`list` of :class:`~logging.LogRecord`: The history of all the log records."""
         return self._records
 
     def emit(self, record):
-        """Overrides :obj:`logging.Handler.emit`."""
+        """Overrides :meth:`logging.Handler.emit`."""
         self._records.append(record)
         if record.levelno >= self._level_combobox.currentData():
             self._append_record(record)
         self._update_label()
-
-    def show_latest(self):
-        """Move the vertical scrollbar to show the latest logging record."""
-        vsb = self._text_browser.verticalScrollBar()
-        vsb.setValue(vsb.maximum())
 
     def save(self, path, level=logging.INFO):
         """Save log records to a file.
 
         Parameters
         ----------
-        path : :obj:`str`
+        path : :class:`str`
             The path to save the log records to. Appends the records to the file
             if the file already exists, otherwise creates a new log file. It is
             recommended that the file extension be ``.log``, but not mandatory.
-        level : :obj:`int`, optional
-            All :obj:`~logging.LogRecord`\'s with a logging level >= `level`
+        level : :class:`int`, optional
+            All :class:`~logging.LogRecord`\'s with a logging level >= `level`
             will be saved.
         """
         with open(path, 'a') as fp:
@@ -160,6 +151,28 @@ class Logger(logging.Handler, QtWidgets.QWidget):
                 if record.levelno >= level:
                     fp.write(self.format(record) + '\n')
             fp.write('\n')
+
+    def show_latest(self):
+        """Move the vertical scrollbar to show the latest logging record."""
+        vsb = self._text_browser.verticalScrollBar()
+        vsb.setValue(vsb.maximum())
+
+    def _add_new_level(self, record):
+        # the MSL-Equipment package has a logging.DEMO level
+        if record.levelname == 'DEMO':
+            color = QtGui.QColor(93, 170, 78)
+        else:
+            color = QtGui.QColor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+        self.color_map[record.levelno] = color
+        self._level_names[record.levelname] = record.levelno
+
+        for i in range(self._level_combobox.count()):
+            if record.levelno < self._level_combobox.itemData(i):
+                self._level_combobox.insertItem(i, record.levelname, userData=record.levelno)
+                return
+
+        self._level_combobox.addItem(record.levelname, userData=record.levelno)
 
     def _append_record(self, record):
         """Append a LogRecord to the QTextBrowser."""
@@ -174,19 +187,8 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._text_browser.append(msg)
         self._num_displayed += 1
 
-    def _update_records(self, name):
-        """
-        Clears the QTextBrowser and adds all the LogRecords that have a
-        levelno >= the currently-selected logging level.
-        """
-        self._num_displayed = 0
-        self._text_browser.clear()
-        self._update_level_checkbox_tooltip()
-        levelno = self._level_names[name]
-        for record in self._records:
-            if record.levelno >= levelno:
-                self._append_record(record)
-        self._update_label()
+    def _level_checkbox_changed(self, state):
+        self._update_records(self._level_combobox.currentText())
 
     def _save_records(self, checked):
         """Save the LogRecords that are currently displayed in the QTextBrowser to a file."""
@@ -205,13 +207,6 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             fp.writelines(self._text_browser.toPlainText())
             fp.write('\n\n')
 
-    def _level_checkbox_changed(self, state):
-        self._update_records(self._level_combobox.currentText())
-
-    def _update_level_checkbox_tooltip(self):
-        """Update the ToolTip for self._level_checkbox"""
-        self._level_checkbox.setToolTip('Show {} level only?'.format(self._level_combobox.currentText()))
-
     def _update_label(self):
         """Update the label that shows the number of LogRecords that are visible."""
         if not self._records:
@@ -221,22 +216,23 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         else:
             self._label.setText('Displaying {} of {} log records'.format(self._num_displayed, len(self._records)))
 
+    def _update_level_checkbox_tooltip(self):
+        """Update the ToolTip for self._level_checkbox"""
+        self._level_checkbox.setToolTip('Show {} level only?'.format(self._level_combobox.currentText()))
+
+    def _update_records(self, name):
+        """
+        Clears the QTextBrowser and adds all the LogRecords that have a
+        levelno >= the currently-selected logging level.
+        """
+        self._num_displayed = 0
+        self._text_browser.clear()
+        self._update_level_checkbox_tooltip()
+        levelno = self._level_names[name]
+        for record in self._records:
+            if record.levelno >= levelno:
+                self._append_record(record)
+        self._update_label()
+
     def _write_header(self, fp):
-        fp.write('# Saved {}\n'.format(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
-
-    def _add_new_level(self, record):
-        # the MSL-Equipment package has a logging.DEMO level
-        if record.levelname == 'DEMO':
-            color = QtGui.QColor(93, 170, 78)
-        else:
-            color = QtGui.QColor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-
-        self.color_map[record.levelno] = color
-        self._level_names[record.levelname] = record.levelno
-
-        for i in range(self._level_combobox.count()):
-            if record.levelno < self._level_combobox.itemData(i):
-                self._level_combobox.insertItem(i, record.levelname, userData=record.levelno)
-                return
-
-        self._level_combobox.addItem(record.levelname, userData=record.levelno)
+        fp.write('# Saved {}\n'.format(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))

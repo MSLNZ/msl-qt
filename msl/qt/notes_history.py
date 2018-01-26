@@ -31,20 +31,36 @@ class NotesHistory(QtWidgets.QDialog):
         geo = application().desktop().availableGeometry()
         self.resize(int(geo.width()*0.4), int(geo.height()*0.6))
 
-    def text(self):
-        """str: The text in the note editor"""
-        return self.note_edit.toPlainText().strip()
+    def append_to_history_table(self, timestamp, note):
+        index = self.table.rowCount()
+        self.table.insertRow(index)
+        self.table.setItem(index, 0, QtWidgets.QTableWidgetItem(timestamp))
+        self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(note))
 
-    def load_json(self):
-        if not os.path.isfile(self.path):
-            # assume that this is a new file that will be created
+    def apply_filter(self):
+        filter_text = self.filter_edit.text().lower()
+        if not filter_text and self.table.rowCount() == len(self.notes):
+            # all rows are already visible
             return
 
-        with open(self.path, 'rb') as fp:
-            try:
-                self.notes = json.load(fp, encoding='utf-8')
-            except Exception as e:
-                prompt.warning('Error loading JSON file:\n{}\n\n{}'.format(self.path, e))
+        self.table.setRowCount(0)
+        for item in self.notes:
+            if not filter_text or filter_text in item['timestamp'] or filter_text in item['notes'].lower():
+                self.append_to_history_table(item['timestamp'], item['notes'])
+        self.update_table_row_colors_and_resize()
+
+    def clear_filter(self):
+        # clear the filter text, only if there is text written in the filter
+        if self.filter_edit.text():
+            self.filter_edit.setText('')
+            self.apply_filter()
+
+    def clear_history(self):
+        if not self.notes or not prompt.question('Clear the entire history?', default=False):
+            return
+        self.table.setRowCount(0)
+        self.notes = []
+        self.save_json()
 
     def create_widgets(self):
         self.note_edit = QtWidgets.QPlainTextEdit(self)
@@ -117,24 +133,39 @@ class NotesHistory(QtWidgets.QDialog):
         layout.addWidget(self.table)
         self.setLayout(layout)
 
-    def append_to_history_table(self, timestamp, note):
-        index = self.table.rowCount()
-        self.table.insertRow(index)
-        self.table.setItem(index, 0, QtWidgets.QTableWidgetItem(timestamp))
-        self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(note))
+    def load_json(self):
+        if not os.path.isfile(self.path):
+            # assume that this is a new file that will be created
+            return
 
-    def update_table_row_colors_and_resize(self):
-        for row in range(self.table.rowCount()):
-            color = self.even_row_color if row % 2 else self.odd_row_color
+        with open(self.path, 'rb') as fp:
             try:
-                self.table.item(row, 0).setBackground(color)
-                self.table.item(row, 1).setBackground(color)
-            except AttributeError:
-                # non-reproducible bug
-                # sometimes the item in the row has a NoneTye
-                # possibly do to signaling issues?
-                pass
-        self.table.verticalHeader().resizeSections(QtWidgets.QHeaderView.ResizeToContents)
+                self.notes = json.load(fp, encoding='utf-8')
+            except Exception as e:
+                prompt.warning('Error loading JSON file:\n{}\n\n{}'.format(self.path, e))
+
+    def prepend_and_close(self):
+        self.close()
+
+        if not self.text():
+            # no new notes were entered so there is nothing to save to the history file
+            return
+
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.notes.insert(0, {'timestamp': timestamp, 'notes': self.text()})
+        self.save_json()
+
+    def save_json(self):
+        # ensure that the intermediate directories exist
+        root = os.path.dirname(self.path)
+        if root and not os.path.isdir(root):
+            os.makedirs(root)
+
+        with open(self.path, 'wb') as fp:
+            json.dump(self.notes, fp, indent=2, ensure_ascii=False)
+
+    def table_double_click(self, row, col):
+        self.note_edit.setPlainText(self.table.item(row, 1).text())
 
     def table_key_press(self, event):
         # CTRL+A pressed
@@ -162,50 +193,19 @@ class NotesHistory(QtWidgets.QDialog):
 
         self.save_json()
 
-    def table_double_click(self, row, col):
-        self.note_edit.setPlainText(self.table.item(row, 1).text())
+    def text(self):
+        """str: The text in the note editor"""
+        return self.note_edit.toPlainText().strip()
 
-    def clear_history(self):
-        if not self.notes or not prompt.question('Clear the entire history?', default=False):
-            return
-        self.table.setRowCount(0)
-        self.notes = []
-        self.save_json()
-
-    def prepend_and_close(self):
-        self.close()
-
-        if not self.text():
-            # no new notes were entered so there is nothing to save to the history file
-            return
-
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        self.notes.insert(0, {'timestamp': timestamp, 'notes': self.text()})
-        self.save_json()
-
-    def save_json(self):
-        # ensure that the intermediate directories exist
-        root = os.path.dirname(self.path)
-        if root and not os.path.isdir(root):
-            os.makedirs(root)
-
-        with open(self.path, 'wb') as fp:
-            json.dump(self.notes, fp, indent=2, ensure_ascii=False)
-
-    def clear_filter(self):
-        # clear the filter text, only if there is text written in the filter
-        if self.filter_edit.text():
-            self.filter_edit.setText('')
-            self.apply_filter()
-
-    def apply_filter(self):
-        filter_text = self.filter_edit.text().lower()
-        if not filter_text and self.table.rowCount() == len(self.notes):
-            # all rows are already visible
-            return
-
-        self.table.setRowCount(0)
-        for item in self.notes:
-            if not filter_text or filter_text in item['timestamp'] or filter_text in item['notes'].lower():
-                self.append_to_history_table(item['timestamp'], item['notes'])
-        self.update_table_row_colors_and_resize()
+    def update_table_row_colors_and_resize(self):
+        for row in range(self.table.rowCount()):
+            color = self.even_row_color if row % 2 else self.odd_row_color
+            try:
+                self.table.item(row, 0).setBackground(color)
+                self.table.item(row, 1).setBackground(color)
+            except AttributeError:
+                # non-reproducible bug
+                # sometimes the item in the row has a NoneTye
+                # possibly do to signaling issues?
+                pass
+        self.table.verticalHeader().resizeSections(QtWidgets.QHeaderView.ResizeToContents)

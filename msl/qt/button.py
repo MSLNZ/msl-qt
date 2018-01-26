@@ -12,26 +12,26 @@ class Button(QtWidgets.QToolButton):
 
         Parameters
         ----------
-        text : :obj:`str`, optional
+        text : :class:`str`, optional
             The text to display on the button.
-        icon : :obj:`object`, optional
+        icon : :class:`object`, optional
             Any icon object that is supported by :func:`~msl.qt.io.get_icon`.
-        icon_size : :obj:`int`, :obj:`float`, :obj:`tuple` of :obj:`int` or :obj:`~QtCore.QSize`, optional
+        icon_size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
             Rescale the icon to the specified `size`.
             If the value is :obj:`None` then do not rescale the icon.
-            If an :obj:`int` then set the width and the height to be the `size` value.
-            If a :obj:`float` then a scaling factor.
-            If a :obj:`tuple` then the (width, height) values.
+            If an :class:`int` then set the width and the height to be the `size` value.
+            If a :class:`float` then a scaling factor.
+            If a :class:`tuple` then the (width, height) values.
         left_click : :obj:`callable`, optional
             The function to be called for a mouse left-click event.
         right_click : :obj:`callable`, optional
             The function to be called for a mouse right-click event.
-        is_text_under_icon : :obj:`bool`, optional
+        is_text_under_icon : :class:`bool`, optional
             If displaying an icon and text then whether to place the text
             under, :obj:`True`, or beside, :obj:`False`, the icon.
-        tooltip : :obj:`str`, optional
+        tooltip : :class:`str`, optional
             The tooltip to display for the button.
-        parent : :class:`~QtWidgets.QWidget`, optional
+        parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
         """
         QtWidgets.QToolButton.__init__(self, parent)
@@ -67,41 +67,21 @@ class Button(QtWidgets.QToolButton):
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
 
-    def set_left_click(self, fcn):
-        """The function to be called for a mouse left-click event.
-
-        Parameters
-        ----------
-        fcn : :obj:`callable`
-            The function to be called for a mouse left-click event.
-        """
-        self.clicked.connect(fcn)
-
-    def set_right_click(self, fcn):
-        """The function to be called for a mouse right-click event.
-
-        Parameters
-        ----------
-        fcn : :obj:`callable`
-            The function to be called for a mouse right-click event.
-        """
-        self.customContextMenuRequested.connect(fcn)
-
     def add_menu_item(self, text=None, triggered=None, icon=None, shortcut=None, tooltip=None):
         """Add a new item to the action menu.
 
         Parameters
         ----------
-        text : :obj:`str`, optional
+        text : :class:`str`, optional
             The text to display for this item.
         triggered : :obj:`callable`, optional
             The function to be called when this item is selected.
             If :obj:`None` then the item is displayed but it is disabled.
-        icon : :obj:`object`, optional
+        icon : :class:`object`, optional
             Any icon object that is supported by :func:`~msl.qt.io.get_icon`.
-        shortcut : :obj:`str`, optional
-          The keyboard shortcut to use to select this item, e.g., ``CTRL+A``
-        tooltip : :obj:`str`, optional
+        shortcut : :class:`str`, optional
+          The keyboard shortcut to use to select this item, e.g., ``'CTRL+A'``
+        tooltip : :class:`str`, optional
           The tooltip to display for this item.
         """
         if self._menu is None:
@@ -130,6 +110,26 @@ class Button(QtWidgets.QToolButton):
             self._create_menu()
         self._menu.addSeparator()
 
+    def set_left_click(self, fcn):
+        """The function to be called for a mouse left-click event.
+
+        Parameters
+        ----------
+        fcn : :obj:`callable`
+            The function to be called for a mouse left-click event.
+        """
+        self.clicked.connect(fcn)
+
+    def set_right_click(self, fcn):
+        """The function to be called for a mouse right-click event.
+
+        Parameters
+        ----------
+        fcn : :obj:`callable`
+            The function to be called for a mouse right-click event.
+        """
+        self.customContextMenuRequested.connect(fcn)
+
     def _show_menu_tooltip(self, action):
         QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), action.toolTip())
 
@@ -147,7 +147,7 @@ class Button(QtWidgets.QToolButton):
 
 class _CustomMenu(QtWidgets.QMenu):
 
-    def event(self,event):
+    def event(self, event):
         # move the position of the QMenu
         if event.type() == QtCore.QEvent.Show:
             point = self.parent().mapToGlobal(QtCore.QPoint(0, 0))
