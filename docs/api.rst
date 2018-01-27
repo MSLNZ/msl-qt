@@ -19,7 +19,7 @@ which has the following modules
    msl.qt.prompt
    msl.qt.threading
 
-the following general :class:`QtWidgets.QWidget`\'s
+the following general :class:`~QtWidgets.QWidget`\'s
 
 .. autosummary::
 
@@ -27,7 +27,7 @@ the following general :class:`QtWidgets.QWidget`\'s
    ~msl.qt.logger.Logger
    ~msl.qt.toggle_switch.ToggleSwitch
 
-the following :class:`QtWidgets.QWidget`\'s that are compatible with the `MSL Equipment`_ package
+the following :class:`~QtWidgets.QWidget`\'s that are compatible with the `MSL Equipment`_ package
 
 .. autosummary::
 
