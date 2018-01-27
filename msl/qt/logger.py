@@ -14,6 +14,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
                  level=logging.INFO,
                  fmt='%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s',
                  datefmt=None,
+                 parent=None,
                  ):
         """A :class:`QtWidgets.QWidget` to display :mod:`logging` messages.
 
@@ -29,6 +30,8 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             The :ref:`strftime format <python:strftime-strptime-behavior>`
             to use for the time stamp. If :obj:`None` then the ``ISO8601``
             date format is used, ``YYYY-mm-dd HH:MM:SS.ssssss``.
+        parent : :class:`QtWidgets.QWidget`, optional
+            The parent widget.
 
         Example
         -------
@@ -38,7 +41,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         >>> logger.show() # doctest: +SKIP
         """
         logging.Handler.__init__(self)
-        QtWidgets.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self, parent=parent)
 
         # a list of all the LogRecords that were emitted
         self._records = []

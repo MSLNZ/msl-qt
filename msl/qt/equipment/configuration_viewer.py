@@ -34,7 +34,7 @@ class ConfigurationViewer(QtWidgets.QWidget):
         >>> from msl.examples.qt.equipment import configuration_viewer # doctest: +SKIP
         >>> configuration_viewer.show() # doctest: +SKIP
         """
-        super(ConfigurationViewer, self).__init__(parent)
+        super(ConfigurationViewer, self).__init__(parent=parent)
 
         if not has_msl_equipment:
             raise ImportError('This class requires that MSL Equipment is installed')

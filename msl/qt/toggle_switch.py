@@ -34,7 +34,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         >>> from msl.examples.qt import toggle_switch
         >>> toggle_switch.show()  # doctest: +SKIP
         """
-        super(ToggleSwitch, self).__init__(parent)
+        super(ToggleSwitch, self).__init__(parent=parent)
 
         screen_height = QtWidgets.QDesktopWidget().availableGeometry(self).height()
         self._height = height if height is not None else int(screen_height*0.03)

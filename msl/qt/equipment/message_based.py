@@ -34,7 +34,7 @@ class MessageBased(QtWidgets.QWidget):
         >>> from msl.examples.qt.equipment import message_based # doctest: +SKIP
         >>> message_based.show() # doctest: +SKIP
         """
-        super(MessageBased, self).__init__(parent)
+        super(MessageBased, self).__init__(parent=parent)
 
         r = connection.equipment_record
         self.setWindowTitle('{} || {} || {}'.format(r.manufacturer, r.model, r.serial))

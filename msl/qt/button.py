@@ -34,7 +34,7 @@ class Button(QtWidgets.QToolButton):
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
         """
-        QtWidgets.QToolButton.__init__(self, parent)
+        QtWidgets.QToolButton.__init__(self, parent=parent)
 
         self._menu = None
 

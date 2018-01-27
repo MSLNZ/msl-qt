@@ -75,7 +75,7 @@ class TranslationStage(QtWidgets.QWidget):
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
         """
-        super(TranslationStage, self).__init__(parent)
+        super(TranslationStage, self).__init__(parent=parent)
 
         if signaler is None:
             raise ImportError('This widget requires that the MSL-Equipment package is installed')
