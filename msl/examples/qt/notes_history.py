@@ -9,10 +9,10 @@ import tempfile
 
 from msl import qt
 
-adjectives = ['purple','pink','loud','quiet','big','small','blue','electric','wooden','scented']
-nouns = ['house','man','cat','dog','door','parrot','lady','plant','kettle','urn','football']
-verbs = ['jumped','slept','ate','meowed','ran','walked','jogged','talked','whispered','cried']
-adverbs = ['loudly','quietly','quickly','slowly','softly','gingerly','carefully','magically']
+adjectives = ['purple', 'pink', 'loud', 'quiet', 'big', 'small', 'blue', 'electric', 'wooden', 'scented']
+nouns = ['house', 'man', 'cat', 'dog', 'door', 'parrot', 'lady', 'plant', 'kettle', 'urn', 'football']
+verbs = ['jumped', 'slept', 'ate', 'meowed', 'ran', 'walked', 'jogged', 'talked', 'whispered', 'cried']
+adverbs = ['loudly', 'quietly', 'quickly', 'slowly', 'softly', 'gingerly', 'carefully', 'magically']
 prepositions = ['after', 'before', 'in', 'to', 'on', 'with', 'without', 'next to', 'by']
 
 
