@@ -1,5 +1,5 @@
 """
-A :func:`~msl.qt.notes_history.notes` example.
+A :func:`~msl.qt.prompt.notes` example.
 """
 import os
 import json
