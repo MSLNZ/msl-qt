@@ -1,5 +1,5 @@
 """
-Custom `Qt <https://www.qt.io/>`_ components for the user interface.
+Custom `Qt <https://www.qt.io/>`_ components for the graphical user interface.
 """
 import sys
 from collections import namedtuple
@@ -18,13 +18,13 @@ def application(args=None):
     Parameters
     ----------
     args : :class:`list` of :class:`str`, optional
-        A list of arguments to initialize the :class:`QtWidgets.QApplication`.
-        If :obj:`None` then uses :obj:`sys.argv`.
+        A list of arguments to initialize the application. If :obj:`None` then
+        uses :obj:`sys.argv`.
 
     Returns
     -------
     :class:`QtWidgets.QApplication`
-        The QApplication instance.
+        The application instance.
     """
     app = QtWidgets.QApplication.instance()
     if app is None:

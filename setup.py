@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 from distutils.cmd import Command
@@ -37,16 +38,24 @@ class BuildDocs(Command):
     see: http://www.sphinx-doc.org/en/latest/man/sphinx-build.html
     """
     description = 'builds the documentation using sphinx-build'
-    user_options = []
+    user_options = [('on-rtd', None, 'simulate building on RTD'),]
 
     def initialize_options(self):
-        pass
+        self.on_rtd = None
 
     def finalize_options(self):
         pass
 
     def run(self):
         from sphinx import build_main
+
+        # Simulate mocking as though we are building on RTD.
+        # This is helpful to debug RTD build issues locally
+        # since RTD does not have PyQt5 available.
+        if self.on_rtd:
+            os.environ.setdefault('READTHEDOCS', 'True')
+            os.environ.setdefault('SIMULATE_READTHEDOCS', 'True')
+
         build_main([
             'sphinx-build',
             '-b', 'html',  # the builder to use, e.g., create a HTML version of the documentation

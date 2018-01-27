@@ -111,7 +111,7 @@ class ConfigurationViewer(QtWidgets.QWidget):
         self.setLayout(main_layout)
 
     def dragEnterEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.dragEnterEvent`."""
+        """Overrides `dragEnterEvent <https://doc.qt.io/qt-5/qwidget.html#dragEnterEvent>`_."""
         paths = get_drag_enter_paths(event, pattern='*.xml')
         if paths:
             self._dropped_path = paths[0]
@@ -120,7 +120,7 @@ class ConfigurationViewer(QtWidgets.QWidget):
             event.ignore()
 
     def dropEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.dropEvent`."""
+        """Overrides `dropEvent <https://doc.qt.io/qt-5/qwidget.html#dropEvent>`_."""
         self._new_file(self._dropped_path)
         event.accept()
 

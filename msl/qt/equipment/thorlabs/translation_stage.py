@@ -206,7 +206,7 @@ class TranslationStage(QtWidgets.QWidget):
         self._preset_combobox.addItem(name)
 
     def closeEvent(self, event):
-        """Overrides :obj:`QtWidgets.QWidget.closeEvent`."""
+        """Overrides `closeEvent <https://doc.qt.io/qt-5/qwidget.html#closeEvent>`_."""
         self._connection.stop_polling()
 
     def get_jog(self, millimeters=True):

@@ -12,7 +12,11 @@ sys.path.insert(0, os.path.abspath('..'))
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
-    html_theme = 'default'
+
+    if os.environ.get('SIMULATE_READTHEDOCS') == 'True':
+        html_theme = 'sphinx_rtd_theme'
+    else:
+        html_theme = 'default'
 
     from unittest.mock import MagicMock
 
@@ -268,6 +272,10 @@ epub_exclude_files = ['search.html']
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
-    'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
+    # 'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
+    'PyQt5': ('', 'pyqt5-modified-objects.inv'),
     'msl.equipment': ('http://msl-equipment.readthedocs.io/en/latest/', None),
 }
+
+# show all the Qt linking warnings
+nitpicky = True

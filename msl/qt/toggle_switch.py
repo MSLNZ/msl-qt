@@ -44,11 +44,11 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         self.setCheckable(True)
 
     def enterEvent(self, event):
-        """Overrides :meth:`QtWidgets.QAbstractButton.enterEvent`."""
+        """Overrides `enterEvent <https://doc.qt.io/qt-5/qwidget.html#enterEvent>`_."""
         self.setCursor(QtCore.Qt.PointingHandCursor)
 
     def paintEvent(self, event):
-        """Overrides :meth:`QtWidgets.QAbstractButton.paintEvent`."""
+        """Overrides `paintEvent <https://doc.qt.io/qt-5/qwidget.html#paintEvent>`_."""
         diameter = self._height - 2 * self._pad
         radius = diameter * 0.5
 
@@ -82,5 +82,5 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             p.drawEllipse(ellipse)
 
     def sizeHint(self):
-        """Overrides :meth:`QtWidgets.QWidget.sizeHint`."""
+        """Overrides `sizeHint <https://doc.qt.io/qt-5/qwidget.html#sizeHint-prop>`_."""
         return QtCore.QSize(2 * (self._height + self._pad), self._height + 2 * self._pad)

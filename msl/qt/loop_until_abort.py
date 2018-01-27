@@ -25,12 +25,18 @@ class LoopUntilAbort(object):
 
         .. literalinclude:: ../../msl/examples/qt/loop_until_abort.py
 
-        Example
-        -------
+        Examples
+        --------
         To run this example enter the following:
 
         >>> from msl.examples.qt import LoopExample
         >>> loop = LoopExample() # doctest: +SKIP
+        >>> loop.start() # doctest: +SKIP
+
+        Another example, but using *single-shot* mode:
+
+        >>> from msl.examples.qt import LoopExampleSleep
+        >>> loop = LoopExampleSleep() # doctest: +SKIP
         >>> loop.start() # doctest: +SKIP
 
         Parameters

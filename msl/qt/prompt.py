@@ -296,10 +296,8 @@ def save(initial=None, filters=None, title='Save As', options=None):
 
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-    options : :class:`QtWidgets.QFileDialog.Option`, optional
-        Specify additional options_ about how to run the dialog.
-
-        .. _options: http://doc.qt.io/qt-5/qfiledialog.html#Option-enum
+    options : `QtWidgets.QFileDialog.Option <http://doc.qt.io/qt-5/qfiledialog.html#Option-enum>`_, optional
+        Specify additional options on how to run the dialog.
 
     Returns
     -------

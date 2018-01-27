@@ -20,12 +20,14 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         Parameters
         ----------
         level : :class:`int`, optional
-            The default `logging level`_ to use to display the :class:`~logging.LogRecord`
-            (e.g., ``logging.INFO``).
+            The :ref:`Logging Level <python:levels>` to use to display the
+            :class:`~logging.LogRecord` (e.g., ``logging.INFO``) .
         fmt : :class:`str`, optional
-            The `string format`_ to use to display the :class:`~logging.LogRecord`.
+            The :ref:`python:logrecord-attributes` to use
+            to display the :class:`~logging.LogRecord`.
         datefmt : :class:`str` or :obj:`None`, optional
-            The `date format`_ to use for the time stamp. If :obj:`None` then the ``ISO8601``
+            The :ref:`strftime format <python:strftime-strptime-behavior>`
+            to use for the time stamp. If :obj:`None` then the ``ISO8601``
             date format is used, ``YYYY-mm-dd HH:MM:SS.ssssss``.
 
         Example
@@ -34,10 +36,6 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
         >>> from msl.examples.qt import logger
         >>> logger.show() # doctest: +SKIP
-
-        .. _logging level: https://docs.python.org/3/library/logging.html#logging-levels
-        .. _string format: https://docs.python.org/3/library/logging.html#logrecord-attributes
-        .. _date format: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         """
         logging.Handler.__init__(self)
         QtWidgets.QWidget.__init__(self)

@@ -144,13 +144,13 @@ class MessageBased(QtWidgets.QWidget):
         self.setLayout(hbox)
 
     def keyPressEvent(self, event):
-        """Overrides :meth:`QtWidgets.QWidget.keyPressEvent`."""
+        """Overrides `keyPressEvent <https://doc.qt.io/qt-5/qwidget.html#keyPressEvent>`_."""
         if event.matches(QtGui.QKeySequence.Paste):
             lines = QtWidgets.QApplication.clipboard().text().splitlines()
             self._insert_lines(lines)
 
     def dragEnterEvent(self, event):
-        """Overrides :meth:`QtWidgets.QWidget.dragEnterEvent`."""
+        """Overrides `dragEnterEvent <https://doc.qt.io/qt-5/qwidget.html#dragEnterEvent>`_."""
         self._dropped_commands = []
         paths = get_drag_enter_paths(event, '*.txt')
         if paths:
@@ -162,11 +162,11 @@ class MessageBased(QtWidgets.QWidget):
             event.ignore()
 
     def dragMoveEvent(self, event):
-        """Overrides :meth:`QtWidgets.QWidget.dragMoveEvent`."""
+        """Overrides `dragMoveEvent <https://doc.qt.io/qt-5/qwidget.html#dragMoveEvent>`_."""
         event.accept()
 
     def dropEvent(self, event):
-        """Overrides :meth:`QtWidgets.QWidget.dropEvent`."""
+        """Overrides `dropEvent <https://doc.qt.io/qt-5/qwidget.html#dropEvent>`_."""
         self._insert_lines(self._dropped_commands)
 
     def _update_timeout(self, val):

@@ -21,12 +21,11 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
         * :class:`QtGui.QIcon`
         * :class:`QtGui.QPixmap`
         * :class:`QtGui.QImage`
-        * :obj:`QtWidgets.QStyle.StandardPixmap` or :class:`int`:
-          See `StandardPixmap <http://doc.qt.io/qt-5/qstyle.html#StandardPixmap-enum>`_
-          for the possible enum values. Example::
+        * `QtWidgets.QStyle.StandardPixmap <http://doc.qt.io/qt-5/qstyle.html#StandardPixmap-enum>`_:
+          One of the built-in Qt pixmaps. Example::
 
-              get_icon(QStyle.SP_TitleBarMenuButton)
-              get_icon(14)  # the QStyle.SP_TrashIcon enum value
+              get_icon(QtWidgets.QStyle.SP_TitleBarMenuButton)
+              get_icon(14)  # the QtWidgets.QStyle.SP_TrashIcon enum value
 
         * :class:`QtCore.QByteArray`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_
           representation of an encoded icon.
@@ -44,11 +43,11 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
           The following examples illustrate the various ways to request an icon by passing
           in a :class:`str` argument::
 
-              # provide the full path to icon files
+              # provide the full path to the icon file
               get_icon('D:/code/resources/icons/msl.png')
               get_icon('D:/code/resources/icons/photon.png')
 
-              # insert the folder where the icons are located into sys.path
+              # insert the folder where the icons are located in to sys.path
               sys.path.insert(0, 'D:/code/resources/icons/')
               # so now only the filename needs to be specified to load the icon
               get_icon('msl.png')
@@ -76,11 +75,8 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
         If an :class:`int` then set the width and the height to be the `size` value.
         If a :class:`float` then a scaling factor.
         If a :class:`tuple` then the (width, height) values.
-    mode : :obj:`Qt.AspectRatioMode`, optional
-        How to maintain the aspect ratio if rescaling. Allowed values are
-        :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
-        :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
-        aspect ratio.
+    mode : `QtCore.Qt.AspectRatioMode <https://doc.qt.io/qt-5/qt.html#AspectRatioMode-enum>`_, optional
+        How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
 
     Returns
     -------
@@ -167,11 +163,8 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
         If an :class:`int` then set the width and the height to be the `size` value.
         If a :class:`float` then a scaling factor.
         If a :class:`tuple` then the (width, height) values.
-    mode : :obj:`Qt.AspectRatioMode`, optional
-        How to maintain the aspect ratio if rescaling. Allowed values are
-        :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
-        :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
-        aspect ratio.
+    mode : QtCore.Qt.AspectRatioMode_, optional
+        How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
     fmt : :class:`str`, optional
         The icon format to use when converting. The supported values are: ``BMP``,
         ``JPG``, ``JPEG`` and ``PNG``.
@@ -322,11 +315,8 @@ def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
         If an :class:`int` then set the width and the height to be the `size` value.
         If a :class:`float` then a scaling factor.
         If a :class:`tuple` then the (width, height) values.
-    mode : :obj:`Qt.AspectRatioMode`, optional
-        How to maintain the aspect ratio when rescaling. Allowed values are
-        :obj:`Qt.IgnoreAspectRatio`, :obj:`Qt.KeepAspectRatio` or
-        :obj:`Qt.KeepAspectRatioByExpanding`. The default mode is to keep the
-        aspect ratio.
+    mode : QtCore.Qt.AspectRatioMode_, optional
+        How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
 
     Returns
     -------
