@@ -14,7 +14,6 @@ which has the following modules
 
 .. autosummary::
 
-   msl.qt.constants
    msl.qt.exceptions
    msl.qt.io
    msl.qt.prompt
@@ -52,7 +51,6 @@ Package Structure
    msl.qt <_api/msl.qt>
    msl.qt.io <_api/msl.qt.io>
    msl.qt.button <_api/msl.qt.button>
-   msl.qt.constants <_api/msl.qt.constants>
    msl.qt.exceptions <_api/msl.qt.exceptions>
    msl.qt.logger <_api/msl.qt.logger>
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
