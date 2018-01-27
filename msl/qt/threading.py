@@ -1,5 +1,5 @@
 """
-Base classes for starting a process in a new :class:`QtCore.QThread`.
+Base classes for starting a process in a new :class:`QThread`.
 """
 import logging
 import traceback

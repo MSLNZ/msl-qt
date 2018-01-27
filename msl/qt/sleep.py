@@ -11,6 +11,9 @@ class SleepWorker(Worker):
     def __init__(self, seconds):
         """The :class:`~msl.qt.threading.Worker` class for :class:`Sleep`.
 
+        Delays execution for a certain number of seconds without
+        freezing the graphical user interface.
+
         Parameters
         ----------
         seconds : :class:`float`
@@ -29,8 +32,7 @@ class SleepWorker(Worker):
 class Sleep(Thread):
 
     def __init__(self):
-        """Delay execution for a certain number of seconds without
-        freezing the graphical user interface.
+        """Sleep without freezing the graphical user interface.
 
         The following example illustrates how one can use :class:`Sleep`
         and keep the GUI active:

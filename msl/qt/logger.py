@@ -1,5 +1,5 @@
 """
-A :class:`QtWidgets.QWidget` to display :mod:`logging` messages.
+A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 """
 import random
 import logging
@@ -16,7 +16,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
                  datefmt=None,
                  parent=None,
                  ):
-        """A :class:`QtWidgets.QWidget` to display :mod:`logging` messages.
+        """A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 
         Parameters
         ----------
@@ -143,8 +143,8 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             if the file already exists, otherwise creates a new log file. It is
             recommended that the file extension be ``.log``, but not mandatory.
         level : :class:`int`, optional
-            All :class:`~logging.LogRecord`\'s with a logging level >= `level`
-            will be saved.
+            All :class:`~logging.LogRecord`\'s with a :ref:`Logging Level <python:levels>`
+            >= `level` will be saved.
         """
         with open(path, 'a') as fp:
             self._write_header(fp)

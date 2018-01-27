@@ -1,5 +1,5 @@
 """
-A button that can display text and/or an icon, with an optional action menu.
+A :class:`~QtWidgets.QToolButton` to display text, an icon and a menu.
 """
 from . import QtWidgets, QtCore, QtGui, io
 
@@ -8,7 +8,7 @@ class Button(QtWidgets.QToolButton):
 
     def __init__(self, text=None, icon=None, icon_size=None, left_click=None,
                  right_click=None, is_text_under_icon=True, tooltip=None, parent=None):
-        """A button that can display text and/or an icon, with an optional action menu.
+        """A :class:`~QtWidgets.QToolButton` to display text, an icon and a menu.
 
         Parameters
         ----------

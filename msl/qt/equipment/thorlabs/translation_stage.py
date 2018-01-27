@@ -1,5 +1,5 @@
 """
-A :class:`QtWidgets.QWidget` for interacting with a translation stage from Thorlabs_.
+A :class:`~QtWidgets.QWidget` for controlling a Thorlabs_ translation stage.
 
 .. _Thorlabs: https://www.thorlabs.com/navigation.cfm?guide_id=2060
 """
@@ -35,7 +35,7 @@ except ImportError:
 class TranslationStage(QtWidgets.QWidget):
 
     def __init__(self, connection, config=None, parent=None):
-        """A :class:`QtWidgets.QWidget` for interacting with a translation stage from Thorlabs.
+        """A :class:`~QtWidgets.QWidget` for controlling a Thorlabs translation stage.
 
         Parameters
         ----------
