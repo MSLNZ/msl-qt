@@ -161,7 +161,7 @@ class NotesHistory(QtWidgets.QDialog):
         if root and not os.path.isdir(root):
             os.makedirs(root)
 
-        with open(self.path, 'wb') as fp:
+        with open(self.path, 'w') as fp:
             json.dump(self.notes, fp, indent=2, ensure_ascii=False)
 
     def table_double_click(self, row, col):
