@@ -91,7 +91,7 @@ class Thread(object):
     def remove_callback(self, callback):
         """Remove the callable object as a callback.
 
-        Rather than raising a ``ValueError`` if the `callback` is not
+        Rather than raising a :exc:`ValueError` if the `callback` is not
         registered as a callback this method logs a warning that the
         `callback` could not be removed.
 
