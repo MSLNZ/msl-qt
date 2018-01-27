@@ -25,7 +25,7 @@ def show():
     ]
 
     dummy_file = os.path.join(tempfile.gettempdir(), 'msl-qt-notes-history-example.json')
-    with open(dummy_file, 'wb') as fp:
+    with open(dummy_file, 'w') as fp:
         json.dump(dummy, fp, indent=2, ensure_ascii=False)
 
     print('The note entered is:\n' + qt.prompt.notes(dummy_file))
