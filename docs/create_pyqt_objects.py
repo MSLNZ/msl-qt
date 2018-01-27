@@ -12,29 +12,42 @@ from sphinx.util.inventory import InventoryFileReader
 # used for redirecting a PyQt URI to a Qt URI
 uri_redirect = re.compile(r'(The C\+\+ documentation can be found.*)(href=")(.*)(">here)')
 
+# make it so that the following statements are equivalent
+#    :class:`QWidget`
+#    :class:`QtWidgets.QWidget`
+#    :class:`PyQt5.QtWidgets.QWidget`
+# only do this for some of the Qt modules
+alias_modules = (u'', u'QtWidgets.', u'QtCore.', u'QtGui.')
+
 HELP = """Creates a PyQt ``objects.inv`` file that is Sphinx compatible.
 
 Inter-Sphinx mapping works best for PyQt5 with the --use-qt-uri flag.
 
 When using the ``pyqt#-modified-objects.inv`` file (which is created by 
-running this script) for inter-Sphinx mapping, the following are equivalent
-ways to specify a link to the PyQt documentation:
+running this script) for inter-Sphinx mapping, there are different ways
+to link to PyQt objects (only valid for *some* of the PyQt modules).
+For example, the following are equivalent ways to specify a link to the
+documentation for the PyQt5.QtWidgets.QWidget class:
 
+   :class:`QWidget`
    :class:`QtWidgets.QWidget`
    :class:`PyQt5.QtWidgets.QWidget`
+
+The Qt modules that follow this equivalent linking syntax are currently:
+%s
 
 warning:
 Running this script for PyQt4 doesn't really do anything useful.
 
 usage:
-1. Run the script using, for example,
+1. run the script using, for example,
 
    python create_pyqt_objects.py pyqt5 --use-qt-uri
 
-2. Put the newly-created ``pyqt#-modified-objects.inv`` file in the same
+2. put the newly-created ``pyqt#-modified-objects.inv`` file in the same
    directory as Sphinx's conf.py file.
 
-3. Modify the ``intersphinx_mapping`` dictionary in the conf.py file to
+3. modify the ``intersphinx_mapping`` dictionary in the conf.py file to
    use the local ``pyqt#-modified-objects.inv`` file rather than the
    remote ``objects.inv`` file from the PyQt website. For example,
 
@@ -42,7 +55,7 @@ usage:
        # 'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
        'PyQt5': ('', 'pyqt5-modified-objects.inv'),
    }
-"""
+""" % ' '.join([m[:-1] for m in alias_modules[1:]])
 
 
 def create_modified_inv(package, original_inv, modified_inv, pyqt_uri, use_qt_uri):
@@ -57,7 +70,7 @@ To help explain what item #2 means we will consider
 the PyQt5.QtWidgets.QWidget class as an example.
 
 Instead of using the PyQt5 URI for the
-:class:`QtWidgets.QWidget` link, i.e.,
+:class:`PyQt5.QtWidgets.QWidget` link, i.e.,
 
   http://pyqt.sourceforge.net/Docs/PyQt5/api/QtWidgets/qwidget.html##PyQt5-QtWidgets-QWidget
 
@@ -65,7 +78,7 @@ where that web page indicates,
 
   The C++ documentation can be found <here>.
 
-the :class:`QtWidgets.QWidget` link will be set
+the :class:`PyQt5.QtWidgets.QWidget` link will be set
 equal to the Qt URI, i.e.,
 
   https://doc.qt.io/qt-5/qwidget.html
@@ -121,14 +134,8 @@ own documentation.
                 assert len(redirect) == 1, 'Expected only 1 redirect match'
                 location = redirect[0][2]  # the Qt URI
 
-        # make it so that you can also specify
-        #    :class:`QWidget`
-        # or
-        #    :class:`QtWidgets.QWidget`
-        # instead of
-        #    :class:`PyQt5.QtWidgets.QWidget`
-        # do this for some of the modules
-        for module in {u'', u'QtWidgets.', u'QtCore.', u'QtGui.'}:
+        # apply the aliases
+        for module in alias_modules:
             prefix = package + u'.' + module
             if name.startswith(prefix):
                 entry = u' '.join((name[len(prefix):], type, prio, location, dispname))
