@@ -27,13 +27,13 @@ class LoopUntilAbort(object):
 
         Examples
         --------
-        To run this example enter the following:
+        To run the above example enter the following:
 
         >>> from msl.examples.qt import LoopExample
         >>> loop = LoopExample() # doctest: +SKIP
         >>> loop.start() # doctest: +SKIP
 
-        Another example, but using *single-shot* mode:
+        Another example which uses *single-shot* mode:
 
         >>> from msl.examples.qt import LoopExampleSleep
         >>> loop = LoopExampleSleep() # doctest: +SKIP
@@ -236,7 +236,7 @@ class LoopUntilAbort(object):
         self._main_window.statusBar().showMessage(text)
 
     def start(self):
-        """Start looping."""
+        """Show the :class:`QtWidgets.QMainWindow` and start looping."""
         self._start_time = self.current_time
         s = self._start_time.strftime('%d %B %Y at %H:%M:%S')
         self.set_status_bar_text('Started ' + s)
