@@ -20,13 +20,19 @@ class LoopExample(LoopUntilAbort):
         self.f.write('Started at {}\n'.format(self.current_time))
 
     def loop(self):
-        """This method gets called repeatedly in a loop (every `loop_delay` ms)."""
+        """Overrides LoopUntilAbort.loop()
+
+        This method gets called repeatedly in a loop (every `loop_delay` ms).
+        """
         self.f.write('Iteration: {}\n'.format(self.iteration))
         self.f.write('Elapsed time: {}\n'.format(self.elapsed_time))
         self.set_label_text('The current time is\n' + str(self.current_time))
 
     def cleanup(self):
-        """This method gets called when the LoopExample window is closing."""
+        """Overrides LoopUntilAbort.cleanup()
+
+        This method gets called when the LoopExample window is closing.
+        """
         self.f.write('Stopped at {}\n'.format(self.current_time))
         self.f.close()
         msg = 'The data was save to\n{}\n\n... in case you want to look at it'

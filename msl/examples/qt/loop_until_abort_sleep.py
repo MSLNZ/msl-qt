@@ -10,7 +10,7 @@ from msl.qt import LoopUntilAbort, Sleep
 class LoopExampleSleep(LoopUntilAbort):
 
     def __init__(self):
-        # initialize the LoopUntilAbort class in single-shot mode
+        """Initialize the LoopUntilAbort class in single-shot mode."""
         super(LoopExampleSleep, self).__init__(single_shot=True)
 
         # create the Sleep thread which uses SleepWorker as the worker class
@@ -40,6 +40,8 @@ class LoopExampleSleep(LoopUntilAbort):
             self.loop_once()
 
     def loop(self):
+        """Overrides LoopUntilAbort.loop()"""
+
         print('started loop #: ' + str(self.iteration))
 
         # pick a random number of seconds to sleep for
@@ -59,6 +61,8 @@ class LoopExampleSleep(LoopUntilAbort):
         # and then the loop is run again
 
     def cleanup(self):
+        """Overrides LoopUntilAbort.cleanup()"""
+
         # let's be nice and wait for the Sleep thread to finish before exiting the program
         # waiting is a blocking call so the GUI will be frozen while it is closing
         self.sleep.remove_callback(self.update_status_bar_text)  # not really necessary...
