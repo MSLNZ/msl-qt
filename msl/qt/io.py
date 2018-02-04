@@ -115,11 +115,13 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
             if _icon is None:
                 raise IOError("Cannot find icon file '{}'".format(obj))
     elif isinstance(obj, QtWidgets.QStyle.StandardPixmap):
-        _icon = QtGui.QIcon(application().style().standardIcon(obj))
+        app = application()
+        _icon = QtGui.QIcon(app.style().standardIcon(obj))
     elif isinstance(obj, int):
         std_icons = [value for name, value in vars(QtWidgets.QStyle).items() if name.startswith('SP_')]
         if obj in std_icons:
-            _icon = QtGui.QIcon(application().style().standardIcon(obj))
+            app = application()
+            _icon = QtGui.QIcon(app.style().standardIcon(obj))
         else:
             raise IOError('Invalid QStyle.StandardPixmap enum value of {}'.format(obj))
     elif isinstance(obj, QtGui.QPixmap):
