@@ -17,3 +17,10 @@ Example repositories which unify the syntax for PyQt4_, PyQt5_, PySide_ and PySi
 .. _PySide2: https://wiki.qt.io/PySide2
 """
 from PyQt5 import Qt, QtWidgets, QtCore, QtGui
+
+__all__ = (
+    'Qt',
+    'QtGui',
+    'QtWidgets',
+    'QtCore',
+)
