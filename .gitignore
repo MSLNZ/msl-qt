@@ -24,7 +24,8 @@ wheels/
 # Sphinx documentation
 docs/_build/
 docs/_autosummary/
-docs/pyqt5-original-objects.inv
+docs/pyqt*-original-objects.*
+docs/pyqt*-modified-objects.txt
 
 # Project settings
 .ropeproject/
