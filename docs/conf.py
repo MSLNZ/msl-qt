@@ -1,6 +1,8 @@
 import os
 import sys
 
+import sphinx
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -107,17 +109,26 @@ extensions = [
     'sphinx.ext.todo',
 ]
 
-# 'alphabetical', 'bysource', 'groupwise'
-autodoc_member_order = 'bysource'
+# autodoc options
+if sphinx.version_info < (1, 8):
+    # 'alphabetical', 'bysource', 'groupwise'
+    autodoc_member_order = 'bysource'
 
-# 'members', 'undoc-members', 'private-members', 'special-members', 'inherited-members', 'show-inheritance'
-autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
+    # 'members', 'undoc-members', 'private-members', 'special-members', 'inherited-members', 'show-inheritance'
+    autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
+else:
+    autodoc_default_options = {
+        'members': None,
+        'member-order': 'bysource',
+        'undoc-members': None,
+        'show-inheritance': None,
+    }
 
 # Generate autodoc stubs with summaries from code
 autosummary_generate = True
 
 # include both class docstring and __init__
-autoclass_content = "both"
+autoclass_content = 'both'
 
 # Napoleon settings
 napoleon_google_docstring = False
@@ -246,7 +257,6 @@ texinfo_documents = [
 ]
 
 
-
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
@@ -268,10 +278,9 @@ epub_copyright = copyright
 epub_exclude_files = ['search.html']
 
 
-
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
+    'python': ('https://docs.python.org/3', None),
     # 'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
     'PyQt5': ('', 'pyqt5-modified-objects.inv'),
     'msl.equipment': ('http://msl-equipment.readthedocs.io/en/latest/', None),
@@ -279,3 +288,8 @@ intersphinx_mapping = {
 
 # show all the Qt linking warnings
 nitpicky = True
+
+# known bad links
+nitpick_ignore = [
+    ('py:class', '_ctypes.Structure'),
+]
