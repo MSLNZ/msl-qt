@@ -7,7 +7,12 @@ import fnmatch
 
 from . import QtWidgets, QtGui, QtCore, application, prompt
 
-__all__ = ['get_drag_enter_paths', 'get_icon', 'icon_to_base64', 'rescale_icon']
+__all__ = (
+    'get_drag_enter_paths',
+    'get_icon',
+    'icon_to_base64',
+    'rescale_icon'
+)
 
 
 def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
@@ -195,13 +200,16 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
         import clr
         import ctypes
 
+        clr.AddReference('System.Drawing')
+        from System.Drawing.Imaging import ImageFormat
+
         shell32 = ctypes.windll.shell32
 
         img_fmts = {
-            'BMP':  clr.System.Drawing.Imaging.ImageFormat.Bmp,
-            'JPG':  clr.System.Drawing.Imaging.ImageFormat.Jpeg,
-            'JPEG': clr.System.Drawing.Imaging.ImageFormat.Jpeg,
-            'PNG':  clr.System.Drawing.Imaging.ImageFormat.Png,
+            'BMP':  ImageFormat.Bmp,
+            'JPG':  ImageFormat.Jpeg,
+            'JPEG': ImageFormat.Jpeg,
+            'PNG':  ImageFormat.Png,
         }
 
         s = icon.split('|')
