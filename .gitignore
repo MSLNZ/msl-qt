@@ -24,6 +24,7 @@ wheels/
 # Sphinx documentation
 docs/_build/
 docs/_autosummary/
+docs/pyqt5-original-objects.inv
 
 # Project settings
 .ropeproject/
@@ -39,5 +40,5 @@ htmlcov/
 junit.xml
 coverage.xml
 
-# irrelevant msl-qt files
-junk*.py
+# ignore all scripts in the junk/ folder
+junk/
