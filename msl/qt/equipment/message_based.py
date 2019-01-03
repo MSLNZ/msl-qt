@@ -1,5 +1,5 @@
 """
-A :class:`~QtWidgets.QWidget` for :class:`~msl.equipment.connection_msl.ConnectionMessageBased`.
+A :class:`~QtWidgets.QWidget` for :class:`~msl.equipment.connection_message_based.ConnectionMessageBased`.
 
 This widget allows for reading/writing messages from/to equipment.
 """
@@ -15,13 +15,14 @@ class MessageBased(QtWidgets.QWidget):
 
     def __init__(self, connection, parent=None):
         """
-        A :class:`~QtWidgets.QWidget` for a :class:`~msl.equipment.connection_msl.ConnectionMessageBased` connection.
+        A :class:`~QtWidgets.QWidget` for a :class:`~msl.equipment.connection_message_based.ConnectionMessageBased`
+        connection.
 
         This widget allows for reading/writing messages from/to equipment.
 
         Parameters
         ----------
-        connection : :class:`~msl.equipment.connection_msl.ConnectionMessageBased`
+        connection : :class:`~msl.equipment.connection_message_based.ConnectionMessageBased`
             The connection to the equipment.
         parent : :class:`QtWidgets.QWidget`
             The parent widget.
