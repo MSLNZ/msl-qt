@@ -6,7 +6,7 @@ import codecs
 import argparse
 
 import requests
-from sphinx.ext.intersphinx import debug
+from sphinx.ext.intersphinx import inspect_main
 from sphinx.util.inventory import InventoryFileReader
 
 # used for redirecting a PyQt URI to a Qt URI
@@ -203,15 +203,15 @@ def main(*args):
     print('  ' + modified_inv)
     print('  ' + modified_txt)
 
-    # redirect the print() statements in the debug() function to a file
+    # redirect the print() statements in the inspect_main() function to a file
     sys.stdout = codecs.open(original_txt, 'wb', encoding='utf-8')
-    debug(['', original_inv])
+    inspect_main([original_inv])
     sys.stdout.close()
 
     # if the following succeeds without raising an exception then Sphinx is
     # able to read the pyqt#-modified-objects.inv file that was just created
     sys.stdout = codecs.open(modified_txt, 'wb', encoding='utf-8')
-    debug(['', modified_inv])
+    inspect_main([modified_inv])
     sys.stdout.close()
 
     sys.exit(0)
