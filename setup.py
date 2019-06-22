@@ -101,7 +101,7 @@ setup(
     name='msl-qt',
     version=fetch_init('__version__'),
     author=fetch_init('__author__'),
-    author_email='joseph.borbely@measurement.govt.nz',
+    author_email='info@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-qt',
     description='Custom Qt components for the user interface',
     long_description=read('README.rst'),
