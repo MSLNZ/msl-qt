@@ -12,7 +12,7 @@ Alternatively, using the `MSL Package Manager`_ run::
 
 Dependencies
 ------------
-* Python 2.7, 3.4-3.6
+* Python 2.7, 3.5+
 * PyQt5_ -- support for PyQt4_, PySide_, and/or PySide2_ may become available in a future release
 * `Python for .NET`_ -- only required if you want to load icons from DLL/EXE files on Windows
 
