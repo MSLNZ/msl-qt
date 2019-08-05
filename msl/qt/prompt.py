@@ -252,6 +252,28 @@ def notes(json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#
     return nh.text()
 
 
+def ok_cancel(message, title=None):
+    """Ask for a response to a `message` where the logical options are ``Ok`` and ``Cancel``.
+
+    Parameters
+    ----------
+    message : :class:`str`
+        The message to ask the user.
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+        If :obj:`None` then uses the text in the title bar of the active window.
+
+    Returns
+    -------
+    :class:`bool`
+        :obj:`True` if the user answered ``Ok``, :obj:`False` otherwise.
+    """
+    app, title = _get_app_and_title(title)
+    response = QtWidgets.QMessageBox.question(app.activeWindow(), title, message,
+                                            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+    return response == QtWidgets.QMessageBox.Ok
+
+
 def question(message, default=True, title=None):
     """Ask a question to receive a ``Yes`` or ``No`` answer.
 
@@ -362,6 +384,34 @@ def warning(message, title=None):
     if isinstance(message, Exception):
         message = traceback.format_exc()
     QtWidgets.QMessageBox.warning(app.activeWindow(), title, str(message))
+
+
+def yes_no_cancel(message, title=None):
+    """Ask a question to receive a ``Yes``, ``No``, or ``Cancel`` answer.
+
+    Parameters
+    ----------
+    message : :class:`str`
+        The question to ask the user.
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+        If :obj:`None` then uses the text in the title bar of the active window.
+
+    Returns
+    -------
+    :class:`object`
+        :obj:`True` if the user answered ``Yes``, :obj:`False` if the user answered ``No``, or :obj:`None` otherwise.
+    """
+    app, title = _get_app_and_title(title)
+    reply = QtWidgets.QMessageBox.question(
+        app.activeWindow(), title, message,
+        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel
+    )
+    if reply == QtWidgets.QMessageBox.Yes:
+        return True
+    elif reply == QtWidgets.QMessageBox.No:
+        return False
+    return None
 
 
 def _get_app_and_title(title):
