@@ -38,7 +38,7 @@ class Worker(QtCore.QObject):
             self._finished.emit()
 
 
-class Thread(object):
+class Thread(QtCore.QObject):
 
     def __init__(self, worker):
         """Moves the `worker` to a new :class:`QtCore.QThread`.
@@ -52,6 +52,7 @@ class Thread(object):
         -------
         See :class:`~msl.qt.sleep.Sleep` for an example subclass of a :class:`Thread`.
         """
+        super(Thread, self).__init__()
         self._thread = None
         self._worker = None
         self._callbacks = []
