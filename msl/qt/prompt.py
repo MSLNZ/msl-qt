@@ -341,6 +341,7 @@ def warning(message, title=None):
 
 def ok_cancel(message, default=True, title=None):
     """Ask for a response to a `message` where the logical options are ``Ok`` and ``Cancel``.
+
     Parameters
     ----------
     message : :class:`str`
@@ -351,16 +352,17 @@ def ok_cancel(message, default=True, title=None):
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
         If :obj:`None` then uses the text in the title bar of the active window.
+
     Returns
     -------
     :class:`bool`
-        :obj:`True` if the user answered ``Ok``, :obj:`False` otherwise.
+        :obj:`True` if the user answered ``Ok``, :obj:`None` if the user answered ``Cancel``.
     """
     app, title = _get_app_and_title(title)
     d = QtWidgets.QMessageBox.Ok if default else QtWidgets.QMessageBox.Cancel
     response = QtWidgets.QMessageBox.question(app.activeWindow(), title, message,
                                             QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, defaultButton=d)
-    return response == QtWidgets.QMessageBox.Ok
+    return True if response == QtWidgets.QMessageBox.Ok else None
 
 
 def yes_no(message, default=True, title=None):
@@ -412,12 +414,12 @@ def yes_no_cancel(message, default=True, title=None):
     """
     app, title = _get_app_and_title(title)
 
-    if default:
-        d = QtWidgets.QMessageBox.Yes
-    elif default == False:
-        d = QtWidgets.QMessageBox.No
-    else:
+    if default is None:
         d = QtWidgets.QMessageBox.Cancel
+    elif default:
+        d = QtWidgets.QMessageBox.Yes
+    else:
+        d = QtWidgets.QMessageBox.No
 
     result = QtWidgets.QMessageBox.question(
         app.activeWindow(), title, message,
