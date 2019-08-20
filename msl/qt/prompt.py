@@ -252,53 +252,6 @@ def notes(json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#
     return nh.text()
 
 
-def ok_cancel(message, title=None):
-    """Ask for a response to a `message` where the logical options are ``Ok`` and ``Cancel``.
-
-    Parameters
-    ----------
-    message : :class:`str`
-        The message to ask the user.
-    title : :class:`str`, optional
-        The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
-
-    Returns
-    -------
-    :class:`bool`
-        :obj:`True` if the user answered ``Ok``, :obj:`False` otherwise.
-    """
-    app, title = _get_app_and_title(title)
-    response = QtWidgets.QMessageBox.question(app.activeWindow(), title, message,
-                                            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
-    return response == QtWidgets.QMessageBox.Ok
-
-
-def question(message, default=True, title=None):
-    """Ask a question to receive a ``Yes`` or ``No`` answer.
-
-    Parameters
-    ----------
-    message : :class:`str`
-        The question to ask the user.
-    default : :class:`bool`, optional
-        The answer to be selected by default. If :obj:`True` then ``Yes`` is
-        the default answer, if :obj:`False` then ``No`` is the default answer.
-    title : :class:`str`, optional
-        The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
-
-    Returns
-    -------
-    :class:`bool`
-        :obj:`True` if the user answered ``Yes``, :obj:`False` otherwise.
-    """
-    app, title = _get_app_and_title(title)
-    d = QtWidgets.QMessageBox.Yes if default else QtWidgets.QMessageBox.No
-    answer = QtWidgets.QMessageBox.question(app.activeWindow(), title, message, defaultButton=d)
-    return answer == QtWidgets.QMessageBox.Yes
-
-
 def save(initial=None, filters=None, title='Save As', options=None):
     """Request to select the name of a file to save.
 
@@ -386,30 +339,93 @@ def warning(message, title=None):
     QtWidgets.QMessageBox.warning(app.activeWindow(), title, str(message))
 
 
-def yes_no_cancel(message, title=None):
-    """Ask a question to receive a ``Yes``, ``No``, or ``Cancel`` answer.
+def ok_cancel(message, default=True, title=None):
+    """Ask for a response to a `message` where the logical options are ``Ok`` and ``Cancel``.
+    Parameters
+    ----------
+    message : :class:`str`
+        The message to ask the user.
+    default : :class:`bool`, optional
+        The answer to be selected by default. If :obj:`True` then ``Ok`` is
+        the default answer, otherwise ``Cancel`` is the default answer.
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+        If :obj:`None` then uses the text in the title bar of the active window.
+    Returns
+    -------
+    :class:`bool`
+        :obj:`True` if the user answered ``Ok``, :obj:`False` otherwise.
+    """
+    app, title = _get_app_and_title(title)
+    d = QtWidgets.QMessageBox.Ok if default else QtWidgets.QMessageBox.Cancel
+    response = QtWidgets.QMessageBox.question(app.activeWindow(), title, message,
+                                            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, defaultButton=d)
+    return response == QtWidgets.QMessageBox.Ok
+
+
+def yes_no(message, default=True, title=None):
+    """Ask a question to receive a ``Yes`` or ``No`` answer.
 
     Parameters
     ----------
     message : :class:`str`
         The question to ask the user.
+    default : :class:`bool`, optional
+        The answer to be selected by default. If :obj:`True` then ``Yes`` is
+        the default answer, if :obj:`False` then ``No`` is the default answer.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
         If :obj:`None` then uses the text in the title bar of the active window.
 
     Returns
     -------
-    :class:`object`
-        :obj:`True` if the user answered ``Yes``, :obj:`False` if the user answered ``No``, or :obj:`None` otherwise.
+    :class:`bool`
+        :obj:`True` if the user answered ``Yes``, :obj:`False` otherwise.
     """
     app, title = _get_app_and_title(title)
-    reply = QtWidgets.QMessageBox.question(
+    d = QtWidgets.QMessageBox.Yes if default else QtWidgets.QMessageBox.No
+    answer = QtWidgets.QMessageBox.question(app.activeWindow(), title, message, defaultButton=d)
+    return answer == QtWidgets.QMessageBox.Yes
+
+
+def yes_no_cancel(message, default=True, title=None):
+    """Ask a question to receive a ``Yes``, ``No``, or ``Cancel`` answer.
+
+    Parameters
+    ----------
+    message : :class:`str`
+        The question to ask the user.
+    default : :class:`bool`, optional
+        The answer to be selected by default. If :obj:`True` then ``Yes`` is
+        the default answer, if :obj:`False` then ``No`` is the default answer,
+        else if :obj:`None` then ``Cancel`` is the default answer.
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+        If :obj:`None` then uses the text in the title bar of the active window.
+
+    Returns
+    -------
+    :class:`bool`
+        :obj:`True` if the user answered ``Yes``, :obj:`False` if the user answered ``No``,
+        or :obj:`None` if the user answered ``Cancel``.
+
+    """
+    app, title = _get_app_and_title(title)
+
+    if default:
+        d = QtWidgets.QMessageBox.Yes
+    elif default == False:
+        d = QtWidgets.QMessageBox.No
+    else:
+        d = QtWidgets.QMessageBox.Cancel
+
+    result = QtWidgets.QMessageBox.question(
         app.activeWindow(), title, message,
-        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel
-    )
-    if reply == QtWidgets.QMessageBox.Yes:
+        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, defaultButton=d)
+
+    if result == QtWidgets.QMessageBox.Yes:
         return True
-    elif reply == QtWidgets.QMessageBox.No:
+    elif result == QtWidgets.QMessageBox.No:
         return False
     return None
 
