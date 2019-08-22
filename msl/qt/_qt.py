@@ -45,9 +45,9 @@ except ImportError:
 #   QT_API = 'pyqt5'
 qt_api = os.getenv('QT_API', 'pyside').lower()
 if qt_api.startswith('pyside'):
-    use_pyside = True
+    use_pyside = has_pyside
 elif qt_api.startswith('pyqt'):
-    use_pyside = False
+    use_pyside = not has_pyqt
 else:
     raise ValueError('Invalid environment variable QT_API -> {!r}'.format(qt_api))
 
