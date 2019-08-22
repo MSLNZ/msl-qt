@@ -6,7 +6,7 @@ A :class:`~QtWidgets.QWidget` for controlling a Thorlabs_ translation stage.
 import os
 import time
 
-from msl.qt import QtWidgets, QtCore, QtGui
+from msl.qt import QtWidgets, QtCore, QtGui, Signal
 from msl.qt import prompt
 from msl.qt.io import get_icon
 from msl.qt.equipment.thorlabs import show_hardware_info
@@ -20,7 +20,7 @@ try:
 
     class _Signaler(QtCore.QObject):
         """Used for sending a signal of the current position."""
-        signal = QtCore.pyqtSignal()
+        signal = Signal()
 
     signaler = _Signaler()
 
@@ -518,7 +518,7 @@ class TranslationStage(QtWidgets.QWidget):
 
 class _Settings(QtWidgets.QDialog):
 
-    sig_update_jog_tooltip = QtCore.pyqtSignal()
+    sig_update_jog_tooltip = Signal()
 
     def __init__(self, parent):
         """Display a QDialog to edit the settings"""

@@ -87,15 +87,11 @@ def fetch_init(key):
     return re.compile(r'{}\s*=\s*(.*)'.format(key)).search(init_text).group(1)[1:-1]
 
 
-# pypi only has wheels for PyQt5 for Python 3.5+
-# otherwise assume that the user already has some version of PyQt installed
-install_requires = [] if sys.version_info[:2] < (3, 5) else ['pyqt5']
-
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
-sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
+sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
 
 setup(
     name='msl-qt',
@@ -119,8 +115,12 @@ setup(
         'Topic :: Software Development :: User Interfaces'
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest-cov', 'pytest'],
-    install_requires=install_requires,
+    tests_require=['pytest', 'pytest-cov', 'PySide2', 'pythonnet'],
+    install_requires=[],
+    extras_require={
+        'pyside': ['PySide2'],
+        'pyqt': ['PyQt5'],
+    },
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,

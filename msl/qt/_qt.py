@@ -1,7 +1,7 @@
 """
 A wrapper over different Python Qt bindings (e.g., PyQt4_, PyQt5_, PySide_, PySide2_).
 
-Currently only PyQt5_ is implemented.
+Currently only PyQt5_ and PySide2_ are supported.
 
 Example repositories which unify the syntax for PyQt4_, PyQt5_, PySide_ and PySide2_:
 
@@ -16,11 +16,68 @@ Example repositories which unify the syntax for PyQt4_, PyQt5_, PySide_ and PySi
 .. _PySide: https://wiki.qt.io/PySide
 .. _PySide2: https://wiki.qt.io/PySide2
 """
-from PyQt5 import Qt, QtWidgets, QtCore, QtGui
+import os
+import sys
+
+# Qt for Python (PySide2) is the project that provides the official
+# set of Python bindings to Qt, see https://www.qt.io/qt-for-python
+try:
+    import PySide2
+    has_pyside = True
+    use_pyside = True
+except ImportError:
+    use_pyside = False
+    has_pyside = False
+
+try:
+    import PyQt5
+    has_pyqt = True
+except ImportError:
+    has_pyqt = False
+
+# One can create a QT_API environment variable to select which Qt API is used.
+# For example,
+#   QT_API = 'PySide'
+#   QT_API = 'PyQt'
+# the value is case insensitive and independent of the version number at the end,
+# for example, the following are equivalent to the above
+#   QT_API = 'pyside2'
+#   QT_API = 'pyqt5'
+qt_api = os.getenv('QT_API', 'pyside').lower()
+if qt_api.startswith('pyside'):
+    use_pyside = True
+elif qt_api.startswith('pyqt'):
+    use_pyside = False
+else:
+    raise ValueError('Invalid environment variable QT_API -> {!r}'.format(qt_api))
+
+# PySide2/PyQt5 is not required if building the documentation
+# since the package gets mocked, see docs/conf.py
+building_docs = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
+if not building_docs and not (has_pyside or has_pyqt):
+    raise ImportError('Either PySide2 or PyQt5 must be installed')
+
+if use_pyside:
+    from PySide2 import QtGui
+    from PySide2 import QtCore
+    from PySide2 import QtWidgets
+    Qt = QtCore.Qt
+    Signal = QtCore.Signal
+    Slot = QtCore.Slot
+else:
+    from PyQt5 import QtGui
+    from PyQt5 import QtCore
+    from PyQt5 import QtWidgets
+    Qt = QtCore.Qt
+    Signal = QtCore.pyqtSignal
+    Slot = QtCore.pyqtSlot
+
 
 __all__ = (
     'Qt',
     'QtGui',
     'QtWidgets',
     'QtCore',
+    'Signal',
+    'Slot',
 )

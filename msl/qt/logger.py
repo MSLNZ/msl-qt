@@ -5,7 +5,7 @@ import random
 import logging
 import datetime
 
-from . import QtWidgets, QtGui, Qt, prompt, io
+from . import QtWidgets, QtGui, prompt, io
 
 
 class Logger(logging.Handler, QtWidgets.QWidget):
@@ -97,7 +97,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._update_label()
 
         self._save_button = QtWidgets.QPushButton()
-        self._save_button.setIcon(io.get_icon(Qt.QStyle.SP_DialogSaveButton))
+        self._save_button.setIcon(io.get_icon(QtWidgets.QStyle.SP_DialogSaveButton))
         self._save_button.clicked.connect(self._save_records)
         self._save_button.setToolTip('Save the log records')
 
@@ -129,7 +129,15 @@ class Logger(logging.Handler, QtWidgets.QWidget):
     def emit(self, record):
         """Overrides :meth:`logging.Handler.emit`."""
         self._records.append(record)
-        if record.levelno >= self._level_combobox.currentData():
+        try:
+            # Fixes the following
+            #   RuntimeError: wrapped C/C++ object of type QComboBox has been deleted
+            data = self._level_combobox.currentData()
+        except RuntimeError:
+            logging.getLogger().removeHandler(self)
+            return
+
+        if record.levelno >= data:
             self._append_record(record)
         self._update_label()
 

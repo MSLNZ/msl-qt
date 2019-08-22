@@ -6,7 +6,7 @@ This widget allows for reading/writing messages from/to equipment.
 import time
 import traceback
 
-from msl.qt import QtWidgets, QtCore, QtGui, prompt
+from msl.qt import QtWidgets, QtCore, QtGui, prompt, Signal
 from msl.qt.io import get_icon, get_drag_enter_paths
 from msl.qt.equipment import show_record
 
@@ -450,11 +450,11 @@ class MessageBased(QtWidgets.QWidget):
 
 class _Execute(QtCore.QThread):
 
-    sig_error = QtCore.pyqtSignal(str)
-    sig_update_row_color = QtCore.pyqtSignal(str, int)
-    sig_highlight_row = QtCore.pyqtSignal(int)
-    sig_update_reply = QtCore.pyqtSignal(int, str)
-    sig_show_execute_icon = QtCore.pyqtSignal()
+    sig_error = Signal(str)
+    sig_update_row_color = Signal(str, int)
+    sig_highlight_row = Signal(int)
+    sig_update_reply = Signal(int, str)
+    sig_show_execute_icon = Signal()
 
     def __init__(self, parent):
         QtCore.QThread.__init__(self)

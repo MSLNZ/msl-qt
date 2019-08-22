@@ -10,7 +10,7 @@ try:
 except ImportError:
     has_msl_equipment = False
 
-from msl.qt import QtWidgets, QtCore
+from msl.qt import QtWidgets, QtCore, Signal
 from msl.qt import prompt, Button, Logger
 from msl.qt.io import get_drag_enter_paths
 from msl.qt.equipment import show_record
@@ -337,7 +337,7 @@ class _RecordTable(QtWidgets.QTableWidget):
 
 class _Tree(QtWidgets.QTreeWidget):
 
-    sig_selected = QtCore.pyqtSignal(str)
+    sig_selected = Signal(str)
 
     def __init__(self, equipment_table, connection_table):
         """A Tree view of the options to use as filters for the devices."""

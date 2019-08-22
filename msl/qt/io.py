@@ -126,7 +126,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
         std_icons = [value for name, value in vars(QtWidgets.QStyle).items() if name.startswith('SP_')]
         if obj in std_icons:
             app = application()
-            _icon = QtGui.QIcon(app.style().standardIcon(obj))
+            _icon = QtGui.QIcon(app.style().standardIcon(QtWidgets.QStyle.StandardPixmap(obj)))
         else:
             raise IOError('Invalid QStyle.StandardPixmap enum value of {}'.format(obj))
     elif isinstance(obj, QtGui.QPixmap):

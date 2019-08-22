@@ -19,7 +19,10 @@ Alternatively, using the `MSL Package Manager`_ run::
 Dependencies
 ------------
 * Python 3.5+
-* PyQt5_ -- support for PyQt4_, PySide_, and/or PySide2_ may become available in a future release
+* PyQt5_ or `Qt for Python`_ -- the Qt package that you want to use (you must install one, but the choice is yours)
+
+Optional Dependencies
++++++++++++++++++++++
 * `Python for .NET`_ -- only required if you want to load icons from DLL/EXE files on Windows
 
 .. |docs| image:: https://readthedocs.org/projects/msl-qt/badge/?version=latest
@@ -29,8 +32,6 @@ Dependencies
 
 .. _Qt: https://www.qt.io/
 .. _MSL Package Manager: http://msl-package-manager.readthedocs.io/en/latest/?badge=latest
-.. _PyQt4: http://pyqt.sourceforge.net/Docs/PyQt4/
-.. _PyQt5: http://pyqt.sourceforge.net/Docs/PyQt5/
-.. _PySide: https://wiki.qt.io/PySide
-.. _PySide2: https://wiki.qt.io/PySide2
-.. _Python for .NET: https://pythonnet.github.io/
+.. _PyQt5: https://pypi.org/project/PyQt5/
+.. _Qt for Python: https://pypi.org/project/PySide2/
+.. _Python for .NET: https://pypi.org/project/pythonnet/

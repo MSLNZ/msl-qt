@@ -2,9 +2,7 @@ import os
 import sys
 
 import pytest
-from PyQt5 import QtWidgets, QtCore, QtGui
-
-from msl.qt import application, io
+from msl.qt import application, io, QtWidgets, QtCore, QtGui
 
 app = application()
 

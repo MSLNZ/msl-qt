@@ -4,7 +4,7 @@ Base classes for starting a process in a new :class:`QThread`.
 import logging
 import traceback
 
-from . import QtCore, prompt
+from . import QtCore, Signal, prompt
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +18,8 @@ class Worker(QtCore.QObject):
     See :class:`~msl.qt.sleep.SleepWorker` for an example subclass of a :class:`Worker`.
     """
 
-    _finished = QtCore.pyqtSignal()
-    _error = QtCore.pyqtSignal(str)
+    finished = Signal()
+    error = Signal(str)
 
     def process(self):
         """The expensive or blocking operation to process.
@@ -33,9 +33,9 @@ class Worker(QtCore.QObject):
         try:
             self.process()
         except:
-            self._error.emit(traceback.format_exc())
+            self.error.emit(traceback.format_exc())
         else:
-            self._finished.emit()
+            self.finished.emit()
 
 
 class Thread(QtCore.QObject):
@@ -45,7 +45,7 @@ class Thread(QtCore.QObject):
 
         Parameters
         ----------
-        worker : :class:`Worker`
+        worker
             A :class:`Worker` subclass that has **NOT** been instantiated.
 
         Example
@@ -58,9 +58,9 @@ class Thread(QtCore.QObject):
         self._callbacks = []
 
         if not callable(worker):
-            raise TypeError('The Worker for the QThread must not be instantiated')
+            raise TypeError('The Worker for the Thread must not be instantiated')
         elif not issubclass(worker, Worker):
-            raise TypeError('The Worker for the QThread is not a Worker subclass')
+            raise TypeError('The Worker for the Thread is not a Worker subclass')
         else:
             self._worker_class = worker
 
@@ -118,9 +118,9 @@ class Thread(QtCore.QObject):
         self._worker = self._worker_class(*args, **kwargs)
         self._worker.moveToThread(self._thread)
         self._thread.started.connect(self._worker._process)
-        self._worker._error.connect(lambda message: prompt.critical(message))
-        self._worker._finished.connect(self._thread.quit)
-        self._worker._finished.connect(self._worker.deleteLater)
+        self._worker.error.connect(lambda message: prompt.critical(message))
+        self._worker.finished.connect(self._thread.quit)
+        self._worker.finished.connect(self._worker.deleteLater)
         self._thread.finished.connect(self._thread.deleteLater)
 
         # connecting the callbacks last seems to have the best

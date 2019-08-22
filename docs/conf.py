@@ -14,64 +14,62 @@ sys.path.insert(0, os.path.abspath('..'))
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
-
-    if os.environ.get('SIMULATE_READTHEDOCS') == 'True':
-        html_theme = 'sphinx_rtd_theme'
-    else:
-        html_theme = 'default'
-
     from unittest.mock import MagicMock
 
+    html_theme = 'default'
+
     class QtWidgets(object):
+
         class QWidget(object):
             pass
-        QWidget = QWidget
 
         class QAbstractButton(object):
             pass
-        QAbstractButton = QAbstractButton
 
         class QToolButton(object):
             pass
-        QToolButton = QToolButton
 
         class QDialog(object):
             pass
-        QDialog = QDialog
 
         class QTableWidget(object):
             pass
-        QTableWidget = QTableWidget
 
         class QTreeWidget(object):
             pass
-        QTreeWidget = QTreeWidget
 
         class QMainWindow(object):
             pass
-        QMainWindow = QMainWindow
 
         class QMenu(object):
             pass
-        QMenu = QMenu
 
     class QtCore(object):
+
         class Qt(object):
             KeepAspectRatio = 1
-        Qt = Qt
 
         class QThread(object):
             pass
-        QThread = QThread
 
         @staticmethod
         def pyqtSignal(*args, **kwargs):
             pass
-        pyqtSignal = pyqtSignal
+
+        @staticmethod
+        def pyqtSlot(*args, **kwargs):
+            pass
+
+        @staticmethod
+        def Signal(*args, **kwargs):
+            pass
+
+        @staticmethod
+        def Slot(*args, **kwargs):
+            pass
 
         class QObject(object):
             pass
-        QObject = QObject
 
     class Mock(MagicMock):
         @classmethod
@@ -82,7 +80,7 @@ if on_rtd:
                 return QtCore
             return MagicMock()
 
-    MOCK_MODULES = ['PyQt5']
+    MOCK_MODULES = ['PyQt5', 'PySide2']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 else:
@@ -282,8 +280,10 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     # 'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
-    'PyQt5': ('', 'pyqt5-modified-objects.inv'),
-    'msl.equipment': ('http://msl-equipment.readthedocs.io/en/latest/', None),
+    # 'PyQt5': ('', 'pyqt5-modified-objects.inv'),
+    # 'PySide2': ('https://doc.qt.io/qtforpython/', None),
+    'PySide2': ('', 'pyside2-modified-objects.inv'),
+    'msl.equipment': ('https://msl-equipment.readthedocs.io/en/latest/', None),
 }
 
 # show all the Qt linking warnings
