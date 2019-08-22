@@ -290,7 +290,7 @@ class LoopUntilAbort(object):
 
         # check that it is okay to abort
         if not self._is_max_reached() and not self._loop_error:
-            if not prompt.question('Are you sure that you want to abort the loop?'):
+            if not prompt.yes_no('Are you sure that you want to abort the loop?'):
                 # check again whether max_iterations was reached while the prompt window was displayed
                 if self._is_max_reached():
                     prompt.information('The maximum number of iterations was already reached.\n'
