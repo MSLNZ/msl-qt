@@ -6,64 +6,79 @@ event that happened or to request information from the user.
 """
 import traceback
 
-from . import QtWidgets, QtCore, application
+from . import QtWidgets, QtGui, Qt, application
 
 
-def critical(message, title=None):
-    """Display the critical `message` in a dialog window.
+def critical(message, *, title=None, font=None):
+    """Display a `critical` message in a dialog window.
 
     Parameters
     ----------
     message : :class:`str` or :class:`Exception`
-        The message to display.
+        The message to display. The message can use HTML/CSS markup, for example,
+        ``'<html>A <p style="color:red;font-size:18px"><i>critical</i></p> error occurred!</html>'``
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
     """
-    app, title = _get_app_and_title(title)
     if isinstance(message, Exception):
         message = traceback.format_exc()
-    QtWidgets.QMessageBox.critical(app.activeWindow(), title, str(message))
+    app, mb = _message_box(title=title, message=message, font=font)
+    mb.setIcon(QtWidgets.QMessageBox.Critical)
+    mb.exec_()
 
 
-def double(message, default=0, minimum=-2147483647, maximum=2147483647, precision=1, title=None):
-    """Request a floating-point value.
+def double(message, *, title=None, font=None, value=0, minimum=-2147483647, maximum=2147483647, step=1, decimals=2):
+    """Request a double-precision value (a Python :class:`float` data type).
 
     Parameters
     ----------
     message : :class:`str`
         The message that is shown to the user to describe what the value represents.
-    default : :class:`float`, optional
-        The default floating-point value.
+        The message can use HTML/CSS markup, for example, ``'<html>Enter a mass, in &mu;g</html>'``
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+    value : :class:`float`, optional
+        The initial value.
     minimum : :class:`float`, optional
         The minimum value that the user can enter.
     maximum : :class:`float`, optional
         The maximum value that the user can enter.
-    precision : :class:`int`, optional
+    step : :class:`float`, optional
+        The step size by which the value is increased and decreased.
+    decimals : :class:`int`, optional
         The number of digits that are displayed after the decimal point.
-    title : :class:`str`, optional
-        The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
 
     Returns
     -------
-    :class:`float` or :obj:`None`
-        The floating-point value or :obj:`None` if the user cancelled
-        the request to enter a floating-point number.
+    :class:`float` or :data:`None`
+        The value or :data:`None` if the user cancelled the request.
     """
-    app, title = _get_app_and_title(title)
-    value, ok = QtWidgets.QInputDialog.getDouble(app.activeWindow(), title, message,
-                                                 default, minimum, maximum, precision,
-                                                 flags=QtCore.Qt.WindowCloseButtonHint)
-    return value if ok else None
+    app, dialog = _input_dialog(title=title, message=message, font=font)
+    dialog.setInputMode(QtWidgets.QInputDialog.DoubleInput)
+    dialog.setDoubleRange(minimum, maximum)
+    dialog.setDoubleStep(step)
+    dialog.setDoubleDecimals(decimals)
+    dialog.setDoubleValue(value)
+    ok = dialog.exec_()
+    return dialog.doubleValue() if ok else None
 
 
-def filename(initial=None, filters=None, multiple=False, title='Select File'):
+def filename(*, title='Select File', directory=None, filters=None, multiple=False):
     """Request to select the file(s) to open.
 
     Parameters
     ----------
-    initial : :class:`str`, optional
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+    directory : :class:`str`, optional
         The initial directory to start in.
     filters : :class:`str`, :class:`list` of :class:`str` or :class:`dict`, optional
         Only filenames that match the specified `filters` are shown.
@@ -77,134 +92,142 @@ def filename(initial=None, filters=None, multiple=False, title='Select File'):
 
     multiple : :class:`bool`, optional
         Whether multiple files can be selected.
-    title : :class:`str`, optional
-        The text to display in the title bar of the dialog window.
 
     Returns
     -------
-    :class:`str` or :class:`list` of :class:`str`
-        The name(s) of the file(s) to open or :obj:`None` if the user cancelled
-        the request to select a file.
+    :class:`str`, :class:`list` of :class:`str` or :data:`None`
+        The name(s) of the file(s) to open or :data:`None` if the user cancelled the request.
     """
     app, title = _get_app_and_title(title)
     filters = _get_file_filters(filters)
     if multiple:
         if title == 'Select File':
             title += 's'
-        name, _ = QtWidgets.QFileDialog.getOpenFileNames(app.activeWindow(), title, initial, filters)
+        name, _ = QtWidgets.QFileDialog.getOpenFileNames(app.activeWindow(), title, directory, filters)
     else:
-        name, _ = QtWidgets.QFileDialog.getOpenFileName(app.activeWindow(), title, initial, filters)
-    return name if len(name) > 0 else None
+        name, _ = QtWidgets.QFileDialog.getOpenFileName(app.activeWindow(), title, directory, filters)
+    return name if name else None
 
 
-def folder(initial=None, title='Select Folder'):
+def folder(*, title='Select Folder', directory=None):
     """Request to select an existing folder or to create a new folder.
 
     Parameters
     ----------
-    initial : :class:`str`, optional
-        The initial directory to start in.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
+    directory : :class:`str`, optional
+        The initial directory to start in.
 
     Returns
     -------
-    :class:`str`
-        The name of the selected folder or :obj:`None` if the user cancelled
-        the request to select a folder.
+    :class:`str` or :data:`None`
+        The name of the selected folder or :data:`None` if the user cancelled the request.
     """
     app, title = _get_app_and_title(title)
-    name = QtWidgets.QFileDialog.getExistingDirectory(app.activeWindow(), title, initial)
-    return name if len(name) > 0 else None
+    name = QtWidgets.QFileDialog.getExistingDirectory(app.activeWindow(), title, directory)
+    return name if name else None
 
 
-def information(message, title=None):
-    """Display the information `message` in a dialog window.
+def information(message, *, title=None, font=None):
+    """Display an `information` message in a dialog window.
 
     Parameters
     ----------
     message : :class:`str` or :class:`Exception`
-        The message to display.
+        The message to display. The message can use HTML/CSS markup, for example,
+        ``'<html>The temperature is 21.3 &deg;C</html>'``
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
     """
-    app, title = _get_app_and_title(title)
     if isinstance(message, Exception):
         message = traceback.format_exc()
-    QtWidgets.QMessageBox.information(app.activeWindow(), title, str(message))
+    app, mb = _message_box(title=title, message=message, font=font)
+    mb.setIcon(QtWidgets.QMessageBox.Information)
+    mb.exec_()
 
 
-def integer(message, default=0, minimum=-2147483647, maximum=2147483647, step=1, title=None):
+def integer(message, *, title=None, font=None, value=0, minimum=-2147483647, maximum=2147483647, step=1):
     """Request an integer value.
 
     Parameters
     ----------
     message : :class:`str`
         The message that is shown to the user to describe what the value represents.
-    default : :class:`int`, optional
-        The default integer value.
+        The message can use HTML/CSS markup, for example, ``'<html>Enter a mass, in &mu;g</html>'``
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+    value : :class:`int`, optional
+        The initial value.
     minimum : :class:`int`, optional
         The minimum value that the user can enter.
     maximum : :class:`int`, optional
         The maximum value that the user can enter.
     step : :class:`int`, optional
-        The amount by which the values change as the user presses the arrow
-        buttons to increment or decrement the value.
-    title : :class:`str`, optional
-        The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        The step size by which the value is increased and decreased.
 
     Returns
     -------
-    :class:`int` or :obj:`None`
-        The integer value or :obj:`None` if the user cancelled the request to
-        enter a number.
+    :class:`int` or :data:`None`
+        The value or :data:`None` if the user cancelled the request.
     """
-    app, title = _get_app_and_title(title)
-    value, ok = QtWidgets.QInputDialog.getInt(app.activeWindow(), title, message,
-                                              default, minimum, maximum, step,
-                                              flags=QtCore.Qt.WindowCloseButtonHint)
-    return value if ok else None
+    app, dialog = _input_dialog(title=title, message=message, font=font)
+    dialog.setInputMode(QtWidgets.QInputDialog.IntInput)
+    dialog.setIntRange(minimum, maximum)
+    dialog.setIntStep(step)
+    dialog.setIntValue(value)
+    ok = dialog.exec_()
+    return dialog.intValue() if ok else None
 
 
-def item(message, items, index=0, title=None):
+def item(message, items, *, title=None, font=None, index=0):
     """Request an item from a list of items.
 
     Parameters
     ----------
     message : :class:`str`
         The message that is shown to the user to describe what the list of items represent.
-    items : :class:`list` of :class:`object`
+        The message can use HTML/CSS markup.
+    items : :class:`list` or :class:`tuple`
         The list of items to choose from. The items can be of any data type.
-    index : :class:`int`, optional
-        The index of the default item that is selected.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+    index : :class:`int`, optional
+        The index of the initial item that is selected.
 
     Returns
     -------
-    :class:`object`
-        The selected item or :obj:`None` if the user cancelled the request to
-        select an item.
+    The selected item or :data:`None` if the user cancelled the request.
 
-        .. note::
-            The data type of the selected item is preserved. For example, if
-            `items` = ``[1, 2.0, 2+3j, 'hello', b'world', True, QtWidgets.QPushButton]``
-            and the user selects the ``True`` item then :obj:`True` is returned.
-
+    Notes
+    -----
+    The data type of the selected item is preserved. For example, if
+    `items` = ``[1, 2.0, 2+3j, 'hello', b'world', True, QtWidgets.QPushButton]``
+    and the user selects the ``2+3j`` item then a :class:`complex` data type is returned.
     """
-    app, title = _get_app_and_title(title)
     items_ = [str(i) for i in items]
-    value, ok = QtWidgets.QInputDialog.getItem(app.activeWindow(), title, message, items_, index,
-                                               editable=False,
-                                               flags=QtCore.Qt.WindowCloseButtonHint,
-                                               inputMethodHints=QtCore.Qt.ImhNone)
-    return items[items_.index(value)] if ok else None
+    app, dialog = _input_dialog(title=title, message=message, font=font)
+    dialog.setComboBoxItems(items_)
+    dialog.setTextValue(items_[index])
+    dialog.setComboBoxEditable(False)
+    dialog.setInputMethodHints(Qt.ImhNone)
+    ok = dialog.exec_()
+    return items[items_.index(dialog.textValue())] if ok else None
 
 
-def notes(json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EAF2F8'):
+def notes(*, json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EAF2F8'):
     """Ask the user to enter notes.
 
     Opens a :class:`QtWidgets.QDialog` to allow for a user to enter a detailed
@@ -226,7 +249,7 @@ def notes(json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#
     ----------
     json_path : :class:`str`, optional
         The path to a JSON_ file that contains the history of the notes that have
-        been used. If :obj:`None` then the default file is used. The file will
+        been used. If :data:`None` then the default file is used. The file will
         automatically be created if it does not exist.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
@@ -252,12 +275,14 @@ def notes(json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#
     return nh.text()
 
 
-def save(initial=None, filters=None, title='Save As', options=None):
-    """Request to select the name of a file to save.
+def save(*, title='Save As', directory=None, filters=None, options=None):
+    """Request to enter the name of a file to save.
 
     Parameters
     ----------
-    initial : :class:`str`, optional
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+    directory : :class:`str`, optional
         The initial directory to start in.
     filters : :class:`str`, :class:`list` of :class:`str` or :class:`dict`, optional
         Only filenames that match the specified `filters` are shown.
@@ -269,165 +294,177 @@ def save(initial=None, filters=None, title='Save As', options=None):
             ['Images (*.png *.xpm *.jpg)', 'Text files (*.txt)', 'XML files (*.xml)']
             {'Images': ('*.png', '*.xpm', '*.jpg'), 'Text files': '*.txt'}
 
-    title : :class:`str`, optional
-        The text to display in the title bar of the dialog window.
     options : `QtWidgets.QFileDialog.Option <http://doc.qt.io/qt-5/qfiledialog.html#Option-enum>`_, optional
         Specify additional options on how to run the dialog.
 
     Returns
     -------
-    :class:`str`
-        The name of the file to save or :obj:`None` if the user cancelled the
-        request to select a file.
+    :class:`str` or :data:`None`
+        The name of the file to save or :data:`None` if the user cancelled the request.
     """
     app, title = _get_app_and_title(title)
     filters = _get_file_filters(filters)
     if options is None:
-        name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, initial, filters)
+        name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, directory, filters)
     else:
-        name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, initial, filters, options=options)
-    return name if len(name) > 0 else None
+        name, _ = QtWidgets.QFileDialog.getSaveFileName(app.activeWindow(), title, directory, filters, options=options)
+    return name if name else None
 
 
-def text(message, default='', multi_line=False, title=None):
+def text(message, *, title=None, font=None, value='', multi_line=False):
     """Request text.
 
     Parameters
     ----------
     message : :class:`str`
-        The message that is shown to the user to describe what the text represents.
-    default : :class:`str`, optional
-        The default text.
-    multi_line : :class:`bool`, optional
-        Whether the entered text can span multiple lines.
+        The message that is shown to the user to describe what the list of items represent.
+        The message can use HTML/CSS markup.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+    value : :class:`str`, optional
+        The initial value.
+    multi_line : :class:`bool`, optional
+        Whether the entered text can span multiple lines.
 
     Returns
     -------
-    :class:`str`
-        The text that the user entered or :obj:`None` if the user cancelled the
-        request to enter text.
+    :class:`str` or :data:`None`
+        The text that the user entered or :data:`None` if the user cancelled the request.
     """
-    app, title = _get_app_and_title(title)
+    app, dialog = _input_dialog(title=title, message=message, font=font)
+    dialog.setTextValue(value)
+    dialog.setInputMethodHints(Qt.ImhNone)
     if multi_line:
-        value, ok = QtWidgets.QInputDialog.getMultiLineText(app.activeWindow(), title, message, default,
-                                                            flags=QtCore.Qt.WindowCloseButtonHint,
-                                                            inputMethodHints=QtCore.Qt.ImhNone)
+        dialog.setOption(QtWidgets.QInputDialog.UsePlainTextEditForTextInput)
     else:
-        value, ok = QtWidgets.QInputDialog.getText(app.activeWindow(), title, message, QtWidgets.QLineEdit.Normal,
-                                                   default, flags=QtCore.Qt.WindowCloseButtonHint,
-                                                   inputMethodHints=QtCore.Qt.ImhNone)
-    return value.strip() if ok else None
+        dialog.setTextEchoMode(QtWidgets.QLineEdit.Normal)
+    ok = dialog.exec_()
+    return dialog.textValue().strip() if ok else None
 
 
-def warning(message, title=None):
-    """Display the warning `message` in a dialog window.
+def warning(message, *, title=None, font=None):
+    """Display a `warning` message in a dialog window.
 
     Parameters
     ----------
     message : :class:`str` or :class:`Exception`
-        The message to display.
+        The message to display. The message can use HTML/CSS markup, for example,
+        ``'<html>A <p style="color:yellow">warning</p>...</html>'``
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
     """
-    app, title = _get_app_and_title(title)
     if isinstance(message, Exception):
         message = traceback.format_exc()
-    QtWidgets.QMessageBox.warning(app.activeWindow(), title, str(message))
+    app, mb = _message_box(title=title, message=message, font=font)
+    mb.setIcon(QtWidgets.QMessageBox.Warning)
+    mb.exec_()
 
 
-def ok_cancel(message, default=True, title=None):
-    """Ask for a response to a `message` where the logical options are ``Ok`` and ``Cancel``.
+def ok_cancel(message, *, title=None, font=None, default=True):
+    """Ask for a response to a message where the logical options are ``Ok`` or ``Cancel``.
 
     Parameters
     ----------
     message : :class:`str`
-        The message to ask the user.
-    default : :class:`bool`, optional
-        The answer to be selected by default. If :obj:`True` then ``Ok`` is
-        the default answer, otherwise ``Cancel`` is the default answer.
+        The message to ask the user. The message can use HTML/CSS markup.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+    default : :class:`bool`, optional
+        The answer to be selected by default. If :data:`True` then ``Ok`` is
+        the default answer, otherwise ``Cancel`` is the default answer.
 
     Returns
     -------
-    :class:`bool`
-        :obj:`True` if the user answered ``Ok``, :obj:`None` if the user answered ``Cancel``.
+    :class:`bool` or :data:`None`
+        :data:`True` if the user answered ``Ok``, :data:`None` if the user answered ``Cancel``.
     """
-    app, title = _get_app_and_title(title)
-    d = QtWidgets.QMessageBox.Ok if default else QtWidgets.QMessageBox.Cancel
-    response = QtWidgets.QMessageBox.question(app.activeWindow(), title, message,
-                                            QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, defaultButton=d)
+    app, mb = _message_box(title=title, message=message, font=font)
+    mb.setIcon(QtWidgets.QMessageBox.Question)
+    mb.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+    mb.setDefaultButton(QtWidgets.QMessageBox.Ok if default else QtWidgets.QMessageBox.Cancel)
+    response = mb.exec_()
     return True if response == QtWidgets.QMessageBox.Ok else None
 
 
-def yes_no(message, default=True, title=None):
-    """Ask a question to receive a ``Yes`` or ``No`` answer.
+def yes_no(message, *, title=None, font=None, default=True):
+    """Ask for a response to a message where the logical options are ``Yes`` or ``No``.
 
     Parameters
     ----------
     message : :class:`str`
-        The question to ask the user.
-    default : :class:`bool`, optional
-        The answer to be selected by default. If :obj:`True` then ``Yes`` is
-        the default answer, if :obj:`False` then ``No`` is the default answer.
+        The message to ask the user. The message can use HTML/CSS markup.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+    default : :class:`bool`, optional
+        The answer to be selected by default. If :data:`True` then ``Yes`` is
+        the default answer, otherwise ``No`` is the default answer.
 
     Returns
     -------
     :class:`bool`
-        :obj:`True` if the user answered ``Yes``, :obj:`False` otherwise.
+        :data:`True` if the user answered ``Yes``, :data:`False` if the user answered ``No``.
     """
-    app, title = _get_app_and_title(title)
-    d = QtWidgets.QMessageBox.Yes if default else QtWidgets.QMessageBox.No
-    answer = QtWidgets.QMessageBox.question(app.activeWindow(), title, message, defaultButton=d)
-    return answer == QtWidgets.QMessageBox.Yes
+    app, mb = _message_box(title=title, message=message, font=font)
+    mb.setIcon(QtWidgets.QMessageBox.Question)
+    mb.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+    mb.setDefaultButton(QtWidgets.QMessageBox.Yes if default else QtWidgets.QMessageBox.No)
+    response = mb.exec_()
+    return response == QtWidgets.QMessageBox.Yes
 
 
-def yes_no_cancel(message, default=True, title=None):
-    """Ask a question to receive a ``Yes``, ``No``, or ``Cancel`` answer.
+def yes_no_cancel(message, *, title=None, font=None, default=True):
+    """Ask for a response to a message where the logical options are ``Yes``, ``No`` or ``Cancel``.
 
     Parameters
     ----------
     message : :class:`str`
-        The question to ask the user.
-    default : :class:`bool`, optional
-        The answer to be selected by default. If :obj:`True` then ``Yes`` is
-        the default answer, if :obj:`False` then ``No`` is the default answer,
-        else if :obj:`None` then ``Cancel`` is the default answer.
+        The message to ask the user. The message can use HTML/CSS markup.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-        If :obj:`None` then uses the text in the title bar of the active window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+    default : :class:`bool`, optional
+        The answer to be selected by default. If :data:`True` then ``Yes`` is
+        the default answer, if :data:`False` then ``No`` is the default answer,
+        else if :data:`None` then ``Cancel`` is the default answer.
 
     Returns
     -------
-    :class:`bool`
-        :obj:`True` if the user answered ``Yes``, :obj:`False` if the user answered ``No``,
-        or :obj:`None` if the user answered ``Cancel``.
-
+    :class:`bool` or :data:`None`
+        :data:`True` if the user answered ``Yes``, :data:`False` if the user answered ``No``,
+        or :data:`None` if the user answered ``Cancel``.
     """
-    app, title = _get_app_and_title(title)
-
+    app, mb = _message_box(title=title, message=message, font=font)
+    mb.setIcon(QtWidgets.QMessageBox.Question)
+    mb.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel)
     if default is None:
-        d = QtWidgets.QMessageBox.Cancel
+        mb.setDefaultButton(QtWidgets.QMessageBox.Cancel)
     elif default:
-        d = QtWidgets.QMessageBox.Yes
+        mb.setDefaultButton(QtWidgets.QMessageBox.Yes)
     else:
-        d = QtWidgets.QMessageBox.No
-
-    result = QtWidgets.QMessageBox.question(
-        app.activeWindow(), title, message,
-        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, defaultButton=d)
-
-    if result == QtWidgets.QMessageBox.Yes:
+        mb.setDefaultButton(QtWidgets.QMessageBox.No)
+    response = mb.exec_()
+    if response == QtWidgets.QMessageBox.Yes:
         return True
-    elif result == QtWidgets.QMessageBox.No:
+    elif response == QtWidgets.QMessageBox.No:
         return False
     return None
 
@@ -439,6 +476,52 @@ def _get_app_and_title(title):
         w = app.activeWindow()
         title = 'MSL' if w is None else w.windowTitle()
     return app, title
+
+
+def _input_dialog(title=None, message=None, font=None):
+    app, title = _get_app_and_title(title)
+    dialog = QtWidgets.QInputDialog(app.activeWindow(), flags=Qt.WindowCloseButtonHint)
+    dialog.setWindowTitle(title)
+    dialog.setLabelText(message)
+    if font:
+        dialog.setFont(_to_qfont(font))
+    return app, dialog
+
+
+def _message_box(title=None, message=None, font=None, buttons=None, default=None):
+    app, title = _get_app_and_title(title)
+    mb = QtWidgets.QMessageBox(app.activeWindow())
+    mb.setWindowTitle(title)
+    mb.setText(message)
+    if font:
+        mb.setFont(_to_qfont(font))
+    if buttons:
+        mb.setStandardButtons(buttons)
+    if default:
+        mb.setDefaultButton(default)
+    return app, mb
+
+
+def _to_qfont(font):
+    """Convert int/float -> point size, str -> family name, tuple -> (family name, point size) to a QFont."""
+    if isinstance(font, QtGui.QFont):
+        return font
+    elif isinstance(font, int):
+        f = QtGui.QFont()
+        f.setPointSize(font)
+        return f
+    elif isinstance(font, float):
+        f = QtGui.QFont()
+        f.setPointSizeF(font)
+        return f
+    elif isinstance(font, str):
+        return QtGui.QFont(font)
+    elif isinstance(font, (tuple, list)):
+        if len(font) < 2:
+            raise ValueError('The font must be a (family name, point size) tuple')
+        return QtGui.QFont(font[0], pointSize=int(font[1]))
+    else:
+        raise TypeError('Must specify a QFont object')
 
 
 def _get_file_filters(filters):
