@@ -4,7 +4,7 @@ Exception handling used by **MSL-Qt**.
 import logging
 import traceback
 
-from . import QtWidgets, Qt, application
+from . import QtWidgets, application
 
 logger = logging.getLogger(__name__)
 
@@ -33,10 +33,10 @@ def excepthook(exc_type, exc_obj, exc_traceback):
             return result
 
         detailed_text.setMaximumSize(QtWidgets.QWIDGETSIZE_MAX, QtWidgets.QWIDGETSIZE_MAX)
-        detailed_text.setSizePolicy(Qt.QSizePolicy.Expanding, Qt.QSizePolicy.Expanding)
+        detailed_text.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
         msg.setMaximumSize(QtWidgets.QWIDGETSIZE_MAX, QtWidgets.QWIDGETSIZE_MAX)
-        msg.setSizePolicy(Qt.QSizePolicy.Expanding, Qt.QSizePolicy.Expanding)
+        msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
         return result
 
