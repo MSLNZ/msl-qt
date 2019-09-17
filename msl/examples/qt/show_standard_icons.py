@@ -100,7 +100,7 @@ class ShowStandardIcons(object):
             button = QtWidgets.QPushButton(i)
             ico = io.get_icon(getattr(QtWidgets.QStyle, i))
             button.setIcon(ico)
-            button.clicked.connect(lambda dummy, ic=ico, n=i: self.zoom(dummy, ic, n))
+            button.clicked.connect(lambda *args, ic=ico, n=i: self.zoom(ic, n))
 
             layout.addWidget(button, count // num_cols, count % num_cols)
             count += 1
@@ -132,7 +132,7 @@ class ShowStandardIcons(object):
                 break
 
             button.setIcon(ico)
-            button.clicked.connect(lambda dummy, ic=ico, n=name: self.zoom(dummy, ic, n))
+            button.clicked.connect(lambda *args, ic=ico, n=name: self.zoom(ic, n))
             layout.addWidget(button, index // num_cols, index % num_cols)
             index += 1
             self.num_icons += 1
@@ -151,7 +151,7 @@ class ShowStandardIcons(object):
     def update_message(self, text):
         self.main_window.statusBar().showMessage(text)
 
-    def zoom(self, dummy, ico, name):
+    def zoom(self, ico, name):
         self.zoom_widget.setWindowTitle(name)
         self.zoom_label.setPixmap(ico.pixmap(self.zoom_widget.size()))
         self.zoom_widget.setWindowState(QtCore.Qt.WindowActive)
