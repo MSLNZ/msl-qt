@@ -64,6 +64,7 @@ if use_pyside:
     Qt = QtCore.Qt
     Signal = QtCore.Signal
     Slot = QtCore.Slot
+    QtWidgets.QWIDGETSIZE_MAX = (1 << 24) - 1  # this constant is missing from QtWidgets
 else:
     from PyQt5 import QtGui
     from PyQt5 import QtCore
