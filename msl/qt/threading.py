@@ -83,10 +83,14 @@ class Thread(QtCore.QObject):
 
     def is_running(self):
         """:class:`bool`: Whether the thread is running."""
+        if self._thread is None:
+            return False
         return self._thread.isRunning()
 
     def quit(self):
         """Tells the thread's event loop to exit."""
+        if self._thread is None:
+            return
         self._thread.quit()
 
     def remove_callback(self, callback):
@@ -105,7 +109,7 @@ class Thread(QtCore.QObject):
         try:
             self._callbacks.remove(callback)
         except ValueError:
-            logger.warning('callback "{}" was not removed from "{}"'.format(
+            logger.warning('callback {!r} was not removed from {!r}'.format(
                 callback.__name__, self.__class__.__name__))
 
     def start(self, *args, **kwargs):
@@ -137,7 +141,7 @@ class Thread(QtCore.QObject):
         ----------
         milliseconds : :class:`int`, optional
             The number of milliseconds to wait before a timeout occurs.
-            If :obj:`None` then :meth:`wait` will never timeout and the
+            If :data:`None` then :meth:`wait` will never timeout and the
             thread must return from its ``run`` method.
 
         Returns
