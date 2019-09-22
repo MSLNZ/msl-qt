@@ -17,11 +17,9 @@ class SleepWorker(Worker):
         Parameters
         ----------
         seconds : :class:`float`
-            The number of seconds to sleep for. This argument is passed in from
-            the :obj:`start(*args, **kwargs) <msl.qt.threading.Thread.start>`
-            method of the :class:`Sleep` class.
+            The number of seconds to sleep for.
         """
-        Worker.__init__(self)
+        super(SleepWorker, self).__init__()
         self.seconds = seconds
 
     def process(self):
@@ -41,10 +39,10 @@ class Sleep(Thread):
 
         Example
         -------
-        To run this example enter the following:
+        To run this example enter the following::
 
-        >>> from msl.examples.qt import LoopExampleSleep
-        >>> loop = LoopExampleSleep() # doctest: +SKIP
-        >>> loop.start() # doctest: +SKIP
+        >>> from msl.examples.qt import LoopExampleSleep  # doctest: +SKIP
+        >>> loop = LoopExampleSleep()  # doctest: +SKIP
+        >>> loop.start()  # doctest: +SKIP
         """
-        Thread.__init__(self, SleepWorker)
+        super(Sleep, self).__init__(SleepWorker)
