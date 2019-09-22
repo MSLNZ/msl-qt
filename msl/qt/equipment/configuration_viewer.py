@@ -29,10 +29,10 @@ class ConfigurationViewer(QtWidgets.QWidget):
 
         Example
         -------
-        To view an example of the :class:`ConfigurationViewer`, run:
+        To view an example of the :class:`ConfigurationViewer`, run::
 
-        >>> from msl.examples.qt.equipment import configuration_viewer # doctest: +SKIP
-        >>> configuration_viewer.show() # doctest: +SKIP
+        >>> from msl.examples.qt.equipment import configuration_viewer  # doctest: +SKIP
+        >>> configuration_viewer.show()  # doctest: +SKIP
         """
         super(ConfigurationViewer, self).__init__(parent=parent)
 

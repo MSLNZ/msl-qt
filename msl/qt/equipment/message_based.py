@@ -30,10 +30,10 @@ class MessageBased(QtWidgets.QWidget):
         Example
         -------
         To view an example of the :class:`MessageBased` widget that will send messages to a
-        *dummy* :class:`~msl.equipment.record_types.EquipmentRecord` in demo mode, run:
+        *dummy* :class:`~msl.equipment.record_types.EquipmentRecord` in demo mode, run::
 
-        >>> from msl.examples.qt.equipment import message_based # doctest: +SKIP
-        >>> message_based.show() # doctest: +SKIP
+        >>> from msl.examples.qt.equipment import message_based  # doctest: +SKIP
+        >>> message_based.show()  # doctest: +SKIP
         """
         super(MessageBased, self).__init__(parent=parent)
 
@@ -217,8 +217,8 @@ class MessageBased(QtWidgets.QWidget):
 
         Parameters
         ----------
-        index : :class:`int` or :obj:`None`
-            If :obj:`None` then append a row, else the index number (0 based) for
+        index : :class:`int`, optional
+            If :data:`None` then append a row, else the index number (0 based) for
             where to create and insert the row.
         """
         cb = QtWidgets.QComboBox()

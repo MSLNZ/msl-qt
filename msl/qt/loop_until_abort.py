@@ -27,17 +27,17 @@ class LoopUntilAbort(object):
 
         Examples
         --------
-        To run the above example enter the following:
+        To run the above example enter the following::
 
-        >>> from msl.examples.qt import LoopExample
-        >>> loop = LoopExample() # doctest: +SKIP
-        >>> loop.start() # doctest: +SKIP
+        >>> from msl.examples.qt import LoopExample  # doctest: +SKIP
+        >>> loop = LoopExample()  # doctest: +SKIP
+        >>> loop.start()  # doctest: +SKIP
 
-        Another example which uses *single-shot* mode:
+        Another example which uses *single-shot* mode::
 
-        >>> from msl.examples.qt import LoopExampleSleep
-        >>> loop = LoopExampleSleep() # doctest: +SKIP
-        >>> loop.start() # doctest: +SKIP
+        >>> from msl.examples.qt import LoopExampleSleep  # doctest: +SKIP
+        >>> loop = LoopExampleSleep()  # doctest: +SKIP
+        >>> loop.start()  # doctest: +SKIP
 
         Parameters
         ----------
@@ -49,11 +49,11 @@ class LoopUntilAbort(object):
             between successive calls to the :meth:`loop` method.
         max_iterations : :class:`int`, optional
             The maximum number of times to call the :meth:`loop` method. The
-            default value is :obj:`None`, which means to loop until the user
+            default value is :data:`None`, which means to loop until the user
             aborts the program.
         single_shot : :class:`bool`, optional
             Whether to call the :meth:`loop` method once (and only once). If
-            you specify the value to be :obj:`True` then you must call the
+            you specify the value to be :data:`True` then you must call the
             :meth:`loop_once` method in the subclass whenever you want to
             run the :meth:`loop` one more time. This is useful if the
             :meth:`loop` depends on external factors (e.g., waiting for an
@@ -62,7 +62,7 @@ class LoopUntilAbort(object):
             known.
         title : :class:`str`, optional
             The text to display in the title bar of the
-            :class:`QtWidgets.QMainWindow`. If :obj:`None` then uses the name
+            :class:`QtWidgets.QMainWindow`. If :data:`None` then uses the name
             of the subclass as the title.
         bg_color : :class:`QtGui.QColor`, optional
             The background color of the :class:`QtWidgets.QMainWindow`. Can be
@@ -159,7 +159,7 @@ class LoopUntilAbort(object):
 
     @property
     def max_iterations(self):
-        """:class:`int` or :obj:`None`: The maximum number of times that the :meth:`loop` will be called."""
+        """:class:`int` or :data:`None`: The maximum number of times that the :meth:`loop` will be called."""
         return self._max_iterations
 
     @property
@@ -198,7 +198,7 @@ class LoopUntilAbort(object):
         """Run the :meth:`loop` method once.
 
         This method should be called if the :class:`LoopUntilAbort` class
-        was initialized with `single_shot` = :obj:`True`, in order to run the
+        was initialized with `single_shot` = :data:`True`, in order to run the
         :meth:`loop` method one more time.
         """
         if not self._loop_timer:

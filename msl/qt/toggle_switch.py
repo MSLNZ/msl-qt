@@ -29,9 +29,9 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
         Example
         -------
-        To view an example with the :class:`ToggleSwitch` run:
+        To view an example with the :class:`ToggleSwitch` run::
 
-        >>> from msl.examples.qt import toggle_switch
+        >>> from msl.examples.qt import toggle_switch  # doctest: +SKIP
         >>> toggle_switch.show()  # doctest: +SKIP
         """
         super(ToggleSwitch, self).__init__(parent=parent)
