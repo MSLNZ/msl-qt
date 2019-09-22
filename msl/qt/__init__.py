@@ -21,8 +21,8 @@ def application(args=None):
     Parameters
     ----------
     args : :class:`list` of :class:`str`, optional
-        A list of arguments to initialize the application. If :obj:`None` then
-        uses :obj:`sys.argv`.
+        A list of arguments to initialize the application. If :data:`None` then
+        uses :data:`sys.argv`.
 
     Returns
     -------

@@ -18,7 +18,7 @@ class Button(QtWidgets.QToolButton):
             Any icon object that is supported by :func:`~msl.qt.io.get_icon`.
         icon_size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
             Rescale the icon to the specified `size`.
-            If the value is :obj:`None` then do not rescale the icon.
+            If the value is :data:`None` then do not rescale the icon.
             If an :class:`int` then set the width and the height to be the `size` value.
             If a :class:`float` then a scaling factor.
             If a :class:`tuple` then the (width, height) values.
@@ -28,7 +28,7 @@ class Button(QtWidgets.QToolButton):
             The function to be called for a mouse right-click event.
         is_text_under_icon : :class:`bool`, optional
             If displaying an icon and text then whether to place the text
-            under, :obj:`True`, or beside, :obj:`False`, the icon.
+            under, :data:`True`, or beside, :data:`False`, the icon.
         tooltip : :class:`str`, optional
             The tooltip to display for the button.
         parent : :class:`QtWidgets.QWidget`, optional
@@ -76,7 +76,7 @@ class Button(QtWidgets.QToolButton):
             The text to display for this item.
         triggered : :obj:`callable`, optional
             The function to be called when this item is selected.
-            If :obj:`None` then the item is displayed but it is disabled.
+            If :data:`None` then the item is displayed but it is disabled.
         icon : :class:`object`, optional
             Any icon object that is supported by :func:`~msl.qt.io.get_icon`.
         shortcut : :class:`str`, optional

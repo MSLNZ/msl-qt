@@ -40,7 +40,7 @@ def get_icon(obj, *, size=None, aspect_mode=QtCore.Qt.KeepAspectRatio):
         * :class:`str`: The path to an icon file or an icon embedded in a DLL or EXE file.
 
           If `obj` is a path to an icon file and only the filename is specified then the
-          directories in :func:`sys.path` and :func:`os.environ['PATH'] <os.environ>` are also
+          directories in :data:`sys.path` and :data:`os.environ['PATH'] <os.environ>` are also
           used to search for the icon file. If `obj` refers to an icon in a Windows DLL/EXE
           file then `obj` is the path to the DLL/EXE file and the icon index separated by the
           ``|`` character.

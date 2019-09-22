@@ -1,5 +1,5 @@
 """
-Example showing the use of the :obj:`MessageBased <msl.qt.equipment.message_based.MessageBased>` widget.
+Example showing the use of the :class:`MessageBased <msl.qt.equipment.message_based.MessageBased>` widget.
 
 The messages are sent to a *dummy* :class:`~msl.equipment.record_types.EquipmentRecord` in demo mode.
 """

@@ -1,5 +1,5 @@
 """
-Example showing the :obj:`ToggleSwitch <msl.qt.toggle_switch.ToggleSwitch>`.
+Example showing the :class:`ToggleSwitch <msl.qt.toggle_switch.ToggleSwitch>`.
 """
 from msl.qt import QtWidgets, application, ToggleSwitch
 

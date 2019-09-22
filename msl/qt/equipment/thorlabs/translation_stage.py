@@ -193,11 +193,11 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        name : :obj:`str`
+        name : :class:`str`
             The name of the preset.
-        position : :obj:`float` or :obj:`int`
+        position : :class:`float` or :class:`int`
             The position.
-        millimeters : :obj:`bool`
+        millimeters : :class:`bool`
             Whether the value of the `position` is in millimeters or in ``device units``.
         """
         if not millimeters:
@@ -214,15 +214,15 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        millimeters : :obj:`bool`, optional
+        millimeters : :class:`bool`, optional
             Whether to return the jog step size in ``device units`` or in ``real-world units``
             (i.e., in millimeters). The default is to return the value in millimeters.
 
         Returns
         -------
-        :obj:`int` or :obj:`float`
-            The jog step size in either device units (:obj:`int`) or in millimeters
-            (:obj:`float`).
+        :class:`int` or :class:`float`
+            The jog step size in either device units (:class:`int`) or in millimeters
+            (:class:`float`).
         """
         size = self._connection.get_jog_step_size()
         if not millimeters:
@@ -237,15 +237,15 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        millimeters : :obj:`bool`, optional
+        millimeters : :class:`bool`, optional
             Whether to return the current position in ``device units`` or in ``real-world units``
             (i.e., in millimeters). The default is to return the value in millimeters.
 
         Returns
         -------
-        :obj:`int` or :obj:`float`
-            The current position in either device units (:obj:`int`) or in millimeters
-            (:obj:`float`).
+        :class:`int` or :class:`float`
+            The current position in either device units (:class:`int`) or in millimeters
+            (:class:`float`).
         """
         pos = float(self._position_display.text())
         if not millimeters:
@@ -257,15 +257,15 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        millimeters : :obj:`bool`, optional
+        millimeters : :class:`bool`, optional
             Whether to return the current position in ``device units`` or in ``real-world units``
             (i.e., in millimeters). The default is to return the value in millimeters.
 
         Returns
         -------
-        :obj:`int` or :obj:`float`
-            The current position (raw and uncalibrated) in either device units (:obj:`int`)
-            or in millimeters (:obj:`float`).
+        :class:`int` or :class:`float`
+            The current position (raw and uncalibrated) in either device units (:class:`int`)
+            or in millimeters (:class:`float`).
         """
         pos = self._connection.get_position()
         if not millimeters:
@@ -277,9 +277,9 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        wait : :obj:`bool`
+        wait : :class:`bool`
             Wait until the move is finished before returning control to the calling program.
-            If :obj:`True` then this is a blocking method.
+            If :data:`True` then this is a blocking method.
         """
         self._requested_mm = 0.0
         self._connection.home()
@@ -292,9 +292,9 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        wait : :obj:`bool`
+        wait : :class:`bool`
             Wait until the move is finished before returning control to the calling program.
-            If :obj:`True` then this is a blocking method.
+            If :data:`True` then this is a blocking method.
         """
         # prefer for the move request to go through the move_to method
         # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Reverse)"
@@ -306,9 +306,9 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        wait : :obj:`bool`
+        wait : :class:`bool`
             Wait until the move is finished before returning control to the calling program.
-            If :obj:`True` then this is a blocking method.
+            If :data:`True` then this is a blocking method.
         """
         # prefer for the move request to go through the move_to method
         # rather than using "self._connection.move_jog(MOT_TravelDirection.MOT_Forwards)"
@@ -320,12 +320,12 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        value : :obj:`int` or :obj:`float`
+        value : :class:`int` or :class:`float`
             The relative value to move by.
-        wait : :obj:`bool`
+        wait : :class:`bool`
             Wait until the move is finished before returning control to the calling program.
-            If :obj:`True` then this is a blocking method.
-        millimeters : :obj:`bool`, optional
+            If :data:`True` then this is a blocking method.
+        millimeters : :class:`bool`, optional
             Whether the `value` is in ``device units`` or in ``real-world units`` (i.e., in millimeters).
         """
         # prefer for the move request to go through the move_to method
@@ -338,12 +338,12 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        value : :obj:`int`, :obj:`float` or :obj:`str`
-            If :obj:`str` then the name of a preset. Otherwise an absolute position to move to.
-        wait : :obj:`bool`
+        value : :class:`int`, :class:`float` or :class:`str`
+            If :class:`str` then the name of a preset. Otherwise an absolute position to move to.
+        wait : :class:`bool`
             Wait until the move is finished before returning control to the calling program.
-            If :obj:`True` then this is a blocking method.
-        millimeters : :obj:`bool`, optional
+            If :data:`True` then this is a blocking method.
+        millimeters : :class:`bool`, optional
             Whether the `value` is in ``device units`` or in ``real-world units`` (i.e., in millimeters).
         """
         if isinstance(value, str):
@@ -381,9 +381,9 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        path : :obj:`str`
+        path : :class:`str`
             The path to the calibration file.
-        enabled : :obj:`bool`, optional
+        enabled : :class:`bool`, optional
             Whether to enable or disable the calibration file.
         """
         if not self._supports_calibration:
@@ -408,9 +408,9 @@ class TranslationStage(QtWidgets.QWidget):
 
         Parameters
         ----------
-        value : :obj:`int` or :obj:`float`
+        value : :class:`int` or :class:`float`
             The jog step size.
-        millimeters : :obj:`bool`, optional
+        millimeters : :class:`bool`, optional
             Whether the `value` is in ``device units`` or in ``real-world units`` (i.e., in millimeters).
         """
         if not millimeters:

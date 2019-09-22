@@ -26,19 +26,19 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         fmt : :class:`str`, optional
             The :ref:`python:logrecord-attributes` to use
             to display the :class:`~logging.LogRecord`.
-        datefmt : :class:`str` or :obj:`None`, optional
+        datefmt : :class:`str` or :data:`None`, optional
             The :ref:`strftime format <python:strftime-strptime-behavior>`
-            to use for the time stamp. If :obj:`None` then the ``ISO8601``
+            to use for the time stamp. If :data:`None` then the ``ISO8601``
             date format is used, ``YYYY-mm-dd HH:MM:SS.ssssss``.
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
 
         Example
         -------
-        To view an example of the :class:`Logger` widget run:
+        To view an example of the :class:`Logger` widget run::
 
-        >>> from msl.examples.qt import logger
-        >>> logger.show() # doctest: +SKIP
+        >>> from msl.examples.qt import logger  # doctest: +SKIP
+        >>> logger.show()  # doctest: +SKIP
         """
         logging.Handler.__init__(self)
         QtWidgets.QWidget.__init__(self, parent=parent)

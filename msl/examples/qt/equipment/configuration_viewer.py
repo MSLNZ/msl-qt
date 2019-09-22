@@ -1,5 +1,5 @@
 """
-Example showing the use of the :obj:`ConfigurationViewer <msl.qt.equipment.configuration_viewer.ConfigurationViewer>`
+Example showing the use of the :class:`ConfigurationViewer <msl.qt.equipment.configuration_viewer.ConfigurationViewer>`
 widget.
 """
 from msl.qt import application
