@@ -15,12 +15,12 @@ version_info = namedtuple('version_info', 'major minor micro releaselevel')(int(
 """:obj:`~collections.namedtuple`: Contains the version information as a (major, minor, micro, releaselevel) tuple."""
 
 
-def application(args=None):
+def application(*args):
     """Returns the :class:`QtWidgets.QApplication` instance (creating one if necessary).
 
     Parameters
     ----------
-    args : :class:`list` of :class:`str`, optional
+    args
         A list of arguments to initialize the application. If :data:`None` then
         uses :data:`sys.argv`.
 
@@ -31,7 +31,7 @@ def application(args=None):
     """
     app = QtWidgets.QApplication.instance()
     if app is None:
-        app = QtWidgets.QApplication(sys.argv if args is None else args)
+        app = QtWidgets.QApplication(args if args else sys.argv)
 
         # use a default *MSL logo* as the app icon
         logo = 'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHR' \
