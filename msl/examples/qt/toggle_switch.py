@@ -13,7 +13,7 @@ def show():
     window = QtWidgets.QWidget()
     window.setWindowTitle('Toggle Switch Example')
     hbox = QtWidgets.QHBoxLayout()
-    ts = ToggleSwitch(window)
+    ts = ToggleSwitch(parent=window)
     ts.toggled.connect(print_state)
     hbox.addWidget(ts)
     window.setLayout(hbox)
