@@ -457,7 +457,7 @@ class _Execute(QtCore.QThread):
     sig_show_execute_icon = Signal()
 
     def __init__(self, parent):
-        super(_Execute, self).__init__(self)
+        super(_Execute, self).__init__()
         self.parent = parent
         self._error = False
 
