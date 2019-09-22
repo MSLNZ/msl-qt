@@ -104,7 +104,7 @@ class MessageBased(QtWidgets.QWidget):
 
         self._info_button = QtWidgets.QPushButton(get_icon(QtWidgets.QStyle.SP_FileDialogInfoView), '')
         self._info_button.setToolTip('Display the information about the equipment')
-        self._info_button.clicked.connect(lambda clicked, record=r: show_record(record))
+        self._info_button.clicked.connect(lambda *args, record=r: show_record(record))
 
         self._status_label = QtWidgets.QLabel()
 
