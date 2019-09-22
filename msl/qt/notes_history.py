@@ -56,7 +56,7 @@ class NotesHistory(QtWidgets.QDialog):
             self.apply_filter()
 
     def clear_history(self):
-        if not self.notes or not prompt.question('Clear the entire history?', default=False):
+        if not self.notes or not prompt.yes_no('Clear the entire history?', default=False):
             return
         self.table.setRowCount(0)
         self.notes = []
@@ -184,7 +184,7 @@ class NotesHistory(QtWidgets.QDialog):
             return
 
         msg = 'this item' if len(selected) == 1 else 'these {} items'.format(len(selected))
-        if not prompt.question('Remove ' + msg + ' from the history?', default=False):
+        if not prompt.yes_no('Remove ' + msg + ' from the history?', default=False):
             return
 
         for index in selected:

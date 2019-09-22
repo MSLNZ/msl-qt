@@ -354,7 +354,7 @@ class TranslationStage(QtWidgets.QWidget):
             millimeters = True  # the preset values are in real-world units
 
         if not self._connection.can_move_without_homing_first():
-            res = prompt.question('The motor should be homed before a move can be performed.\n\nHome the motor?')
+            res = prompt.yes_no('The motor should be homed before a move can be performed.\n\nHome the motor?')
             if res:
                 self.go_home(False)
                 return
