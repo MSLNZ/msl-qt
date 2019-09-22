@@ -28,7 +28,7 @@ def show():
     with open(dummy_file, 'w') as fp:
         json.dump(dummy, fp, indent=2, ensure_ascii=False)
 
-    print('The note entered is:\n' + qt.prompt.notes(dummy_file))
+    print('The note entered is:\n' + qt.prompt.notes(path=dummy_file))
     os.remove(dummy_file)
 
 

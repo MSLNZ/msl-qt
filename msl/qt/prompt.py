@@ -227,7 +227,7 @@ def item(message, items, *, title=None, font=None, index=0):
     return items[items_.index(dialog.textValue())] if ok else None
 
 
-def notes(*, json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EAF2F8'):
+def notes(*, path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EAF2F8'):
     """Ask the user to enter notes.
 
     Opens a :class:`QtWidgets.QDialog` to allow for a user to enter a detailed
@@ -247,7 +247,7 @@ def notes(*, json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color
 
     Parameters
     ----------
-    json_path : :class:`str`, optional
+    path : :class:`str`, optional
         The path to a JSON_ file that contains the history of the notes that have
         been used. If :data:`None` then the default file is used. The file will
         automatically be created if it does not exist.
@@ -270,7 +270,7 @@ def notes(*, json_path=None, title=None, even_row_color='#FFFFFF', odd_row_color
     # import here since there are circular import errors if you import at the module level
     from .notes_history import NotesHistory
     app, title = _get_app_and_title(title)
-    nh = NotesHistory(app.activeWindow(), json_path, title, even_row_color, odd_row_color)
+    nh = NotesHistory(app.activeWindow(), path, title, even_row_color, odd_row_color)
     nh.exec_()
     return nh.text()
 
@@ -478,7 +478,7 @@ def _get_app_and_title(title):
     return app, title
 
 
-def _input_dialog(title=None, message=None, font=None):
+def _input_dialog(*, title=None, message=None, font=None):
     app, title = _get_app_and_title(title)
     dialog = QtWidgets.QInputDialog(app.activeWindow(), flags=Qt.WindowCloseButtonHint)
     dialog.setWindowTitle(title)
@@ -488,7 +488,7 @@ def _input_dialog(title=None, message=None, font=None):
     return app, dialog
 
 
-def _message_box(title=None, message=None, font=None, buttons=None, default=None):
+def _message_box(*, title=None, message=None, font=None, buttons=None, default=None):
     app, title = _get_app_and_title(title)
     mb = QtWidgets.QMessageBox(app.activeWindow())
     mb.setWindowTitle(title)
