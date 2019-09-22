@@ -18,7 +18,7 @@ from msl.qt.equipment import show_record
 
 class ConfigurationViewer(QtWidgets.QWidget):
 
-    def __init__(self, parent=None):
+    def __init__(self, *, parent=None):
         """A :class:`~QtWidgets.QWidget` to view a
         :ref:`Configuration File <msl.equipment:configuration_file>`.
 
@@ -194,7 +194,7 @@ class _RecordTable(QtWidgets.QTableWidget):
 
     allowed_keys = ['year_calibrated']  # contains the key names for both Equipment and Connection Record's
 
-    def __init__(self, record_type, parent, is_dict=False):
+    def __init__(self, record_type, parent, *, is_dict=False):
         super(_RecordTable, self).__init__(parent)
 
         self._database = None
@@ -230,7 +230,7 @@ class _RecordTable(QtWidgets.QTableWidget):
                 self.records_all = database.connections()
         self.filter('')
 
-    def get_records(self, text=''):
+    def get_records(self, *, text=''):
         kwargs = {}
         search_for_raw_strings = []
 

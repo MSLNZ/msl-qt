@@ -34,7 +34,7 @@ except ImportError:
 
 class TranslationStage(QtWidgets.QWidget):
 
-    def __init__(self, connection, config=None, parent=None):
+    def __init__(self, connection, *, config=None, parent=None):
         """A :class:`~QtWidgets.QWidget` for controlling a Thorlabs translation stage.
 
         Parameters
@@ -188,7 +188,7 @@ class TranslationStage(QtWidgets.QWidget):
         self._preset_combobox.setCurrentText(self._get_preset_name(self._requested_mm))
         self._preset_combobox.currentIndexChanged[str].connect(self._go_to_preset)
 
-    def add_preset(self, name, position, millimeters=True):
+    def add_preset(self, name, position, *, millimeters=True):
         """Add a preset position.
 
         Parameters
@@ -209,7 +209,7 @@ class TranslationStage(QtWidgets.QWidget):
         """Overrides `closeEvent <https://doc.qt.io/qt-5/qwidget.html#closeEvent>`_."""
         self._connection.stop_polling()
 
-    def get_jog(self, millimeters=True):
+    def get_jog(self, *, millimeters=True):
         """Get the jog step size.
 
         Parameters
@@ -229,7 +229,7 @@ class TranslationStage(QtWidgets.QWidget):
             return size
         return self._connection.get_real_value_from_device_unit(size, UnitType.DISTANCE)
 
-    def get_position(self, millimeters=True):
+    def get_position(self, *, millimeters=True):
         """Get the current position (calibrated).
 
         If no calibration file has been set then this function returns
@@ -252,7 +252,7 @@ class TranslationStage(QtWidgets.QWidget):
             return self._connection.get_device_unit_from_real_value(pos, UnitType.DISTANCE)
         return pos
 
-    def get_position_raw(self, millimeters=True):
+    def get_position_raw(self, *, millimeters=True):
         """Get the current position (raw and uncalibrated).
 
         Parameters
@@ -272,7 +272,7 @@ class TranslationStage(QtWidgets.QWidget):
             return pos
         return self._connection.get_real_value_from_device_unit(pos, UnitType.DISTANCE)
 
-    def go_home(self, wait=True):
+    def go_home(self, *, wait=True):
         """Send the motor home.
 
         Parameters
@@ -287,7 +287,7 @@ class TranslationStage(QtWidgets.QWidget):
             self._wait(0)
         self._update_preset_text_block_signals(0.0)
 
-    def jog_backward(self, wait=True):
+    def jog_backward(self, *, wait=True):
         """Jog backward.
 
         Parameters
@@ -301,7 +301,7 @@ class TranslationStage(QtWidgets.QWidget):
         pos = self.get_position() - self.get_jog()
         self.move_to(pos, wait=wait, millimeters=True)
 
-    def jog_forward(self, wait=True):
+    def jog_forward(self, *, wait=True):
         """Jog forward.
 
         Parameters
@@ -315,7 +315,7 @@ class TranslationStage(QtWidgets.QWidget):
         pos = self.get_position() + self.get_jog()
         self.move_to(pos, wait=wait, millimeters=True)
 
-    def move_by(self, value, wait=True, millimeters=True):
+    def move_by(self, value, *, wait=True, millimeters=True):
         """Move by a relative value.
 
         Parameters
@@ -333,7 +333,7 @@ class TranslationStage(QtWidgets.QWidget):
         pos = self.get_position(millimeters) + value
         self.move_to(pos, wait=wait, millimeters=millimeters)
 
-    def move_to(self, value, wait=True, millimeters=True):
+    def move_to(self, value, *, wait=True, millimeters=True):
         """Move to an absolute position.
 
         Parameters
@@ -376,7 +376,7 @@ class TranslationStage(QtWidgets.QWidget):
             m = 'Invalid move request.\n\n{} is outside the allowed range [{}, {}]'
             prompt.critical(m.format(value, self._min_pos_mm, self._max_pos_mm))
 
-    def set_calibration_file(self, path, enabled=True):
+    def set_calibration_file(self, path, *, enabled=True):
         """Set the calibration file.
 
         Parameters
@@ -403,7 +403,7 @@ class TranslationStage(QtWidgets.QWidget):
             self._uncalibrated_mm, self._calibrated_mm = np.array([]), np.array([])
             self._calibration_label = ''
 
-    def set_jog(self, value, millimeters=True):
+    def set_jog(self, value, *, millimeters=True):
         """Set the jog step size.
 
         Parameters

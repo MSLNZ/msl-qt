@@ -6,7 +6,7 @@ from . import QtWidgets, QtCore, QtGui, io
 
 class Button(QtWidgets.QToolButton):
 
-    def __init__(self, text=None, icon=None, icon_size=None, left_click=None,
+    def __init__(self, *, text=None, icon=None, icon_size=None, left_click=None,
                  right_click=None, is_text_under_icon=True, tooltip=None, parent=None):
         """A :class:`~QtWidgets.QToolButton` to display text, an icon and a menu.
 
@@ -34,7 +34,7 @@ class Button(QtWidgets.QToolButton):
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
         """
-        QtWidgets.QToolButton.__init__(self, parent=parent)
+        super(Button, self).__init__(parent=parent)
 
         self._menu = None
 
@@ -67,7 +67,7 @@ class Button(QtWidgets.QToolButton):
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
 
-    def add_menu_item(self, text=None, triggered=None, icon=None, shortcut=None, tooltip=None):
+    def add_menu_item(self, *, text=None, triggered=None, icon=None, shortcut=None, tooltip=None):
         """Add a new item to the action menu.
 
         Parameters

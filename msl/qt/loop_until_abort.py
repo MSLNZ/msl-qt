@@ -9,7 +9,7 @@ from . import QtWidgets, QtCore, QtGui, application, prompt
 
 class LoopUntilAbort(object):
 
-    def __init__(self, loop_delay=0, max_iterations=None, single_shot=False,
+    def __init__(self, *, loop_delay=0, max_iterations=None, single_shot=False,
                  title=None, bg_color='#DFDFDF', text_color='#20548B',
                  font_family='Helvetica', font_size=14):
         """Repeatedly perform a task until aborted by the user.

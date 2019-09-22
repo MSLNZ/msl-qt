@@ -10,12 +10,8 @@ from . import QtWidgets, QtGui, prompt, io
 
 class Logger(logging.Handler, QtWidgets.QWidget):
 
-    def __init__(self,
-                 level=logging.INFO,
-                 fmt='%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s',
-                 datefmt=None,
-                 parent=None,
-                 ):
+    def __init__(self, *, level=logging.INFO, fmt='%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s',
+                 datefmt=None, parent=None):
         """A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 
         Parameters
@@ -141,7 +137,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             self._append_record(record)
         self._update_label()
 
-    def save(self, path, level=logging.INFO):
+    def save(self, path, *, level=logging.INFO):
         """Save log records to a file.
 
         Parameters

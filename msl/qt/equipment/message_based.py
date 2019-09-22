@@ -13,7 +13,7 @@ from msl.qt.equipment import show_record
 
 class MessageBased(QtWidgets.QWidget):
 
-    def __init__(self, connection, parent=None):
+    def __init__(self, connection, *, parent=None):
         """
         A :class:`~QtWidgets.QWidget` for a :class:`~msl.equipment.connection_message_based.ConnectionMessageBased`
         connection.
@@ -457,7 +457,7 @@ class _Execute(QtCore.QThread):
     sig_show_execute_icon = Signal()
 
     def __init__(self, parent):
-        QtCore.QThread.__init__(self)
+        super(_Execute, self).__init__(self)
         self.parent = parent
         self._error = False
 

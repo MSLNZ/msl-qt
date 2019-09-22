@@ -6,7 +6,7 @@ from . import QtWidgets, QtCore, QtGui
 
 class ToggleSwitch(QtWidgets.QAbstractButton):
 
-    def __init__(self, parent=None, height=None, checked_color='#009688', unchecked_color='#B4B4B4'):
+    def __init__(self, *, parent=None, height=None, checked_color='#009688', unchecked_color='#B4B4B4'):
         """Constructs a toggle switch, |toggle_switch|
 
         .. |toggle_switch| image:: ../../docs/_static/toggle_switch.gif
