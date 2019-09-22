@@ -11,16 +11,16 @@ __all__ = (
     'get_drag_enter_paths',
     'get_icon',
     'icon_to_base64',
-    'rescale_icon'
+    'rescale_icon',
 )
 
 
-def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
+def get_icon(obj, *, size=None, aspect_mode=QtCore.Qt.KeepAspectRatio):
     """Convert the input object to a :class:`QtGui.QIcon`.
 
     Parameters
     ----------
-    obj : :class:`object`
+    obj
         The object to be converted to a :class:`QtGui.QIcon`. The data type of `obj` can be one of:
 
         * :class:`QtGui.QIcon`
@@ -40,7 +40,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
         * :class:`str`: The path to an icon file or an icon embedded in a DLL or EXE file.
 
           If `obj` is a path to an icon file and only the filename is specified then the
-          directories in :obj:`sys.path` and :obj:`os.environ['PATH'] <os.environ>` are also
+          directories in :func:`sys.path` and :func:`os.environ['PATH'] <os.environ>` are also
           used to search for the icon file. If `obj` refers to an icon in a Windows DLL/EXE
           file then `obj` is the path to the DLL/EXE file and the icon index separated by the
           ``|`` character.
@@ -76,11 +76,11 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
 
     size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
         Rescale the icon to the specified `size`.
-        If the value is :obj:`None` then do not rescale the icon.
+        If the value is :data:`None` then do not rescale the icon.
         If an :class:`int` then set the width and the height to be the `size` value.
         If a :class:`float` then a scaling factor.
         If a :class:`tuple` then the (width, height) values.
-    mode : `QtCore.Qt.AspectRatioMode <https://doc.qt.io/qt-5/qt.html#AspectRatioMode-enum>`_, optional
+    aspect_mode : `QtCore.Qt.AspectRatioMode <https://doc.qt.io/qt-5/qt.html#AspectRatioMode-enum>`_, optional
         How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
 
     Returns
@@ -97,11 +97,12 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
 
     Example
     -------
-    To view the standard icons that come with Qt and that come with Windows run:
+    To view the standard icons that come with Qt and that come with Windows run::
 
-    >>> from msl.examples.qt import ShowStandardIcons
-    >>> ShowStandardIcons() # doctest: +SKIP
+    >>> from msl.examples.qt import ShowStandardIcons  # doctest: +SKIP
+    >>> ShowStandardIcons()  # doctest: +SKIP
     """
+    app = application()  # make sure that a QApplication exists
     _icon = None
     if isinstance(obj, QtGui.QIcon):
         _icon = obj
@@ -118,7 +119,7 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
                     _icon = QtGui.QIcon(full_path)
                     break
             if _icon is None:
-                raise IOError("Cannot find icon file '{}'".format(obj))
+                raise IOError('Cannot find icon file {!r}'.format(obj))
     elif isinstance(obj, QtWidgets.QStyle.StandardPixmap):
         app = application()
         _icon = QtGui.QIcon(app.style().standardIcon(obj))
@@ -143,11 +144,12 @@ def get_icon(obj, size=None, mode=QtCore.Qt.KeepAspectRatio):
 
     if size is None:
         return _icon
-    return QtGui.QIcon(rescale_icon(_icon, size, mode))
+
+    return QtGui.QIcon(rescale_icon(_icon, size, aspect_mode=aspect_mode))
 
 
-def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PNG'):
-    """Convert the icon to a :class:`QtCore.QByteArray` encoded as Base64_.
+def icon_to_base64(icon, *, fmt='png'):
+    """Convert an icon to a :class:`QtCore.QByteArray` encoded as Base64_.
 
     This function is useful if you want to save icons in a database, use it in a
     data URI scheme_, or if you want to use icons in your GUI and rather than loading
@@ -164,14 +166,6 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
         An icon with a data type that is handled by :func:`get_icon`. If :obj:`None`
         then a dialog window is created to allow the user to select an icon file
         that is saved in a folder.
-    size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
-        Rescale the icon to the specified `size` before converting it to Base64_.
-        If the value is :obj:`None` then do not rescale the icon.
-        If an :class:`int` then set the width and the height to be the `size` value.
-        If a :class:`float` then a scaling factor.
-        If a :class:`tuple` then the (width, height) values.
-    mode : QtCore.Qt.AspectRatioMode_, optional
-        How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
     fmt : :class:`str`, optional
         The icon format to use when converting. The supported values are: ``BMP``,
         ``JPG``, ``JPEG`` and ``PNG``.
@@ -189,9 +183,8 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
         If the icon format, `fmt`, to use for converting is not supported.
     """
     fmt = fmt.upper()
-    ALLOWED_FORMATS = ['BMP', 'JPG', 'JPEG', 'PNG']
-    if fmt not in ALLOWED_FORMATS:
-        raise ValueError('Invalid format {}. Must be one of: {}'.format(fmt, ', '.join(ALLOWED_FORMATS)))
+    if fmt not in ['BMP', 'JPG', 'JPEG', 'PNG']:
+        raise ValueError('Invalid format {!r}. Must be one of: BMP, JPG, JPEG, PNG'.format(fmt))
 
     if isinstance(icon, str) and '|' in icon:
         # extract an icon from a Windows DLL/EXE file
@@ -219,7 +212,7 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
             raise IOError('The icon index must be >= 0')
 
         if not os.path.isfile(path):
-            err_msg = "Cannot find DLL/EXE file '{}'".format(s[0])
+            err_msg = 'Cannot find DLL/EXE file {!r}'.format(s[0])
             if os.path.split(path)[0]:  # then it wasn't just the filename that was specified
                 raise IOError(err_msg)
 
@@ -235,13 +228,8 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
         handle_large = ctypes.c_int()
         res = shell32.ExtractIconExA(path_ptr, icon_index, ctypes.byref(handle_large), ctypes.c_void_p(), 1)
         if res != 1:
-            # Check if the icon index is valid
             max_index = shell32.ExtractIconExA(path_ptr, -1, ctypes.c_void_p(), ctypes.c_void_p(), 0) - 1
-            if icon_index > max_index:
-                msg = 'Requested icon {}, the maximum icon index allowed is {}'.format(icon_index, max_index)
-            else:
-                msg = "ExtractIconExA: Cannot extract icon {} from '{}'".format(icon_index, path)
-            raise IOError(msg)
+            raise IOError('Requested icon {}, the maximum icon index allowed is {}'.format(icon_index, max_index))
 
         # get the icon bitmap and convert it to base64
         handle = clr.System.Int32(handle_large.value)
@@ -256,28 +244,13 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
         stream.Dispose()
         return base
 
-    # ensure that a QApplication exists in order to access Qt classes
-    app = application()
-
-    if icon is None:
-        title = 'Select an icon file to convert to Base64'
-        filters = {'Images': ('bmp', 'jpg', 'jpeg', 'png'), 'All files': '*'}
-        icon = prompt.filename(title=title, filters=filters)
-        if icon is None:
-            return QtCore.QByteArray()
-        icon = str(icon)
-
     icon = get_icon(icon)
     try:
-        default_size = icon.availableSizes()[-1]  # use the largest size as the default size
+        size = icon.availableSizes()[-1]  # use the largest size as the default size
     except IndexError:
-        prompt.critical('Invalid icon file.')
-        return QtCore.QByteArray()
+        raise ValueError('Cannot determine a size of the QIcon.') from None
 
-    pixmap = icon.pixmap(default_size)
-    if size is not None:
-        pixmap = rescale_icon(pixmap, size, mode)
-
+    pixmap = icon.pixmap(size)
     array = QtCore.QByteArray()
     buffer = QtCore.QBuffer(array)
     buffer.open(QtCore.QIODevice.WriteOnly)
@@ -286,7 +259,7 @@ def icon_to_base64(icon=None, size=None, mode=QtCore.Qt.KeepAspectRatio, fmt='PN
     return array.toBase64()
 
 
-def get_drag_enter_paths(event, pattern=None):
+def get_drag_enter_paths(event, *, pattern=None):
     """Returns the list of file paths from a :class:`QtGui.QDragEnterEvent`.
 
     Parameters
@@ -312,7 +285,7 @@ def get_drag_enter_paths(event, pattern=None):
     return []
 
 
-def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
+def rescale_icon(icon, size, *, aspect_mode=QtCore.Qt.KeepAspectRatio):
     """Rescale an icon.
 
     Parameters
@@ -321,11 +294,10 @@ def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
         Any object that is supported by :func:`~msl.qt.io.get_icon`.
     size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`
         Rescale the icon to the specified `size`.
-        If the value is :obj:`None` then do not rescale the icon.
         If an :class:`int` then set the width and the height to be the `size` value.
         If a :class:`float` then a scaling factor.
         If a :class:`tuple` then the (width, height) values.
-    mode : QtCore.Qt.AspectRatioMode_, optional
+    aspect_mode : QtCore.Qt.AspectRatioMode_, optional
         How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
 
     Returns
@@ -335,17 +307,13 @@ def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
     """
     if isinstance(icon, QtGui.QIcon):
         try:
-            max_size = icon.availableSizes()[-1]
+            pixmap = icon.pixmap(icon.availableSizes()[-1])
         except IndexError:
-            max_size = QtCore.QSize(16, 16)
-        pixmap = icon.pixmap(max_size)
+            raise ValueError('Cannot automatically determine a size from the QIcon. Specify the size.') from None
     elif isinstance(icon, QtGui.QPixmap):
         pixmap = icon
     else:
-        return rescale_icon(get_icon(icon), size, mode)
-
-    if size is None:
-        return pixmap
+        return rescale_icon(get_icon(icon), size, aspect_mode=aspect_mode)
 
     default_size = pixmap.size()
     if isinstance(size, int):
@@ -353,16 +321,17 @@ def rescale_icon(icon, size, mode=QtCore.Qt.KeepAspectRatio):
     elif isinstance(size, float):
         size = QtCore.QSize(int(default_size.width()*size), int(default_size.height()*size))
     elif isinstance(size, (list, tuple)):
-        if len(size) == 0:
-            size = default_size
-        elif len(size) == 1:
-            size = QtCore.QSize(size[0], size[0])
-        else:
-            size = QtCore.QSize(size[0], size[1])
+        if len(size) != 2:
+            raise ValueError('The size must be in the form (width, height)')
+        size = QtCore.QSize(size[0], size[1])
     elif not isinstance(size, QtCore.QSize):
-        raise TypeError('Unsupported "size" data type of "{}"'.format(type(size)))
+        raise TypeError('Unsupported "size" type of {!r}'.format(type(size)))
 
     if (size.width() != default_size.width()) or (size.height() != default_size.height()):
-        pixmap = pixmap.scaled(size, aspectRatioMode=mode)
+        # PyQt uses aspectRatioMode as a kwarg (this is what the Qt docs indicate) however
+        # PySide uses aspectMode. Therefore, don't specify a kwarg but use a positional
+        # argument since both APIs have the aspect ratio mode as the second argument if
+        # the first argument is a QSize
+        pixmap = pixmap.scaled(size, aspect_mode)
 
     return pixmap

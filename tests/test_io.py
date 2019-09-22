@@ -2,12 +2,13 @@ import os
 import sys
 
 import pytest
-from msl.qt import application, io, QtWidgets, QtCore, QtGui
+from msl.qt import application, io, QtWidgets, QtCore, QtGui, Qt
 
 app = application()
 
 
 def test_get_icon():
+
     assert isinstance(io.get_icon(QtGui.QIcon()), QtGui.QIcon)
     assert isinstance(io.get_icon(QtGui.QPixmap()), QtGui.QIcon)
     assert isinstance(io.get_icon(QtGui.QImage()), QtGui.QIcon)
@@ -40,18 +41,7 @@ def test_get_icon():
 
     assert isinstance(io.get_icon(os.path.join(os.path.dirname(__file__), 'gamma.png')), QtGui.QIcon)
 
-    try:
-        # make sure that the directory where the test_init.py file is not already in sys.path
-        # otherwise the qt.get_icon('gamma.png') test below will not raise the expected exception
-        sys.path.pop(sys.path.index(os.path.dirname(__file__)))
-    except ValueError:
-        pass
-
-    # expect IOError provided that os.path.dirname(__file__) is not in sys.path
-    with pytest.raises(IOError):
-        io.get_icon('gamma.png')
-
-    # insert this directory back into sys.path and check again
+    # insert this directory into sys.path and check again
     sys.path.insert(0, os.path.dirname(__file__))
     assert isinstance(io.get_icon('gamma.png'), QtGui.QIcon)
 
@@ -66,51 +56,143 @@ def test_get_icon():
         assert isinstance(io.get_icon('explorer|0'), QtGui.QIcon)
         with pytest.raises(IOError):
             io.get_icon('C:/Windows/System32/explorer.exe|0')  # the exe is located at 'C:/Windows/explorer.exe'
-        with pytest.raises(IOError):
+        with pytest.raises(IOError) as err:
             io.get_icon('shell32|9999')  # the maximum icon index should be much less than 9999
+        assert str(err.value).startswith('Requested icon 9999')
+
+    icon_1 = io.get_icon('gamma.png').availableSizes()[0]
+    icon_2 = io.get_icon('gamma.png', size=0.5).availableSizes()[0]
+    assert int(icon_1.width() * 0.5) == icon_2.width()
+    assert int(icon_1.height() * 0.5) == icon_2.height()
 
 
 def test_icon_to_base64():
-    assert isinstance(io.icon_to_base64('explorer|0'), QtCore.QByteArray)
+
+    # reading from a .EXE file does not raise any errors
+    if sys.platform == 'win32':
+        assert isinstance(io.icon_to_base64('explorer|0'), QtCore.QByteArray)
+
+        # index number is < 0
+        with pytest.raises(IOError):
+            io.icon_to_base64('explorer|-1')
+
+        # the filename not a DLL in C:/Windows/System32/ nor an EXE in C:/Windows/
+        with pytest.raises(IOError):
+            io.icon_to_base64('unknown_default|1')
+
+    # reading from a standard Qt icon does not raise any errors
     assert isinstance(io.icon_to_base64(QtWidgets.QStyle.SP_TitleBarMenuButton), QtCore.QByteArray)
 
+    # reading from a file does not raise any errors
     icon = io.get_icon('gamma.png')
-    default_size = QtCore.QSize(191, 291)
-    assert default_size.width() == 191
-    assert default_size.height() == 291
-
     assert isinstance(io.icon_to_base64(icon), QtCore.QByteArray)
+    assert io.icon_to_base64(icon).startsWith(b'iVBORw0KGgoAAAA')
+    assert io.icon_to_base64(icon, fmt='PNG').startsWith(b'iVBORw0KGgoAAAA')
+    assert io.icon_to_base64(icon, fmt='BMP').startsWith(b'Qk32jgIAAAAAADY')
+    assert io.icon_to_base64(icon, fmt='JPG').startsWith(b'/9j/4AAQSkZJRgA')
+    assert io.icon_to_base64(icon, fmt='JPEG').startsWith(b'/9j/4AAQSkZJRgA')
 
-    new_size = io.get_icon(io.icon_to_base64(icon)).availableSizes()[0]
-    assert new_size.width() == default_size.width()
-    assert new_size.height() == default_size.height()
-
-    factor = 2.6
-    new_size = io.get_icon(io.icon_to_base64(icon, size=factor)).availableSizes()[0]
-    assert new_size.width() == int(default_size.width()*factor)
-    assert new_size.height() == int(default_size.height()*factor)
-
-    y = 150
-    new_size = io.get_icon(io.icon_to_base64(icon, size=y)).availableSizes()[0]
-    assert new_size.width() == int(y*191./291.)
-    assert new_size.height() == y
-
-    x = 300
-    new_size = io.get_icon(io.icon_to_base64(icon, size=x, mode=QtCore.Qt.KeepAspectRatioByExpanding)).availableSizes()[0]
-    assert new_size.width() == x
-    assert new_size.height() == int(x*291./191.)
-
-    size = (150, 200)
-    new_size = io.get_icon(io.icon_to_base64(icon, size=size, mode=QtCore.Qt.IgnoreAspectRatio)).availableSizes()[0]
-    assert new_size.width() == size[0]
-    assert new_size.height() == size[1]
-
-    new_size = io.get_icon(io.icon_to_base64(icon, size=size)).availableSizes()[0]
-    assert new_size.width() == int(size[1]*191./291.)
-    assert new_size.height() == size[1]
-
-    for fmt in ['BMP', 'JPG', 'JPEG', 'PNG']:
-        io.icon_to_base64(icon, fmt=fmt)
-
+    # GIF is not supported
     with pytest.raises(ValueError):
         io.icon_to_base64(icon, fmt='GIF')
+
+    # the size of 'gamma.png'
+    size = QtCore.QSize(191, 291)
+
+    # convert back to a QIcon and check each pixel
+    original = icon.pixmap(size).toImage()
+    converted = io.get_icon(io.icon_to_base64(icon)).pixmap(size).toImage()
+    for x in range(0, size.width()):
+        for y in range(0, size.height()):
+            rgb_original = original.pixel(x, y)
+            rgb_converted = converted.pixel(x, y)
+            assert QtGui.QColor(rgb_original).getRgb() == QtGui.QColor(rgb_converted).getRgb()
+
+
+def test_rescale_icon():
+    # the actual size of 'gamma.png'
+    size = QtCore.QSize(191, 291)
+
+    icon = io.get_icon('gamma.png')
+    sizes = icon.availableSizes()
+    assert len(sizes) == 1
+    assert sizes[0].width() == size.width()
+    assert sizes[0].height() == size.height()
+
+    new_size = io.rescale_icon(icon, 2.6).size()
+    assert new_size.width() == int(size.width() * 2.6)
+    assert new_size.height() == int(size.height() * 2.6)
+
+    new_size = io.rescale_icon(icon, 150).size()
+    assert new_size.width() == int((150. / float(size.height())) * size.width())
+    assert new_size.height() == 150
+
+    new_size = io.rescale_icon(icon, 300, aspect_mode=Qt.KeepAspectRatioByExpanding).size()
+    assert new_size.width() == 300
+    assert new_size.height() == int((300. / float(size.width())) * size.height())
+
+    size2 = (150, 200)
+    new_size = io.rescale_icon(icon, size2, aspect_mode=Qt.IgnoreAspectRatio).size()
+    assert new_size.width() == size2[0]
+    assert new_size.height() == size2[1]
+    new_size = io.rescale_icon(icon, size2).size()
+    assert new_size.width() == int(size2[1] * size.width() / float(size.height()))
+    assert new_size.height() == size2[1]
+
+    # passing different objects does not raise an error
+    if sys.platform == 'win32':
+        assert isinstance(io.rescale_icon('explorer|0', 1.0), QtGui.QPixmap)
+    assert isinstance(io.rescale_icon(QtWidgets.QStyle.SP_TitleBarMenuButton, 1.0), QtGui.QPixmap)
+    assert isinstance(io.rescale_icon(25, 1.0), QtGui.QPixmap)
+    assert isinstance(io.rescale_icon(icon.pixmap(size), 1.0), QtGui.QPixmap)
+    assert isinstance(io.rescale_icon(icon.pixmap(size).toImage(), 1.0), QtGui.QPixmap)
+
+    with pytest.raises(TypeError) as err:
+        io.rescale_icon('explorer|0', None)
+    assert str(err.value).startswith('Unsupported "size"')
+
+    # if a list/tuple then must contain 2 elements
+    for item in [(), [], (256,), [256,], (256, 256, 256), [256, 256, 256]]:
+        with pytest.raises(ValueError) as err:
+            io.rescale_icon(icon, (1,))
+        assert str(err.value) == 'The size must be in the form (width, height)'
+
+
+def test_drag_enter_paths():
+    mime = QtCore.QMimeData()
+
+    event = QtGui.QDragEnterEvent(QtCore.QPoint(0, 0), Qt.CopyAction, mime, Qt.LeftButton, Qt.NoModifier)
+    paths = io.get_drag_enter_paths(event)
+    assert len(paths) == 0
+
+    url1 = QtCore.QUrl('/path/to/image.jpeg')
+    url1.setScheme('file')
+
+    url2 = QtCore.QUrl('')  # does not pass the isValid() and scheme() == 'file' checks
+
+    url3 = QtCore.QUrl('/path/to/image.jpeg')
+    url3.setScheme('ftp')  # does not pass the scheme() == 'file' check
+
+    url4 = QtCore.QUrl('/path/to/image.png')
+    url4.setScheme('file')
+
+    url5 = QtCore.QUrl('/path/to/image2.jpg')
+    url5.setScheme('file')
+
+    mime.setUrls([url1, url2, url3, url4, url5])
+    event = QtGui.QDragEnterEvent(QtCore.QPoint(0, 0), Qt.CopyAction, mime, Qt.LeftButton, Qt.NoModifier)
+
+    paths = io.get_drag_enter_paths(event)
+    assert len(paths) == 3
+    assert '/path/to/image.jpeg' in paths
+    assert '/path/to/image.png' in paths
+    assert '/path/to/image2.jpg' in paths
+
+    paths = io.get_drag_enter_paths(event, pattern='*.jp*g')
+    assert len(paths) == 2
+    assert '/path/to/image.jpeg' in paths
+    assert '/path/to/image2.jpg' in paths
+
+    paths = io.get_drag_enter_paths(event, pattern='*.png')
+    assert len(paths) == 1
+    assert '/path/to/image.png' in paths
