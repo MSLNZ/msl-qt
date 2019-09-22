@@ -5,7 +5,7 @@ import os
 import json
 from datetime import datetime
 
-from . import application, QtWidgets, QtCore, QtGui
+from . import application, QtWidgets, Qt, QtGui
 from . import prompt, Button
 from .constants import HOME_DIR
 
@@ -14,9 +14,9 @@ class NotesHistory(QtWidgets.QDialog):
 
     def __init__(self, parent, json_path, title, even_row_color, odd_row_color):
         """Do not instantiate directly. Use :func:`msl.qt.prompt.notes` instead."""
-        QtWidgets.QDialog.__init__(self, parent=parent)
+        super(NotesHistory, self).__init__(parent=parent)
 
-        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinMaxButtonsHint)
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle(title)
 
         self.path = json_path if json_path else os.path.join(HOME_DIR, 'qt-notes-history.json')
@@ -169,11 +169,11 @@ class NotesHistory(QtWidgets.QDialog):
 
     def table_key_press(self, event):
         # CTRL+A pressed
-        if event.modifiers() == QtCore.Qt.ControlModifier and event.key() == QtCore.Qt.Key_A:
+        if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_A:
             self.table.selectAll()
             return
 
-        if event.key() != QtCore.Qt.Key_Delete:
+        if event.key() != Qt.Key_Delete:
             return
 
         # sort the selected rows in reverse order for the self.table.removeRow method below
