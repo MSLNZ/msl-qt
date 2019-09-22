@@ -5,3 +5,4 @@ msl\.qt\.sleep module
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: staticMetaObject
