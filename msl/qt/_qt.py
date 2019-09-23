@@ -43,13 +43,13 @@ except ImportError:
 # for example, the following are equivalent to the above
 #   QT_API = 'pyside2'
 #   QT_API = 'pyqt5'
-qt_api = os.getenv('QT_API', 'pyside').lower()
-if qt_api.startswith('pyside'):
+QT_API = os.getenv('QT_API', 'pyside').lower()
+if QT_API.startswith('pyside'):
     use_pyside = has_pyside
-elif qt_api.startswith('pyqt'):
+elif QT_API.startswith('pyqt'):
     use_pyside = not has_pyqt
 else:
-    raise ValueError('Invalid environment variable QT_API -> {!r}'.format(qt_api))
+    raise ValueError('Invalid environment variable QT_API -> {!r}'.format(QT_API))
 
 # PySide2/PyQt5 is not required if building the documentation
 # since the package gets mocked, see docs/conf.py
@@ -64,7 +64,8 @@ if use_pyside:
     Qt = QtCore.Qt
     Signal = QtCore.Signal
     Slot = QtCore.Slot
-    QtWidgets.QWIDGETSIZE_MAX = (1 << 24) - 1  # this constant is missing from QtWidgets
+    if not hasattr(QtWidgets, 'QWIDGETSIZE_MAX'):
+        QtWidgets.QWIDGETSIZE_MAX = (1 << 24) - 1
 else:
     from PyQt5 import QtGui
     from PyQt5 import QtCore
