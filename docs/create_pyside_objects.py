@@ -64,6 +64,22 @@ def create_modified_inv():
         entry = ' '.join((name, typ, prio, location, dispname))
         fout.write(compressor.compress((entry + '\n').encode('utf-8')))
 
+        found = re.search(r'(PySide2)\.(\w+)(\.)*(PySide2.)*', name)
+        if found:
+            index = found.end()
+            name = name[index:]
+
+        found = re.search(r'(\w+)\.(\w+)', name)
+        if found and found.group(1) == found.group(2):
+            index = (found.end()+1)//2
+            name = name[index:]
+
+        if not found:
+            continue
+
+        entry = ' '.join((name, typ, prio, location, dispname))
+        fout.write(compressor.compress((entry + '\n').encode('utf-8')))
+
     fout.write(compressor.flush())
     fin.close()
     fout.close()
