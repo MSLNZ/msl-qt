@@ -5,9 +5,15 @@ import os
 import json
 from datetime import datetime
 
-from . import application, QtWidgets, Qt, QtGui
-from . import prompt, Button
-from .constants import HOME_DIR
+from .. import (
+    application,
+    QtWidgets,
+    Qt,
+    QtGui,
+    prompt,
+    Button,
+)
+from ..constants import HOME_DIR
 
 
 class NotesHistory(QtWidgets.QDialog):

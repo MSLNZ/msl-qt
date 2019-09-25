@@ -1,7 +1,7 @@
 """
 A :class:`~QtWidgets.QToolButton` to display text, an icon and a menu.
 """
-from . import QtWidgets, QtCore, QtGui, io
+from .. import QtWidgets, QtCore, Qt, QtGui, io
 
 
 class Button(QtWidgets.QToolButton):
@@ -40,16 +40,16 @@ class Button(QtWidgets.QToolButton):
 
         if text and icon:
             if is_text_under_icon:
-                self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+                self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             else:
-                self.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+                self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             self.setText(text)
             self._set_icon(icon, icon_size)
         elif text and not icon:
-            self.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+            self.setToolButtonStyle(Qt.ToolButtonTextOnly)
             self.setText(text)
         elif not text and icon:
-            self.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+            self.setToolButtonStyle(Qt.ToolButtonIconOnly)
             self._set_icon(icon, icon_size)
 
         # the left-click event handler
@@ -57,7 +57,7 @@ class Button(QtWidgets.QToolButton):
             self.set_left_click(left_click)
 
         # setContextMenuPolicy allows for right-click events
-        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
 
         if right_click is not None:
             self.set_right_click(right_click)
@@ -131,6 +131,7 @@ class Button(QtWidgets.QToolButton):
         self.customContextMenuRequested.connect(fcn)
 
     def _show_menu_tooltip(self, action):
+        """Slot -> The tooltip of a QAction in a QMenu is not shown. This is a work-around."""
         QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), action.toolTip())
 
     def _create_menu(self):

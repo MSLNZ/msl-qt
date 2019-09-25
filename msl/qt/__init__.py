@@ -55,12 +55,16 @@ def application(*args):
 
 
 from ._qt import *
-from .button import Button
 from .exceptions import excepthook
 from . import io
-from .logger import Logger
 from .loop_until_abort import LoopUntilAbort
 from . import prompt
-from .toggle_switch import ToggleSwitch
 from .sleep import Sleep
 from .threading import Thread, Worker
+from .widgets import (
+    Button,
+    Logger,
+    ToggleSwitch,
+    DoubleSpinBox,
+    SpinBox,
+)

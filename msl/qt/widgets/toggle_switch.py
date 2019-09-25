@@ -1,7 +1,7 @@
 """
 A toggle switch :class:`QtWidgets.QWidget`.
 """
-from . import QtWidgets, QtCore, QtGui
+from msl.qt import QtWidgets, Qt, QtCore, QtGui
 
 
 class ToggleSwitch(QtWidgets.QAbstractButton):
@@ -15,7 +15,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         Parameters
         ----------
         parent : :class:`QtWidgets.QWidget`, optional
-            The parent :class:`QtWidgets.QWidget`.
+            The parent widget.
         height : :class:`int`, optional
             The height, in pixels, of the toggle switch.
         checked_color : :class:`QtGui.QColor`, optional
@@ -44,11 +44,11 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         self.setCheckable(True)
 
     def enterEvent(self, event):
-        """Overrides `enterEvent <https://doc.qt.io/qt-5/qwidget.html#enterEvent>`_."""
-        self.setCursor(QtCore.Qt.PointingHandCursor)
+        """Overrides :meth:`QtWidgets.QWidget.enterEvent`."""
+        self.setCursor(Qt.PointingHandCursor)
 
     def paintEvent(self, event):
-        """Overrides `paintEvent <https://doc.qt.io/qt-5/qwidget.html#paintEvent>`_."""
+        """Overrides :meth:`QtWidgets.QWidget.paintEvent`."""
         diameter = self._height - 2 * self._pad
         radius = diameter * 0.5
 
@@ -62,7 +62,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             opacity = 0.5
 
         p = QtGui.QPainter(self)
-        p.setPen(QtCore.Qt.NoPen)
+        p.setPen(Qt.NoPen)
         p.setRenderHint(QtGui.QPainter.Antialiasing, True)
         ellipse = QtCore.QRect(x, self._pad, diameter, diameter)
         w = max(diameter, self.width() - 2 * self._pad)
@@ -74,7 +74,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             p.setOpacity(1.0)
             p.drawEllipse(ellipse)
         else:
-            p.setBrush(QtCore.Qt.black)
+            p.setBrush(Qt.black)
             p.setOpacity(0.12)
             p.drawRoundedRect(rect, radius, radius)
             p.setOpacity(1.0)
@@ -82,5 +82,5 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             p.drawEllipse(ellipse)
 
     def sizeHint(self):
-        """Overrides `sizeHint <https://doc.qt.io/qt-5/qwidget.html#sizeHint-prop>`_."""
+        """Overrides :meth:`QtWidgets.QWidget.sizeHint`."""
         return QtCore.QSize(2 * (self._height + self._pad), self._height + 2 * self._pad)

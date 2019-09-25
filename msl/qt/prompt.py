@@ -268,7 +268,7 @@ def notes(*, path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EA
         The note that was entered.
     """
     # import here since there are circular import errors if you import at the module level
-    from .notes_history import NotesHistory
+    from .widgets.notes_history import NotesHistory
     app, title = _get_app_and_title(title)
     nh = NotesHistory(app.activeWindow(), path, title, even_row_color, odd_row_color)
     nh.exec_()
