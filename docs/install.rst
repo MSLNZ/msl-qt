@@ -1,3 +1,5 @@
+.. _qt-install:
+
 =======
 Install
 =======
@@ -14,6 +16,16 @@ Dependencies
 ------------
 * Python 3.5+
 * PyQt5_ or `Qt for Python`_ -- the Qt package that you want to use (you must install one, but the choice is yours)
+
+You can automatically install one of these Qt packages when **MSL-Qt** is installed.
+
+To also install PyQt5_::
+
+   msl install qt[pyqt]
+
+or, to also install `Qt for Python`_::
+
+   msl install qt[pyside]
 
 Optional Dependencies
 +++++++++++++++++++++
