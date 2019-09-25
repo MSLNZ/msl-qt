@@ -1,5 +1,5 @@
 """
-Example to show the :class:`Logger <msl.qt.logger.Logger>`.
+Example to show the :class:`~msl.qt.widgets.logger.Logger`.
 """
 import random
 import logging

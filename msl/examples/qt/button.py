@@ -1,5 +1,5 @@
 """
-A :class:`~msl.qt.button.Button` example.
+A :class:`~msl.qt.widget.button.Button` example.
 """
 from msl.qt import application, Button
 
