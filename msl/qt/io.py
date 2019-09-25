@@ -5,7 +5,7 @@ import os
 import sys
 import fnmatch
 
-from . import QtWidgets, QtGui, QtCore, application, prompt
+from . import QtWidgets, QtGui, QtCore, Qt, application
 
 __all__ = (
     'get_drag_enter_paths',
@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-def get_icon(obj, *, size=None, aspect_mode=QtCore.Qt.KeepAspectRatio):
+def get_icon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
     """Convert the input object to a :class:`QtGui.QIcon`.
 
     Parameters
@@ -80,7 +80,7 @@ def get_icon(obj, *, size=None, aspect_mode=QtCore.Qt.KeepAspectRatio):
         If an :class:`int` then set the width and the height to be the `size` value.
         If a :class:`float` then a scaling factor.
         If a :class:`tuple` then the (width, height) values.
-    aspect_mode : `QtCore.Qt.AspectRatioMode <https://doc.qt.io/qt-5/qt.html#AspectRatioMode-enum>`_, optional
+    aspect_mode : :attr:`QtCore.Qt.AspectRatioMode`, optional
         How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
 
     Returns
@@ -162,10 +162,8 @@ def icon_to_base64(icon, *, fmt='png'):
 
     Parameters
     ----------
-    icon : :class:`object`, optional
-        An icon with a data type that is handled by :func:`get_icon`. If :obj:`None`
-        then a dialog window is created to allow the user to select an icon file
-        that is saved in a folder.
+    icon : :class:`object`
+        An icon with a data type that is handled by :func:`get_icon`.
     fmt : :class:`str`, optional
         The icon format to use when converting. The supported values are: ``BMP``,
         ``JPG``, ``JPEG`` and ``PNG``.
@@ -267,7 +265,8 @@ def get_drag_enter_paths(event, *, pattern=None):
     event : :class:`QtGui.QDragEnterEvent`
         A drag-enter event.
     pattern : :class:`str`, optional
-        Include only the file paths that match the `pattern`.
+        Include only the file paths that match the `pattern`. For example,
+        to only include JPEG or JPG image files use ``'*.jp*g'``.
 
         See :func:`fnmatch.fnmatch`.
 
@@ -285,7 +284,7 @@ def get_drag_enter_paths(event, *, pattern=None):
     return []
 
 
-def rescale_icon(icon, size, *, aspect_mode=QtCore.Qt.KeepAspectRatio):
+def rescale_icon(icon, size, *, aspect_mode=Qt.KeepAspectRatio):
     """Rescale an icon.
 
     Parameters
@@ -297,7 +296,7 @@ def rescale_icon(icon, size, *, aspect_mode=QtCore.Qt.KeepAspectRatio):
         If an :class:`int` then set the width and the height to be the `size` value.
         If a :class:`float` then a scaling factor.
         If a :class:`tuple` then the (width, height) values.
-    aspect_mode : QtCore.Qt.AspectRatioMode_, optional
+    aspect_mode : :attr:`QtCore.Qt.AspectRatioMode`, optional
         How to maintain the aspect ratio if rescaling. The default mode is to keep the aspect ratio.
 
     Returns

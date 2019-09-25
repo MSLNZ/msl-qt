@@ -28,7 +28,7 @@ class Worker(QtCore.QObject):
         """The expensive or blocking operation to process.
 
         .. attention::
-           You **MUST** override this method.
+           You must override this method.
         """
         raise NotImplementedError("You must override the 'process' method.")
 
@@ -44,7 +44,7 @@ class Worker(QtCore.QObject):
 class Thread(QtCore.QObject):
 
     finished = Signal()
-    """:class:`~msl.qt._qt.Signal`: This signal is emitted from the thread when it finishes executing."""
+    """This :ref:`Signal` is emitted when the thread finishes (i.e., when :meth:`Worker.process` finishes)."""
 
     def __init__(self, worker):
         """Moves the `worker` to a new :class:`QtCore.QThread`.
@@ -85,10 +85,10 @@ class Thread(QtCore.QObject):
 
         Parameters
         ----------
-        exception
-            The exception.
-        traceback
-            The traceback.
+        exception : :exc:`BaseException`
+            The exception instance
+        traceback : :mod:`traceback`
+            A traceback object.
         """
         prompt.critical(''.join(tb.format_exception(type(exception), exception, traceback)))
 
