@@ -311,7 +311,7 @@ def save(*, title='Save As', directory=None, filters=None, options=None):
     return name if name else None
 
 
-def text(message, *, title=None, font=None, value='', multi_line=False):
+def text(message, *, title=None, font=None, value='', multi_line=False, echo=QtWidgets.QLineEdit.Normal):
     """Request text.
 
     Parameters
@@ -329,6 +329,8 @@ def text(message, *, title=None, font=None, value='', multi_line=False):
         The initial value.
     multi_line : :class:`bool`, optional
         Whether the entered text can span multiple lines.
+    echo : :class:`int` or `QLineEdit.EchoMode <https://doc.qt.io/qt-5/qlineedit.html#EchoMode-enum>`_, optional
+        The echo mode for the text value. Useful if requesting a password.
 
     Returns
     -------
@@ -341,7 +343,7 @@ def text(message, *, title=None, font=None, value='', multi_line=False):
     if multi_line:
         dialog.setOption(QtWidgets.QInputDialog.UsePlainTextEditForTextInput)
     else:
-        dialog.setTextEchoMode(QtWidgets.QLineEdit.Normal)
+        dialog.setTextEchoMode(QtWidgets.QLineEdit.EchoMode(echo))
     ok = dialog.exec_()
     return dialog.textValue().strip() if ok else None
 
