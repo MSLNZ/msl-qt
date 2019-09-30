@@ -135,7 +135,7 @@ class Button(QtWidgets.QToolButton):
         QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), action.toolTip())
 
     def _create_menu(self):
-        self._menu = _CustomMenu(self)
+        self._menu = ButtonMenu(self)
         self.setMenu(self._menu)
         self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
 
@@ -146,12 +146,11 @@ class Button(QtWidgets.QToolButton):
         self.setIcon(io.get_icon(icon))
 
 
-class _CustomMenu(QtWidgets.QMenu):
+class ButtonMenu(QtWidgets.QMenu):
+    """Display the :class:`QtWidgets.QMenu` underneath the :class:`Button`."""
 
-    def event(self, event):
-        # move the position of the QMenu
-        if event.type() == QtCore.QEvent.Show:
-            point = self.parent().mapToGlobal(QtCore.QPoint(0, 0))
-            offset = self.parent().width() - self.width()
-            self.move(point + QtCore.QPoint(offset, self.parent().height()))
-        return QtWidgets.QMenu.event(self, event)
+    def showEvent(self, event):
+        point = self.parent().mapToGlobal(QtCore.QPoint(0, 0))
+        offset = self.parent().width() - self.width()
+        self.move(point + QtCore.QPoint(offset, self.parent().height()))
+        super(ButtonMenu, self).showEvent(event)
