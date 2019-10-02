@@ -1,5 +1,5 @@
 """
-Exception handling used by **MSL-Qt**.
+Exception handling.
 """
 import logging
 import traceback
