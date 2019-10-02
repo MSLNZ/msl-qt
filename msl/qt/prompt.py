@@ -6,7 +6,12 @@ event that happened or to request information from the user.
 """
 import traceback
 
-from . import QtWidgets, QtGui, Qt, application
+from . import (
+    QtWidgets,
+    Qt,
+    application,
+)
+from .utils import to_qfont
 
 
 def critical(message, *, title=None, font=None):
@@ -486,7 +491,7 @@ def _input_dialog(*, title=None, message=None, font=None):
     dialog.setWindowTitle(title)
     dialog.setLabelText(message)
     if font:
-        dialog.setFont(_to_qfont(font))
+        dialog.setFont(to_qfont(font))
     return app, dialog
 
 
@@ -496,34 +501,12 @@ def _message_box(*, title=None, message=None, font=None, buttons=None, default=N
     mb.setWindowTitle(title)
     mb.setText(message)
     if font:
-        mb.setFont(_to_qfont(font))
+        mb.setFont(to_qfont(font))
     if buttons:
         mb.setStandardButtons(buttons)
     if default:
         mb.setDefaultButton(default)
     return app, mb
-
-
-def _to_qfont(font):
-    """Convert int/float -> point size, str -> family name, tuple -> (family name, point size) to a QFont."""
-    if isinstance(font, QtGui.QFont):
-        return font
-    elif isinstance(font, int):
-        f = QtGui.QFont()
-        f.setPointSize(font)
-        return f
-    elif isinstance(font, float):
-        f = QtGui.QFont()
-        f.setPointSizeF(font)
-        return f
-    elif isinstance(font, str):
-        return QtGui.QFont(font)
-    elif isinstance(font, (tuple, list)):
-        if len(font) < 2:
-            raise ValueError('The font must be a (family name, point size) tuple')
-        return QtGui.QFont(font[0], pointSize=int(font[1]))
-    else:
-        raise TypeError('Must specify a QFont object')
 
 
 def _get_file_filters(filters):

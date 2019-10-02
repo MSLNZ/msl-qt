@@ -18,6 +18,7 @@ which has the following modules
    msl.qt.io
    msl.qt.prompt
    msl.qt.threading
+   msl.qt.utils
 
 the following custom :class:`~QtWidgets.QWidget`\'s
 
@@ -58,6 +59,7 @@ Package Structure
    msl.qt.prompt <_api/msl.qt.prompt>
    msl.qt.sleep <_api/msl.qt.sleep>
    msl.qt.threading <_api/msl.qt.threading>
+   msl.qt.utils <_api/msl.qt.utils>
    msl.qt.equipment <_api/msl.qt.equipment>
    msl.qt.widgets <_api/msl.qt.widgets>
 
