@@ -1,12 +1,18 @@
 """
 A toggle switch :class:`QtWidgets.QWidget`.
 """
-from msl.qt import QtWidgets, Qt, QtCore, QtGui
+from .. import (
+    Qt,
+    QtGui,
+    QtCore,
+    QtWidgets,
+    utils,
+)
 
 
 class ToggleSwitch(QtWidgets.QAbstractButton):
 
-    def __init__(self, *, parent=None, height=None, checked_color='#009688', unchecked_color='#B4B4B4'):
+    def __init__(self, *, parent=None, height=None, on_color='#009688', off_color='#B4B4B4'):
         """Constructs a toggle switch, |toggle_switch|
 
         .. |toggle_switch| image:: ../../docs/_static/toggle_switch.gif
@@ -18,30 +24,90 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             The parent widget.
         height : :class:`int`, optional
             The height, in pixels, of the toggle switch.
-        checked_color : :class:`QtGui.QColor`, optional
-            The color to draw the switch when it is in the checked state.
-            Can be any data type and value that the constructor of a
-            :class:`QtGui.QColor` accepts.
-        unchecked_color : :class:`QtGui.QColor`, optional
-            The color to draw the switch when it is **not** in the checked state.
-            Can be any data type and value that the constructor of a
-            :class:`QtGui.QColor` accepts.
+        on_color
+            The color when the :class:`ToggleSwitch` is on. See :func:`~msl.qt.utils.to_qcolor`
+            for details about the different data types that are supported.
+        off_color
+            The color when the :class:`ToggleSwitch` is off. See :func:`~msl.qt.utils.to_qcolor`
+            for details about the different data types that are supported.
 
         Example
         -------
         To view an example with the :class:`ToggleSwitch` run::
 
-        >>> from msl.examples.qt import toggle_switch  # doctest: +SKIP
+        >>> from msl.examples.qt import toggle_switch
         >>> toggle_switch.show()  # doctest: +SKIP
         """
         super(ToggleSwitch, self).__init__(parent=parent)
 
-        screen_height = QtWidgets.QDesktopWidget().availableGeometry(self).height()
-        self._height = height if height is not None else int(screen_height*0.03)
+        if height is None:
+            self._height = int(utils.screen_geometry(self).height()*0.03)
+        else:
+            self._height = int(height)
+
         self._pad = 4
-        self._checked_brush = QtGui.QBrush(QtGui.QColor(checked_color))
-        self._unchecked_brush = QtGui.QBrush(QtGui.QColor(unchecked_color))
         self.setCheckable(True)
+        self.set_on_color(on_color)
+        self.set_off_color(off_color)
+
+    @property
+    def is_on(self):
+        """:class:`bool`: Whether the :class:`ToggleSwitch` is on or off."""
+        return self.isChecked()
+
+    def off_color(self):
+        """Get the color of the :class:`ToggleSwitch` when it is off.
+
+        Returns
+        -------
+        :class:`QtGui.QColor`
+            The off color.
+        """
+        return self._off_brush.color()
+
+    def set_off_color(self, color):
+        """Set the color of the :class:`ToggleSwitch` when it is off.
+
+        Parameters
+        -------
+        color
+            The color when the :class:`ToggleSwitch` is off. See :func:`~msl.qt.utils.to_qcolor`
+            for details about the different data types that are supported.
+        """
+        self._off_brush = QtGui.QBrush(utils.to_qcolor(color))
+        self.update()
+
+    def on_color(self):
+        """Get the color of the :class:`ToggleSwitch` when it is on.
+
+        Returns
+        -------
+        :class:`QtGui.QColor`
+            The on color.
+        """
+        return self._on_brush.color()
+
+    def set_on_color(self, color):
+        """Set the color of the :class:`ToggleSwitch` when it is on.
+
+        Parameters
+        -------
+        color
+            The color when the :class:`ToggleSwitch` is on. See :func:`~msl.qt.utils.to_qcolor`
+            for details about the different data types that are supported.
+        """
+        self._on_brush = QtGui.QBrush(utils.to_qcolor(color))
+        self.update()
+
+    def turn_off(self):
+        """Turn the :class:`ToggleSwitch` off."""
+        if self.isChecked():
+            self.toggle()
+
+    def turn_on(self):
+        """Turn the :class:`ToggleSwitch` on."""
+        if not self.isChecked():
+            self.toggle()
 
     def enterEvent(self, event):
         """Overrides :meth:`QtWidgets.QWidget.enterEvent`."""
@@ -53,11 +119,11 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         radius = diameter * 0.5
 
         if self.isChecked():
-            brush = self._checked_brush
+            brush = self._on_brush
             x = self.width() - diameter - self._pad
             opacity = 0.3
         else:
-            brush = self._unchecked_brush
+            brush = self._off_brush
             x = self._pad
             opacity = 0.5
 
