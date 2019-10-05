@@ -5,4 +5,4 @@ msl.qt.widgets.spinboxes module
    :members:
    :undoc-members:
    :show-inheritance:
-   :exclude-members: staticMetaObject
+   :exclude-members: staticMetaObject, stepBy
