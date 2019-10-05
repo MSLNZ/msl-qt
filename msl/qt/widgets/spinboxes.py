@@ -27,7 +27,7 @@ from .. import QtWidgets
 
 class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
-    def __init__(self, parent=None):
+    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1, decimals=2):
         """A :class:`~QtWidgets.QDoubleSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -36,8 +36,20 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         ----------
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
+        minimum : :class:`float`, optional
+            The minimum value.
+        maximum : :class:`float`, optional
+            The maximum value.
+        step : :class:`float`, optional
+            The step-by size.
+        decimals : :class:`int`, optional
+            The number of digits after the decimal place to use to show the value.
         """
         super(DoubleSpinBox, self).__init__(parent=parent)
+        self.setMinimum(minimum)
+        self.setMaximum(maximum)
+        self.setSingleStep(step)
+        self.setDecimals(decimals)
 
     def stepBy(self, step):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
@@ -52,7 +64,7 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
 class SpinBox(QtWidgets.QSpinBox):
 
-    def __init__(self, parent=None):
+    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1):
         """A :class:`~QtWidgets.QSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -61,8 +73,17 @@ class SpinBox(QtWidgets.QSpinBox):
         ----------
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
+        minimum : :class:`int`, optional
+            The minimum value.
+        maximum : :class:`int`, optional
+            The maximum value.
+        step : :class:`int`, optional
+            The step-by size.
         """
         super(SpinBox, self).__init__(parent=parent)
+        self.setMinimum(minimum)
+        self.setMaximum(maximum)
+        self.setSingleStep(step)
 
     def stepBy(self, step):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
