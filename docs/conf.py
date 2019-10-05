@@ -44,6 +44,15 @@ if on_rtd:
         class QMenu(object):
             pass
 
+        class QLineEdit(object):
+            Normal = 0
+
+        class QDoubleSpinBox(object):
+            pass
+
+        class QSpinBox(object):
+            pass
+
     class QtCore(object):
 
         class Qt(object):
