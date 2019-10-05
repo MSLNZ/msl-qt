@@ -8,3 +8,4 @@ from .spinboxes import (
     DoubleSpinBox,
     SpinBox,
 )
+from .led import LED

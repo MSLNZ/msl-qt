@@ -25,6 +25,7 @@ the following custom :class:`~QtWidgets.QWidget`\'s
 .. autosummary::
 
    ~msl.qt.widgets.button.Button
+   ~msl.qt.widgets.led.LED
    ~msl.qt.widgets.logger.Logger
    ~msl.qt.widgets.toggle_switch.ToggleSwitch
    ~msl.qt.widgets.spinboxes.DoubleSpinBox
@@ -64,4 +65,7 @@ Package Structure
    msl.qt.widgets <_api/msl.qt.widgets>
 
 .. |toggle_switch| image:: _static/toggle_switch.gif
+   :scale: 40 %
+
+.. |led_widget| image:: _static/led_widget.gif
    :scale: 40 %

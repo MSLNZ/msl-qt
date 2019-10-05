@@ -67,5 +67,6 @@ from .widgets import (
     ToggleSwitch,
     DoubleSpinBox,
     SpinBox,
+    LED,
 )
 from . import utils

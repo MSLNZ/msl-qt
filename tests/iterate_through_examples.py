@@ -17,6 +17,7 @@ examples = [
     example.toggle_switch.show,
     example.loop_until_abort.main,
     example.ShowStandardIcons,
+    example.led.show,
 ]
 
 count = 1

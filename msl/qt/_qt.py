@@ -61,6 +61,7 @@ if use_pyside:
     from PySide2 import QtGui
     from PySide2 import QtCore
     from PySide2 import QtWidgets
+    from PySide2 import QtSvg
     Qt = QtCore.Qt
     Signal = QtCore.Signal
     Slot = QtCore.Slot
@@ -70,6 +71,7 @@ else:
     from PyQt5 import QtGui
     from PyQt5 import QtCore
     from PyQt5 import QtWidgets
+    from PyQt5 import QtSvg
     Qt = QtCore.Qt
     Signal = QtCore.pyqtSignal
     Slot = QtCore.pyqtSlot
@@ -80,6 +82,7 @@ __all__ = (
     'QtGui',
     'QtWidgets',
     'QtCore',
+    'QtSvg',
     'Signal',
     'Slot',
 )
