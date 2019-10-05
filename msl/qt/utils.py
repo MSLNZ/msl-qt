@@ -4,38 +4,72 @@ General helper functions.
 from . import QtGui
 
 
-def to_qfont(font):
-    """Convert the input argument into a :class:`QtGui.QFont` object.
+def to_qfont(*args):
+    """Convert the input argument(s) into a :class:`QtGui.QFont`.
 
     Parameters
     ----------
-    font : :class:`int`, :class:`float`, :class:`str` or :class:`tuple`
-        The value to convert to a :class:`QtGui.QFont`.
+    args
+        The argument(s) to convert to a :class:`QtGui.QFont`.
 
         * If :class:`int` or :class:`float` then the point size.
         * If :class:`str` then the font family name.
-        * If :class:`tuple` then (family name, point size).
+        * If :class:`QtGui.QFont` then returns a copy.
+        * If multiple arguments then
+
+          - family name, point size
+
+          - family name, point size, weight
+
+          - family name, point size, weight, is italic
 
     Returns
     -------
     :class:`QtGui.QFont`
-        The input `value` converted to a :class:`QtGui.QFont` object.
+        The input argument(s) converted to a :class:`QtGui.QFont`.
+
+    Examples
+    --------
+    >>> font = to_qfont(48)
+    >>> font = to_qfont(23.4)
+    >>> font = to_qfont('Papyrus')
+    >>> font = to_qfont('Ariel', 16)
+    >>> font = to_qfont('Ariel', 16, QtGui.QFont.Bold)
+    >>> font = to_qfont('Ariel', 16, 50, True)
     """
-    if isinstance(font, QtGui.QFont):
-        return font
-    elif isinstance(font, int):
-        f = QtGui.QFont()
-        f.setPointSize(font)
-        return f
-    elif isinstance(font, float):
-        f = QtGui.QFont()
-        f.setPointSizeF(font)
-        return f
-    elif isinstance(font, str):
-        return QtGui.QFont(font)
-    elif isinstance(font, (tuple, list)):
-        if len(font) < 2:
-            raise ValueError('The font must be a (family name, point size) tuple')
-        return QtGui.QFont(font[0], pointSize=int(font[1]))
+
+    def parse_tuple(a):
+        if not isinstance(a[0], str):
+            raise TypeError('The first argument must be the family name (as a string)')
+
+        if len(a) == 1:
+            return QtGui.QFont(a[0])
+        elif len(a) == 2:
+            return QtGui.QFont(a[0], pointSize=int(a[1]))
+        elif len(a) == 3:
+            return QtGui.QFont(a[0], pointSize=int(a[1]), weight=int(a[2]))
+        else:
+            return QtGui.QFont(a[0], pointSize=int(a[1]), weight=int(a[2]), italic=bool(a[3]))
+
+    if not args:
+        return QtGui.QFont()
+    elif len(args) == 1:
+        value = args[0]
+        if isinstance(value, QtGui.QFont):
+            return QtGui.QFont(value)
+        elif isinstance(value, int):
+            f = QtGui.QFont()
+            f.setPointSize(value)
+            return f
+        elif isinstance(value, float):
+            f = QtGui.QFont()
+            f.setPointSizeF(value)
+            return f
+        elif isinstance(value, str):
+            return QtGui.QFont(value)
+        elif isinstance(value, (list, tuple)):
+            return parse_tuple(value)
+        else:
+            raise TypeError('Cannot create a QFont from {!r}'.format(value))
     else:
-        raise TypeError('Must specify a QFont object')
+        return parse_tuple(args)
