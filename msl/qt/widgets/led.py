@@ -119,7 +119,7 @@ class LED(QtWidgets.QWidget):
         Parameters
         -------
         color
-            The color when the :class:`ToggleSwitch` is off. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`LED` is off. See :func:`~msl.qt.utils.to_qcolor`
             for details about the different data types that are supported.
         """
         self._off_color = utils.to_qcolor(color)
@@ -141,7 +141,7 @@ class LED(QtWidgets.QWidget):
         Parameters
         -------
         color
-            The color when the :class:`ToggleSwitch` is on. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`LED` is on. See :func:`~msl.qt.utils.to_qcolor`
             for details about the different data types that are supported.
         """
         self._on_color = utils.to_qcolor(color)
