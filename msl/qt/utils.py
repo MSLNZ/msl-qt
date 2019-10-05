@@ -132,6 +132,8 @@ def to_qcolor(*args):
             return QtGui.QColor(val, val, val)
         elif isinstance(arg, (int, Qt.GlobalColor)):
             return QtGui.QColor(Qt.GlobalColor(arg))
+        else:
+            raise TypeError('Cannot convert {!r} to a QColor'.format(args))
     else:
         return QtGui.QColor(*tuple(ensure_255(v) for v in args))
 
