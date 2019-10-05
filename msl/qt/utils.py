@@ -4,6 +4,7 @@ General helper functions.
 from . import (
     QtGui,
     Qt,
+    QtWidgets,
 )
 
 
@@ -132,3 +133,35 @@ def to_qcolor(*args):
             return QtGui.QColor(Qt.GlobalColor(arg))
     else:
         return QtGui.QColor(*tuple(ensure_255(v) for v in args))
+
+
+def screen_geometry(widget=None):
+    """Get the geometry of a desktop screen.
+
+    Parameters
+    ----------
+    widget : :class:`QtWidgets.QWidget`, optional
+        Get the geometry of the screen that contains this widget.
+
+    Returns
+    -------
+    :class:`QtCore.QRect`
+        If a `widget` is specified then the geometry of the screen that
+        contains the `widget` otherwise returns the geometry of the primary
+        screen (i.e., the screen where the main widget resides).
+    """
+    if widget is None:
+        return QtGui.QGuiApplication.primaryScreen().geometry()
+
+    handle = widget.window().windowHandle()
+    if handle is not None:
+        return handle.screen().geometry()
+
+    parent = widget.parentWidget()
+    if parent is not None:
+        handle = parent.window().windowHandle()
+        if handle is not None:
+            return handle.screen().geometry()
+
+    # the Qt docs say that this function is deprecated
+    return QtWidgets.QDesktopWidget().availableGeometry(widget)

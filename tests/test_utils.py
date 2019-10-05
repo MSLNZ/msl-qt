@@ -1,6 +1,6 @@
 import pytest
 
-from msl.qt import Qt, QtGui, utils
+from msl.qt import Qt, QtGui, QtCore, QtWidgets, utils
 
 
 def test_to_qfont():
@@ -155,3 +155,11 @@ def test_to_qcolor():
     for obj in [(1, 2), (1, 2, 3, 4, 5)]:
         with pytest.raises(TypeError):
             utils.to_qcolor(obj)
+
+
+def test_screen_geometry():
+
+    # just check that these don't raise an exception
+    assert isinstance(utils.screen_geometry(), QtCore.QRect)
+    assert isinstance(utils.screen_geometry(QtWidgets.QLabel()), QtCore.QRect)
+    assert isinstance(utils.screen_geometry(QtWidgets.QLabel(parent=QtWidgets.QLabel())), QtCore.QRect)
