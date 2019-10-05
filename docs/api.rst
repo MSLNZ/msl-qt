@@ -31,15 +31,6 @@ the following custom :class:`~QtWidgets.QWidget`\'s
    ~msl.qt.widgets.spinboxes.DoubleSpinBox
    ~msl.qt.widgets.spinboxes.SpinBox
 
-the following :class:`~QtWidgets.QWidget`\'s that are compatible with the :ref:`msl-equipment-welcome`
-package
-
-.. autosummary::
-
-   ~msl.qt.equipment.configuration_viewer.ConfigurationViewer
-   ~msl.qt.equipment.message_based.MessageBased
-   ~msl.qt.equipment.thorlabs.translation_stage.TranslationStage
-
 and the following convenience classes
 
 .. autosummary::
@@ -61,7 +52,6 @@ Package Structure
    msl.qt.sleep <_api/msl.qt.sleep>
    msl.qt.threading <_api/msl.qt.threading>
    msl.qt.utils <_api/msl.qt.utils>
-   msl.qt.equipment <_api/msl.qt.equipment>
    msl.qt.widgets <_api/msl.qt.widgets>
 
 .. |toggle_switch| image:: _static/toggle_switch.gif
