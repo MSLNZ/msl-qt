@@ -27,7 +27,7 @@ from .. import QtWidgets
 
 class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
-    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1, decimals=2):
+    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1, decimals=2, tooltip=None):
         """A :class:`~QtWidgets.QDoubleSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -44,12 +44,16 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             The step-by size.
         decimals : :class:`int`, optional
             The number of digits after the decimal place to use to show the value.
+        tooltip : :class:`str`, optional
+            The tooltip to use for the :class:`DoubleSpinBox`.
         """
         super(DoubleSpinBox, self).__init__(parent=parent)
         self.setMinimum(minimum)
         self.setMaximum(maximum)
         self.setSingleStep(step)
         self.setDecimals(decimals)
+        if tooltip:
+            self.setToolTip(tooltip)
 
     def stepBy(self, step):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
@@ -64,7 +68,7 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
 class SpinBox(QtWidgets.QSpinBox):
 
-    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1):
+    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1, tooltip=None):
         """A :class:`~QtWidgets.QSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -79,11 +83,15 @@ class SpinBox(QtWidgets.QSpinBox):
             The maximum value.
         step : :class:`int`, optional
             The step-by size.
+        tooltip : :class:`str`, optional
+            The tooltip to use for the :class:`SpinBox`.
         """
         super(SpinBox, self).__init__(parent=parent)
         self.setMinimum(minimum)
         self.setMaximum(maximum)
         self.setSingleStep(step)
+        if tooltip:
+            self.setToolTip(tooltip)
 
     def stepBy(self, step):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.

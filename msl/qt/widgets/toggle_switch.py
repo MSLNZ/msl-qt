@@ -12,7 +12,7 @@ from .. import (
 
 class ToggleSwitch(QtWidgets.QAbstractButton):
 
-    def __init__(self, *, parent=None, height=None, on_color='#009688', off_color='#B4B4B4'):
+    def __init__(self, *, parent=None, height=None, on_color='#009688', off_color='#B4B4B4', tooltip=None):
         """Constructs a toggle switch, |toggle_switch|
 
         .. |toggle_switch| image:: ../../docs/_static/toggle_switch.gif
@@ -30,6 +30,8 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         off_color
             The color when the :class:`ToggleSwitch` is off. See :func:`~msl.qt.utils.to_qcolor`
             for details about the different data types that are supported.
+        tooltip : :class:`str`, optional
+            The tooltip to use for the :class:`ToggleSwitch`.
 
         Example
         -------
@@ -49,6 +51,8 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         self.setCheckable(True)
         self.set_on_color(on_color)
         self.set_off_color(off_color)
+        if tooltip:
+            self.setToolTip(tooltip)
 
     @property
     def is_on(self):

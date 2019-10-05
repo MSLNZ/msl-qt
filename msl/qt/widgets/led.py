@@ -34,7 +34,8 @@ class LED(QtWidgets.QWidget):
     toggled = Signal(bool)
     """Emitted when the LED turns on :math:`\\rightarrow` off or off :math:`\\rightarrow` on."""
 
-    def __init__(self, *, parent=None, shape=Circle, on_color='#0F6900', off_color='grey', clickable=False):
+    def __init__(self, *, parent=None, shape=Circle, on_color='#0F6900', off_color='grey',
+                 clickable=False, tooltip=None):
         """An LED widget, |led_widget|
 
         .. |led_widget| image:: ../../docs/_static/led_widget.gif
@@ -57,6 +58,8 @@ class LED(QtWidgets.QWidget):
             about the different data types that are supported.
         clickable : :class:`bool`
             Whether the state of the :class:`LED` can be changed by clicking on it.
+        tooltip : :class:`str`, optional
+            The tooltip to use for the :class:`LED`.
 
         Example
         -------
@@ -77,6 +80,9 @@ class LED(QtWidgets.QWidget):
         self.set_off_color(off_color)
         self.set_clickable(clickable)
         self.set_shape(shape)
+
+        if tooltip:
+            self.setToolTip(tooltip)
 
     @property
     def is_on(self):
