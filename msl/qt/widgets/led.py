@@ -34,7 +34,7 @@ class LED(QtWidgets.QWidget):
     toggled = Signal(bool)
     """Emitted when the LED turns on :math:`\\rightarrow` off or off :math:`\\rightarrow` on."""
 
-    def __init__(self, *, parent=None, shape=Circle, on_color='#0F6900', off_color='grey', is_clickable=False):
+    def __init__(self, *, parent=None, shape=Circle, on_color='#0F6900', off_color='grey', clickable=False):
         """An LED widget, |led_widget|
 
         .. |led_widget| image:: ../../docs/_static/led_widget.gif
@@ -55,60 +55,117 @@ class LED(QtWidgets.QWidget):
         off_color
             The color when the :class:`LED` is off. See :func:`~msl.qt.utils.to_qcolor` for details
             about the different data types that are supported.
-        is_clickable : :class:`bool`
+        clickable : :class:`bool`
             Whether the state of the :class:`LED` can be changed by clicking on it.
+
+        Example
+        -------
+        To view an example with the :class:`LED` run::
+
+        >>> from msl.examples.qt import led
+        >>> led.show()  # doctest: +SKIP
         """
         super(LED, self).__init__(parent=parent)
         self._is_on = False
         self._renderer = QtSvg.QSvgRenderer()
 
-        # use the setter methods
-        self.on_color = on_color
-        self.off_color = off_color
-        self.is_clickable = is_clickable
-        self.shape = shape
+        self._height_hint = utils.screen_geometry(self).height() // 38
+        self._rounded_factor = 2.0
+        self._triangle_factor = 4.0 / 3.0
 
-    @property
-    def is_clickable(self):
-        """:class:`bool`: Whether the on/off state of the :class:`LED` can be changed by clicking on it."""
-        return self._is_clickable
-
-    @is_clickable.setter
-    def is_clickable(self, value):
-        self._is_clickable = bool(value)
+        self.set_on_color(on_color)
+        self.set_off_color(off_color)
+        self.set_clickable(clickable)
+        self.set_shape(shape)
 
     @property
     def is_on(self):
         """:class:`bool`: Whether the :class:`LED` is on or off."""
         return self._is_on
 
-    @property
+    def clickable(self):
+        """Get if the on/off state of the :class:`LED` can be changed by clicking on it.
+
+        Returns
+        -------
+        :class:`bool`
+            Whether the state of the :class:`LED` can be changed by clicking on it.
+        """
+        return self._is_clickable
+
+    def set_clickable(self, clickable):
+        """Set if the on/off state of the :class:`LED` can be changed by clicking on it.
+
+        Parameters
+        ----------
+        clickable : :class:`bool`
+            Whether the state of the :class:`LED` can be changed by clicking on it.
+        """
+        self._is_clickable = bool(clickable)
+
     def off_color(self):
-        """:class:`QtGui.QColor`: The color of the :class:`LED` when it is off."""
+        """Get the color of the :class:`LED` when it is off.
+
+        Returns
+        -------
+        :class:`QtGui.QColor`
+            The off color.
+        """
         return self._off_color
 
-    @off_color.setter
-    def off_color(self, color):
+    def set_off_color(self, color):
+        """Set the color of the :class:`LED` when it is off.
+
+        Parameters
+        -------
+        color
+            The color when the :class:`ToggleSwitch` is off. See :func:`~msl.qt.utils.to_qcolor`
+            for details about the different data types that are supported.
+        """
         self._off_color = utils.to_qcolor(color)
         self.update()
 
-    @property
     def on_color(self):
-        """:class:`QtGui.QColor`: The color of the :class:`LED` when it is on."""
+        """Get the color of the :class:`LED` when it is on.
+
+        Returns
+        -------
+        :class:`QtGui.QColor`
+            The on color.
+        """
         return self._on_color
 
-    @on_color.setter
-    def on_color(self, color):
+    def set_on_color(self, color):
+        """Set the color of the :class:`LED` when it is on.
+
+        Parameters
+        -------
+        color
+            The color when the :class:`ToggleSwitch` is on. See :func:`~msl.qt.utils.to_qcolor`
+            for details about the different data types that are supported.
+        """
         self._on_color = utils.to_qcolor(color)
         self.update()
 
-    @property
     def shape(self):
-        """:class:`Shapes`: The shape of the :class:`LED`."""
+        """Get the shape of the :class:`LED`.
+
+        Returns
+        -------
+        :class:`Shapes`
+            The shape of the :class:`LED`.
+        """
         return self._shape
 
-    @shape.setter
-    def shape(self, shape):
+    def set_shape(self, shape):
+        """Set the shape of the :class:`LED`.
+
+        Parameters
+        ----------
+        shape : :class:`int`, :class:`str` or :class:`Shapes`
+            The shape to draw the :class:`LED`. If a :class:`str` then the name of one of the
+            :class:`Shapes`, e.g. ``0``, ``'circle'`` and :obj:`Shapes.Circle` are equivalent.
+        """
         if isinstance(shape, str):
             shape = Shapes[shape.title()]
         self._shape = Shapes(shape)
@@ -133,10 +190,10 @@ class LED(QtWidgets.QWidget):
     def sizeHint(self):
         """Overrides :meth:`QtWidgets.QWidget.sizeHint`."""
         if self._shape == Shapes.Triangle:
-            return QtCore.QSize(64, 48)
+            return QtCore.QSize(self._triangle_factor*self._height_hint, self._height_hint)
         elif self._shape == Shapes.Rounded:
-            return QtCore.QSize(96, 48)
-        return QtCore.QSize(48, 48)
+            return QtCore.QSize(self._rounded_factor*self._height_hint, self._height_hint)
+        return QtCore.QSize(self._height_hint, self._height_hint)
 
     def paintEvent(self, event):
         """Overrides :meth:`QtWidgets.QWidget.paintEvent`."""
@@ -146,7 +203,7 @@ class LED(QtWidgets.QWidget):
         h = option.rect.height()
         w = option.rect.width()
         if self._shape == Shapes.Triangle or self._shape == Shapes.Rounded:
-            aspect = (4 / 3.0) if self._shape == Shapes.Triangle else 2.0
+            aspect = self._triangle_factor if self._shape == Shapes.Triangle else self._rounded_factor
             ah = w / aspect
             aw = w
             if ah > h:
@@ -164,7 +221,11 @@ class LED(QtWidgets.QWidget):
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
 
-        color = self._on_color if self._is_on else self._off_color
+        if self.isEnabled():
+            color = self._on_color if self._is_on else self._off_color
+        else:
+            color = QtGui.QColor('#BDBDBD')
+
         lighter = QtGui.QColor(color).lighter(150)  # 150 -> 50% brighter
 
         color_str = 'rgb(%d,%d,%d)' % (color.red(), color.green(), color.blue())

@@ -22,9 +22,9 @@ class BlinkingLEDs(QtWidgets.QWidget):
         # The shape can be an enum value or member name (case in-sensitive)
         # The color can be anything that msl.qt.utils.to_qcolor() accepts
         params = [
-            {'shape': LED.Circle, 'on_color': Qt.darkGreen, 'is_clickable': True},
+            {'shape': LED.Circle, 'on_color': Qt.darkGreen, 'clickable': True},
             {'shape': 'rouNDed', 'on_color': (78, 82, 107)},
-            {'shape': 2, 'on_color': 'cyan', 'is_clickable': True},
+            {'shape': 2, 'on_color': 'cyan', 'clickable': True},
             {'shape': 'Triangle', 'on_color': '#6b3064'},
         ]
 
@@ -46,10 +46,10 @@ class BlinkingLEDs(QtWidgets.QWidget):
         random.choice(self.leds).toggle()
 
     def led_state_changed(self, is_on):
-        print(self.sender().shape.name, 'is on' if is_on else 'is off')
+        print(self.sender().shape().name, 'is on' if is_on else 'is off')
 
     def led_was_clicked(self):
-        print(self.sender().shape.name, 'was clicked')
+        print(self.sender().shape().name, 'was clicked')
 
 
 def show():
