@@ -1,7 +1,10 @@
 """
 General helper functions.
 """
-from . import QtGui
+from . import (
+    QtGui,
+    Qt,
+)
 
 
 def to_qfont(*args):
@@ -73,3 +76,59 @@ def to_qfont(*args):
             raise TypeError('Cannot create a QFont from {!r}'.format(value))
     else:
         return parse_tuple(args)
+
+
+def to_qcolor(*args):
+    """Convert the input argument(s) into a :class:`QtGui.QColor`.
+
+    Parameters
+    ----------
+    args
+        The argument(s) to convert to a :class:`QtGui.QColor`.
+
+        * R, G, B, [A] :math:`\\rightarrow` values can be :class:`int` 0-255 or :class:`float` 0.0-1.0
+        * (R, G, B, [A]) :math:`\\rightarrow` :class:`tuple` of :class:`int` 0-255 or :class:`float` 0.0-1.0
+        * :class:`int` or :obj:`QtCore.Qt.GlobalColor` :math:`\\rightarrow` a pre-defined enum value
+        * :class:`float` :math:`\\rightarrow` a greyscale value between 0.0-1.0
+        * :class:`QtGui.QColor` :math:`\\rightarrow` returns a copy
+        * :class:`str` :math:`\\rightarrow` see `here <https://doc.qt.io/qt-5/qcolor.html#setNamedColor>`_ for examples
+
+    Returns
+    -------
+    :class:`QtGui.QColor`
+        The input argument(s) converted to a :class:`QtGui.QColor`.
+
+    Examples
+    --------
+    >>> color = to_qcolor(48, 127, 69)
+    >>> color = to_qcolor((48, 127, 69))
+    >>> color = to_qcolor(0.5)  # greyscale -> (127, 127, 127, 255)
+    >>> color = to_qcolor(0.2, 0.45, 0.3, 0.5)
+    >>> color = to_qcolor('red')
+    >>> color = to_qcolor(Qt.darkBlue)
+    >>> color = to_qcolor(15)  # 15 == Qt.darkBlue
+    """
+    if not args:
+        return QtGui.QColor()
+
+    def ensure_255(value):
+        # ensure that a value is between 0 and 255
+        if value <= 1 and isinstance(value, float):
+            value = int(value * 255)
+        return min(max(value, 0), 255)
+
+    if len(args) == 1:
+        arg = args[0]
+        if isinstance(arg, str):
+            return QtGui.QColor(arg)
+        elif isinstance(arg, QtGui.QColor):
+            return QtGui.QColor(arg)
+        elif isinstance(arg, (list, tuple)):
+            return QtGui.QColor(*tuple(ensure_255(v) for v in arg))
+        elif isinstance(arg, float):
+            val = ensure_255(arg)
+            return QtGui.QColor(val, val, val)
+        elif isinstance(arg, (int, Qt.GlobalColor)):
+            return QtGui.QColor(Qt.GlobalColor(arg))
+    else:
+        return QtGui.QColor(*tuple(ensure_255(v) for v in args))

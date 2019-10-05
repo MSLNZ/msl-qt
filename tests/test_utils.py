@@ -1,5 +1,6 @@
 import pytest
-from msl.qt import QtGui, utils
+
+from msl.qt import Qt, QtGui, utils
 
 
 def test_to_qfont():
@@ -100,3 +101,57 @@ def test_to_qfont():
     # the third item cannot be cast to an integer
     with pytest.raises(ValueError):
         utils.to_qfont('Ariel', 12, 'xxx')
+
+
+def test_to_qcolor():
+
+    def assert_rgba(c, r, g, b, a):
+        assert c.red() == r
+        assert c.green() == g
+        assert c.blue() == b
+        assert c.alpha() == a
+
+    # no arguments
+    assert isinstance(utils.to_qcolor(), QtGui.QColor)
+
+    # QtGui.QColor
+    color = QtGui.QColor(127, 127, 127)
+    assert utils.to_qcolor(color) is not color
+    assert utils.to_qcolor(color) == color
+
+    # int or Qt.GlobalColor
+    assert_rgba(utils.to_qcolor(7), 255, 0, 0, 255)
+    assert_rgba(utils.to_qcolor(Qt.red), 255, 0, 0, 255)
+
+    # string
+    assert_rgba(utils.to_qcolor('red'), 255, 0, 0, 255)
+    assert_rgba(utils.to_qcolor('#00FF00'), 0, 255, 0, 255)
+    assert_rgba(utils.to_qcolor('#080000FF'), 0, 0, 255, 8)
+
+    # float
+    assert_rgba(utils.to_qcolor(0.0), 0, 0, 0, 255)
+    assert_rgba(utils.to_qcolor(0.45), 114, 114, 114, 255)
+    assert_rgba(utils.to_qcolor(0.5), 127, 127, 127, 255)
+    assert_rgba(utils.to_qcolor(1.0), 255, 255, 255, 255)
+    assert_rgba(utils.to_qcolor(1e9), 255, 255, 255, 255)
+    assert_rgba(utils.to_qcolor(-1.0), 0, 0, 0, 255)
+    assert_rgba(utils.to_qcolor(-0.1), 0, 0, 0, 255)
+
+    # edge cases for int/float
+    assert_rgba(utils.to_qcolor(0, 0, 0), 0, 0, 0, 255)
+    assert_rgba(utils.to_qcolor(0.0, 0.0, 0.0), 0, 0, 0, 255)
+    assert_rgba(utils.to_qcolor(1, 1, 1), 1, 1, 1, 255)
+    assert_rgba(utils.to_qcolor(1., 1., 1.), 255, 255, 255, 255)
+    assert_rgba(utils.to_qcolor(0, 1., 1), 0, 255, 1, 255)
+
+    # tuple (can mix int 0-255 and float 0.0-1.0)
+    assert_rgba(utils.to_qcolor((34, 58, 129)), 34, 58, 129, 255)
+    assert_rgba(utils.to_qcolor((34, 58, 129, 50)), 34, 58, 129, 50)
+    assert_rgba(utils.to_qcolor((34, 58/255., 129)), 34, 58, 129, 255)
+    assert_rgba(utils.to_qcolor((34/255., 58/255., 129/255.)), 34, 58, 129, 255)
+    assert_rgba(utils.to_qcolor((34/255., 58/255., 129/255., 0.45)), 34, 58, 129, 114)
+
+    # wrong number of arguments
+    for obj in [(1, 2), (1, 2, 3, 4, 5)]:
+        with pytest.raises(TypeError):
+            utils.to_qcolor(obj)
