@@ -5,6 +5,7 @@ from . import (
     QtGui,
     Qt,
     QtWidgets,
+    application,
 )
 
 
@@ -151,7 +152,7 @@ def screen_geometry(widget=None):
         screen (i.e., the screen where the main widget resides).
     """
     if widget is None:
-        return QtGui.QGuiApplication.primaryScreen().geometry()
+        return application().primaryScreen().geometry()
 
     handle = widget.window().windowHandle()
     if handle is not None:
