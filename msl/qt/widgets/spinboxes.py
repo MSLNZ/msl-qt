@@ -27,7 +27,7 @@ from .. import QtWidgets
 
 class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
-    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1, decimals=2, tooltip=None):
+    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100, step=1, decimals=2, tooltip=None):
         """A :class:`~QtWidgets.QDoubleSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -36,6 +36,8 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         ----------
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
+        value : :class:`float`, optional
+            The initial value.
         minimum : :class:`float`, optional
             The minimum value.
         maximum : :class:`float`, optional
@@ -50,6 +52,7 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         super(DoubleSpinBox, self).__init__(parent=parent)
         self.setMinimum(minimum)
         self.setMaximum(maximum)
+        self.setValue(value)
         self.setSingleStep(step)
         self.setDecimals(decimals)
         if tooltip:
@@ -68,7 +71,7 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
 class SpinBox(QtWidgets.QSpinBox):
 
-    def __init__(self, *, parent=None, minimum=0, maximum=100, step=1, tooltip=None):
+    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100, step=1, tooltip=None):
         """A :class:`~QtWidgets.QSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -77,6 +80,8 @@ class SpinBox(QtWidgets.QSpinBox):
         ----------
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
+        value : :class:`int`, optional
+            The initial value.
         minimum : :class:`int`, optional
             The minimum value.
         maximum : :class:`int`, optional
@@ -89,6 +94,7 @@ class SpinBox(QtWidgets.QSpinBox):
         super(SpinBox, self).__init__(parent=parent)
         self.setMinimum(minimum)
         self.setMaximum(maximum)
+        self.setValue(value)
         self.setSingleStep(step)
         if tooltip:
             self.setToolTip(tooltip)
