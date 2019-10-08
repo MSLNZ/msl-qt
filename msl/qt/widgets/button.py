@@ -1,7 +1,13 @@
 """
 A :class:`~QtWidgets.QToolButton` to display text, an icon and a menu.
 """
-from .. import QtWidgets, QtCore, Qt, QtGui, io
+from .. import (
+    QtWidgets,
+    QtCore,
+    Qt,
+    QtGui,
+    io,
+)
 
 
 class Button(QtWidgets.QToolButton):
@@ -94,14 +100,12 @@ class Button(QtWidgets.QToolButton):
         if text is not None:
             action.setText(text)
         if shortcut is not None:
-            action.setShortcut(shortcut)
+            action.setShortcut(QtGui.QKeySequence(shortcut))
         if icon is not None:
             action.setIcon(io.get_icon(icon))
         if tooltip is not None:
             action.setToolTip(tooltip)
             action.setStatusTip(tooltip)
-            # the tooltip of a QAction in a QMenu is not shown. Here's a work-around.
-            self._menu.hovered.connect(self._show_menu_tooltip)
         self._menu.addAction(action)
 
     def add_menu_separator(self):
@@ -130,12 +134,9 @@ class Button(QtWidgets.QToolButton):
         """
         self.customContextMenuRequested.connect(fcn)
 
-    def _show_menu_tooltip(self, action):
-        """Slot -> The tooltip of a QAction in a QMenu is not shown. This is a work-around."""
-        QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), action.toolTip())
-
     def _create_menu(self):
         self._menu = ButtonMenu(self)
+        self._menu.setToolTipsVisible(True)
         self.setMenu(self._menu)
         self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
 
@@ -150,6 +151,7 @@ class ButtonMenu(QtWidgets.QMenu):
     """Display the :class:`QtWidgets.QMenu` underneath the :class:`Button`."""
 
     def showEvent(self, event):
+        """Overrides :meth:`QtWidgets.QMenu.showEvent`."""
         point = self.parent().mapToGlobal(QtCore.QPoint(0, 0))
         offset = self.parent().width() - self.width()
         self.move(point + QtCore.QPoint(offset, self.parent().height()))
