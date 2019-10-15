@@ -158,7 +158,7 @@ class Comments(QtWidgets.QDialog):
             return
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        self.comments.insert(0, {'timestamp': timestamp, 'comments': self.text()})
+        self.comments.insert(0, {'timestamp': timestamp, 'comment': self.text()})
         self.save_json()
 
     def save_json(self):
