@@ -151,7 +151,7 @@ class ButtonMenu(QtWidgets.QMenu):
     """Display the :class:`QtWidgets.QMenu` underneath the :class:`Button`."""
 
     def showEvent(self, event):
-        """Overrides :meth:`QtWidgets.QMenu.showEvent`."""
+        """Overrides :meth:`QtWidgets.QWidget.showEvent`."""
         point = self.parent().mapToGlobal(QtCore.QPoint(0, 0))
         offset = self.parent().width() - self.width()
         self.move(point + QtCore.QPoint(offset, self.parent().height()))
