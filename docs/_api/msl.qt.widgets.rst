@@ -14,6 +14,6 @@ Submodules
    msl.qt.widgets.button
    msl.qt.widgets.led
    msl.qt.widgets.logger
-   msl.qt.widgets.notes_history
+   msl.qt.widgets.comments
    msl.qt.widgets.spinboxes
    msl.qt.widgets.toggle_switch

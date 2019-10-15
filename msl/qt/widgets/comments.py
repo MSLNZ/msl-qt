@@ -1,58 +1,58 @@
 """
-A :class:`QtWidgets.QDialog` to prompt the user to enter notes.
+A :class:`QtWidgets.QDialog` to prompt the user to enter comments.
 """
 import os
 import json
 from datetime import datetime
 
 from .. import (
-    application,
     QtWidgets,
     Qt,
-    QtGui,
     prompt,
     Button,
+    utils,
 )
 from ..constants import HOME_DIR
 
 
-class NotesHistory(QtWidgets.QDialog):
+class Comments(QtWidgets.QDialog):
 
-    def __init__(self, parent, json_path, title, even_row_color, odd_row_color):
-        """Do not instantiate directly. Use :func:`msl.qt.prompt.notes` instead."""
-        super(NotesHistory, self).__init__(parent=parent)
+    def __init__(self, json_path, title, even_row_color, odd_row_color):
+        """A :class:`QtWidgets.QDialog` to prompt the user to enter comments.
 
-        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
+        Do not instantiate directly. Use :func:`msl.qt.prompt.comments` instead.
+        """
+        super(Comments, self).__init__(None, Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle(title)
 
-        self.path = json_path if json_path else os.path.join(HOME_DIR, 'qt-notes-history.json')
+        self.path = json_path if json_path else os.path.join(HOME_DIR, 'msl-qt-comments.json')
 
-        self.notes = []
-        self.even_row_color = QtGui.QColor(even_row_color)
-        self.odd_row_color = QtGui.QColor(odd_row_color)
+        self.comments = []
+        self.even_row_color = utils.to_qcolor(even_row_color)
+        self.odd_row_color = utils.to_qcolor(odd_row_color)
 
         self.load_json()
         self.create_widgets()
 
-        geo = application().desktop().availableGeometry()
+        geo = utils.screen_geometry(widget=self)
         self.resize(int(geo.width()*0.4), int(geo.height()*0.6))
 
-    def append_to_history_table(self, timestamp, note):
+    def append_to_history_table(self, timestamp, comment):
         index = self.table.rowCount()
         self.table.insertRow(index)
         self.table.setItem(index, 0, QtWidgets.QTableWidgetItem(timestamp))
-        self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(note))
+        self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(comment))
 
     def apply_filter(self):
         filter_text = self.filter_edit.text().lower()
-        if not filter_text and self.table.rowCount() == len(self.notes):
+        if not filter_text and self.table.rowCount() == len(self.comments):
             # all rows are already visible
             return
 
         self.table.setRowCount(0)
-        for item in self.notes:
-            if not filter_text or filter_text in item['timestamp'] or filter_text in item['notes'].lower():
-                self.append_to_history_table(item['timestamp'], item['notes'])
+        for item in self.comments:
+            if not filter_text or filter_text in item['timestamp'] or filter_text in item['comment'].lower():
+                self.append_to_history_table(item['timestamp'], item['comment'])
         self.update_table_row_colors_and_resize()
 
     def clear_filter(self):
@@ -62,28 +62,28 @@ class NotesHistory(QtWidgets.QDialog):
             self.apply_filter()
 
     def clear_history(self):
-        if not self.notes or not prompt.yes_no('Clear the entire history?', default=False):
+        if not self.comments or not prompt.yes_no('Clear the entire history?', default=False):
             return
         self.table.setRowCount(0)
-        self.notes = []
+        self.comments = []
         self.save_json()
 
     def create_widgets(self):
-        self.note_edit = QtWidgets.QPlainTextEdit(self)
-        height = self.note_edit.fontMetrics().lineSpacing()
-        self.note_edit.setFixedHeight(5 * height)  # display 5 lines
+        self.comment_textedit = QtWidgets.QPlainTextEdit(self)
+        height = self.comment_textedit.fontMetrics().lineSpacing()
+        self.comment_textedit.setFixedHeight(5 * height)  # display 5 lines
 
         self.ok_button = Button(
             text='OK',
             left_click=self.prepend_and_close,
-            tooltip='Select the note and exit',
+            tooltip='Select the comment and exit',
             parent=self,
         )
         self.ok_button.add_menu_item(
             text='Clear history',
             icon=QtWidgets.QStyle.SP_DialogResetButton,
             triggered=self.clear_history,
-            tooltip='Delete all notes that are in the history'
+            tooltip='Delete all comments that are in the history'
         )
 
         #
@@ -114,7 +114,7 @@ class NotesHistory(QtWidgets.QDialog):
         # history table
         #
         self.table = QtWidgets.QTableWidget()
-        table_header = ['Timestamp', 'Notes']
+        table_header = ['Timestamp', 'Comment']
         self.table.setColumnCount(len(table_header))
         self.table.setHorizontalHeaderLabels(table_header)
         self.table.setSortingEnabled(True)
@@ -124,16 +124,16 @@ class NotesHistory(QtWidgets.QDialog):
         self.table.horizontalHeader().sectionClicked.connect(self.update_table_row_colors_and_resize)
         self.table.cellDoubleClicked.connect(self.table_double_click)
         self.table.keyPressEvent = self.table_key_press
-        for item in self.notes:
-            self.append_to_history_table(item['timestamp'], item['notes'])
+        for item in self.comments:
+            self.append_to_history_table(item['timestamp'], item['comment'])
         self.update_table_row_colors_and_resize()
 
         #
         # main layout
         #
         layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(QtWidgets.QLabel('Enter a new note or select one from the history below'))
-        layout.addWidget(self.note_edit)
+        layout.addWidget(QtWidgets.QLabel('Enter a new comment or select one from the history below'))
+        layout.addWidget(self.comment_textedit)
         layout.addWidget(self.ok_button)
         layout.addLayout(filter_layout)
         layout.addWidget(self.table)
@@ -146,7 +146,7 @@ class NotesHistory(QtWidgets.QDialog):
 
         with open(self.path, 'rb') as fp:
             try:
-                self.notes = json.load(fp, encoding='utf-8')
+                self.comments = json.load(fp, encoding='utf-8')
             except Exception as e:
                 prompt.warning('Error loading JSON file:\n{}\n\n{}'.format(self.path, e))
 
@@ -154,11 +154,11 @@ class NotesHistory(QtWidgets.QDialog):
         self.close()
 
         if not self.text():
-            # no new notes were entered so there is nothing to save to the history file
+            # no new comments were entered so there is nothing to save to the history file
             return
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        self.notes.insert(0, {'timestamp': timestamp, 'notes': self.text()})
+        self.comments.insert(0, {'timestamp': timestamp, 'comments': self.text()})
         self.save_json()
 
     def save_json(self):
@@ -168,10 +168,10 @@ class NotesHistory(QtWidgets.QDialog):
             os.makedirs(root)
 
         with open(self.path, 'w') as fp:
-            json.dump(self.notes, fp, indent=2, ensure_ascii=False)
+            json.dump(self.comments, fp, indent=2, ensure_ascii=False)
 
     def table_double_click(self, row, col):
-        self.note_edit.setPlainText(self.table.item(row, 1).text())
+        self.comment_textedit.setPlainText(self.table.item(row, 1).text())
 
     def table_key_press(self, event):
         # CTRL+A pressed
@@ -195,13 +195,13 @@ class NotesHistory(QtWidgets.QDialog):
 
         for index in selected:
             self.table.removeRow(index)
-            del self.notes[index]
+            del self.comments[index]
 
         self.save_json()
 
     def text(self):
-        """str: The text in the note editor"""
-        return self.note_edit.toPlainText().strip()
+        """str: The text in the comment editor"""
+        return self.comment_textedit.toPlainText().strip()
 
     def update_table_row_colors_and_resize(self):
         for row in range(self.table.rowCount()):

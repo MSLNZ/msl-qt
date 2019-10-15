@@ -9,7 +9,7 @@ import msl.examples.qt as example
 
 examples = [
     example.loop_until_abort_sleep.main,
-    example.notes_history.show,
+    example.comments.show,
     example.button.show,
     example.logger.show,
     example.toggle_switch.show,

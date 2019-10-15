@@ -1,5 +1,5 @@
 """
-A :func:`~msl.qt.prompt.notes` example.
+A :func:`~msl.qt.prompt.comments` example.
 """
 import os
 import json
@@ -19,16 +19,16 @@ prepositions = ['after', 'before', 'in', 'to', 'on', 'with', 'without', 'next to
 def show():
     dummy = [
         {'timestamp': (datetime.datetime.now() + datetime.timedelta(days=i)).strftime('%Y-%m-%d %H:%M:%S'),
-         'notes': 'The {} {} {} {} {} the {}'.format(
+         'comment': 'The {} {} {} {} {} the {}'.format(
              *map(random.choice, (adjectives, nouns, verbs, adverbs, prepositions, nouns)))}
         for i in range(1000)
     ]
 
-    dummy_file = os.path.join(tempfile.gettempdir(), 'msl-qt-notes-history-example.json')
+    dummy_file = os.path.join(tempfile.gettempdir(), 'msl-qt-comments-example.json')
     with open(dummy_file, 'w') as fp:
         json.dump(dummy, fp, indent=2, ensure_ascii=False)
 
-    print('The note entered is:\n' + qt.prompt.notes(path=dummy_file))
+    print('The comment entered is:\n' + qt.prompt.comments(path=dummy_file))
     os.remove(dummy_file)
 
 

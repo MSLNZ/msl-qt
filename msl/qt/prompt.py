@@ -232,50 +232,49 @@ def item(message, items, *, title=None, font=None, index=0):
     return items[items_.index(dialog.textValue())] if ok else None
 
 
-def notes(*, path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EAF2F8'):
-    """Ask the user to enter notes.
+def comments(*, path=None, title=None, even_row_color='#FFFFFF', odd_row_color='#EAF2F8'):
+    """Ask the user to enter comments.
 
-    Opens a :class:`QtWidgets.QDialog` to allow for a user to enter a detailed
-    description of a task that they are performing. The :class:`QtWidgets.QDialog`
-    provides a table of all the previous notes that have been used. Notes that are
-    in the table can be deleted by selecting the desired row(s) and pressing the
-    ``delete`` key or the note in a row can be copied to the note editor by
-    double-clicking on a row.
+    Opens a :class:`QtWidgets.QDialog` to allow for a user to enter comments about
+    a task that they are performing. The dialog provides a table of all the previous
+    comments that have been used. Comments that are in the table can be deleted by
+    selecting the desired row(s) and pressing the ``Delete`` key or the comment in
+    a row can be selected by double-clicking on a row.
 
-    This function is useful when acquiring data and you want to include notes
-    about how the data was acquired. Using a prompt to enter notes forces you
-    to manually enter the notes every time you acquire data rather than having
-    the notes typed directly onto the graphical user interface, which you might
-    forget to update before acquiring the next data set.
+    This function is useful when acquiring data and you want to include comments
+    about how the data was acquired. Using a prompt to enter comments forces you
+    to enter a new comment (or use a previous comment) every time you acquire data
+    rather than having the comments in a, for example :class:`QtWidgets.QPlainTextEdit`,
+    which you might forget to update before acquiring the next data set.
 
     .. _JSON: https://www.json.org/
 
     Parameters
     ----------
     path : :class:`str`, optional
-        The path to a JSON_ file that contains the history of the notes that have
+        The path to a JSON_ file that contains the history of the comments that have
         been used. If :data:`None` then the default file is used. The file will
         automatically be created if it does not exist.
     title : :class:`str`, optional
         The text to display in the title bar of the dialog window.
-    even_row_color : :class:`QtGui.QColor`, optional
+    even_row_color
         The background color of the even-numbered rows in the history table.
-        Can be any data type and value that the constructor of a
-        :class:`QtGui.QColor` accepts.
-    odd_row_color : :class:`QtGui.QColor`, optional
+        See :func:`~msl.qt.utils.to_qcolor` for details about the different
+        data types that are supported.
+    odd_row_color
         The background color of the odd-numbered rows in the history table.
-        Can be any data type and value that the constructor of a
-        :class:`QtGui.QColor` accepts.
+        See :func:`~msl.qt.utils.to_qcolor` for details about the different
+        data types that are supported.
 
     Returns
     -------
     :class:`str`
-        The note that was entered.
+        The comment that was entered.
     """
     # import here since there are circular import errors if you import at the module level
-    from .widgets.notes_history import NotesHistory
+    from .widgets.comments import Comments
     app, title = _get_app_and_title(title)
-    nh = NotesHistory(app.activeWindow(), path, title, even_row_color, odd_row_color)
+    nh = Comments(path, title, even_row_color, odd_row_color)
     nh.exec_()
     return nh.text()
 
