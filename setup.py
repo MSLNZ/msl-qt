@@ -86,6 +86,10 @@ def fetch_init(key):
     return re.search(r'{}\s*=\s*(.*)'.format(key), init_text).group(1)[1:-1]
 
 
+tests_require = ['pytest', 'pytest-cov', 'PySide2']
+if sys.platform == 'win32':
+    tests_require.append('pythonnet')
+
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
 
@@ -117,7 +121,7 @@ setup(
         'Topic :: Scientific/Engineering',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest', 'pytest-cov', 'PySide2', 'pythonnet'],
+    tests_require=tests_require,
     install_requires=[],
     extras_require={
         'pyside': ['PySide2'],
