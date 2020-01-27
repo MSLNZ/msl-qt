@@ -188,7 +188,10 @@ def icon_to_base64(icon, *, fmt='png'):
         # extract an icon from a Windows DLL/EXE file
         # uses ctypes and the .NET Framework to convert the icon to base64
         # import here in case pythonnet is not installed
-        import clr
+        try:
+            import clr
+        except ImportError:
+            raise ImportError('requires pythonnet, run: pip install pythonnet') from None
         import ctypes
 
         clr.AddReference('System.Drawing')
