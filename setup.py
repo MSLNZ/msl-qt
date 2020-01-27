@@ -29,7 +29,7 @@ class ApiDocs(Command):
         ]
 
         import sphinx
-        if sphinx.version_info < (1, 7):
+        if sphinx.version_info[:2] < (1, 7):
             from sphinx.apidoc import main
         else:
             from sphinx.ext.apidoc import main  # Sphinx also changed the location of apidoc.main
@@ -65,7 +65,7 @@ class BuildDocs(Command):
             './docs/_build/html',  # where to save the output files
         ]
 
-        if sphinx.version_info < (1, 7):
+        if sphinx.version_info[:2] < (1, 7):
             from sphinx import build_main
         else:
             from sphinx.cmd.build import build_main  # Sphinx also changed the location of build_main
@@ -105,13 +105,16 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
+        'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Topic :: Scientific/Engineering :: Physics',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: User Interfaces'
+        'Topic :: Scientific/Engineering',
     ],
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest', 'pytest-cov', 'PySide2', 'pythonnet'],
