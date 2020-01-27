@@ -204,6 +204,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._num_displayed += 1
         if self._vsb.maximum() - self._vsb.value() <= self._vsb.singleStep():
             self._text_browser.moveCursor(QtGui.QTextCursor.End)
+            self._text_browser.moveCursor(QtGui.QTextCursor.StartOfLine)
 
     def _level_checkbox_changed(self, state):
         self._update_records(self._level_combobox.currentText())
