@@ -11,21 +11,24 @@ from .. import QtWidgets, QtGui, prompt, io
 class Logger(logging.Handler, QtWidgets.QWidget):
 
     def __init__(self, *, level=logging.INFO, fmt='%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s',
-                 datefmt=None, parent=None):
+                 datefmt=None, logger=None, parent=None):
         """A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 
         Parameters
         ----------
-        level : :class:`int`, optional
+        level : :class:`int` or :class:`str`, optional
             The :ref:`Logging Level <python:levels>` to use to display the
-            :class:`~logging.LogRecord` (e.g., ``logging.INFO``) .
+            :class:`~logging.LogRecord`.
         fmt : :class:`str`, optional
             The :ref:`python:logrecord-attributes` to use
             to display the :class:`~logging.LogRecord`.
         datefmt : :class:`str` or :data:`None`, optional
             The :ref:`strftime format <python:strftime-strptime-behavior>`
             to use for the time stamp. If :data:`None` then the ``ISO8601``
-            date format is used, ``YYYY-mm-dd HH:MM:SS.ssssss``.
+            date format is used, ``YYYY-mm-dd HH:MM:SS,sss``.
+        logger : :class:`logging.Logger`, optional
+            The :class:`logging.Logger` to add this :class:`logging.Handler` to.
+            If :data:`None` the uses the root :class:`logging.Logger`.
         parent : :class:`QtWidgets.QWidget`, optional
             The parent widget.
 
@@ -63,12 +66,24 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         #
         # configure logging
         #
+        if logger is None:
+            logger = logging.getLogger()
+        elif not isinstance(logger, logging.Logger):
+            raise TypeError('the logger must be of type logging.Logger, got {}'.format(type(logger)))
 
-        root = logging.getLogger()
-        self._current_level = level  # set the initial logging level
-        root.setLevel(logging.NOTSET)  # however, the root logger must have access to all logging levels
-        self.setFormatter(logging.Formatter(fmt, datefmt))
-        logging.getLogger().addHandler(self)
+        if logger.level == logging.NOTSET:
+            logger.setLevel(logging.DEBUG)
+
+        if isinstance(level, str):
+            level = self._level_names[level.upper()]
+        if not isinstance(level, int):
+            raise TypeError('the level must be an integer or the name of a logging level')
+
+        self._current_level = level
+        formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
+        formatter.default_msec_format = '%s.%03d'
+        self.setFormatter(formatter)
+        logger.addHandler(self)
 
         #
         # create the widgets
@@ -99,6 +114,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
         self._text_browser = QtWidgets.QTextBrowser(self)
         self._text_browser.setLineWrapMode(QtWidgets.QTextBrowser.NoWrap)
+        self._vsb = self._text_browser.verticalScrollBar()
 
         #
         # add the widgets to the layout
@@ -157,11 +173,6 @@ class Logger(logging.Handler, QtWidgets.QWidget):
                     fp.write(self.format(record) + '\n')
             fp.write('\n')
 
-    def show_latest(self):
-        """Move the vertical scrollbar to show the latest logging record."""
-        vsb = self._text_browser.verticalScrollBar()
-        vsb.setValue(vsb.maximum())
-
     def _add_new_level(self, record):
         # the MSL-Equipment package has a logging.DEMO level
         if record.levelname == 'DEMO':
@@ -191,6 +202,8 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             self._text_browser.setTextColor(self.color_map[record.levelno])
         self._text_browser.append(msg)
         self._num_displayed += 1
+        if self._vsb.maximum() - self._vsb.value() <= self._vsb.singleStep():
+            self._text_browser.moveCursor(QtGui.QTextCursor.End)
 
     def _level_checkbox_changed(self, state):
         self._update_records(self._level_combobox.currentText())
