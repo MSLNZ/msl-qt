@@ -54,8 +54,12 @@ def test_get_icon():
         assert isinstance(io.get_icon('C:/Windows/explorer.exe|0'), QtGui.QIcon)
         assert isinstance(io.get_icon('explorer.exe|0'), QtGui.QIcon)
         assert isinstance(io.get_icon('explorer|0'), QtGui.QIcon)
-        with pytest.raises(IOError):
-            io.get_icon('C:/Windows/System32/explorer.exe|0')  # the exe is located at 'C:/Windows/explorer.exe'
+        if sys.maxsize > 2**32:
+            # the exe is located at 'C:/Windows/explorer.exe'
+            with pytest.raises(IOError):
+                io.get_icon('C:/Windows/System32/explorer.exe|0')
+        else:
+            assert isinstance(io.get_icon('C:/Windows/System32/explorer.exe|0'), QtGui.QIcon)
         with pytest.raises(IOError) as err:
             io.get_icon('shell32|9999')  # the maximum icon index should be much less than 9999
         assert str(err.value).startswith('Requested icon 9999')
