@@ -1,7 +1,7 @@
 MSL-Qt
 ======
 
-|docs|
+|docs| |travis| |appveyor|
 
 This package provides custom Qt_ components that can be used for the graphical user interface.
 
@@ -39,6 +39,12 @@ Optional Dependencies
    :target: http://msl-qt.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
    :scale: 100%
+
+.. |travis| image:: https://img.shields.io/travis/MSLNZ/msl-qt/master.svg?label=Travis-CI
+   :target: https://travis-ci.org/MSLNZ/msl-qt
+
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-qt/master.svg?label=AppVeyor
+   :target: https://ci.appveyor.com/project/jborbely/msl-qt/branch/master
 
 .. _Qt: https://www.qt.io/
 .. _MSL Package Manager: http://msl-package-manager.readthedocs.io/en/latest/?badge=latest
