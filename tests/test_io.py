@@ -59,40 +59,42 @@ def test_get_icon():
     assert int(icon_1.width() * 0.5) == icon_2.width()
     assert int(icon_1.height() * 0.5) == icon_2.height()
 
-    if has_pythonnet() and sys.platform == 'win32':
-        assert isinstance(io.get_icon('C:/Windows/System32/shell32.dll|0'), QtGui.QIcon)
-        assert isinstance(io.get_icon('shell32.dll|0'), QtGui.QIcon)
-        assert isinstance(io.get_icon('shell32|0'), QtGui.QIcon)
+
+@pytest.mark.skipif(not (has_pythonnet() and sys.platform == 'win32'), reason='requires pythonnet and win32')
+def test_get_icon_dll_exe():
+    assert isinstance(io.get_icon('C:/Windows/System32/shell32.dll|0'), QtGui.QIcon)
+    assert isinstance(io.get_icon('shell32.dll|0'), QtGui.QIcon)
+    assert isinstance(io.get_icon('shell32|0'), QtGui.QIcon)
+    with pytest.raises(IOError):
+        io.get_icon('/shell32|0')  # fails because it appears as though a full path is being specified
+    assert isinstance(io.get_icon('C:/Windows/explorer.exe|0'), QtGui.QIcon)
+    assert isinstance(io.get_icon('explorer.exe|0'), QtGui.QIcon)
+    assert isinstance(io.get_icon('explorer|0'), QtGui.QIcon)
+    if sys.maxsize > 2**32:
+        # the exe is located at 'C:/Windows/explorer.exe'
         with pytest.raises(IOError):
-            io.get_icon('/shell32|0')  # fails because it appears as though a full path is being specified
-        assert isinstance(io.get_icon('C:/Windows/explorer.exe|0'), QtGui.QIcon)
-        assert isinstance(io.get_icon('explorer.exe|0'), QtGui.QIcon)
-        assert isinstance(io.get_icon('explorer|0'), QtGui.QIcon)
-        if sys.maxsize > 2**32:
-            # the exe is located at 'C:/Windows/explorer.exe'
-            with pytest.raises(IOError):
-                io.get_icon('C:/Windows/System32/explorer.exe|0')
-        else:
-            assert isinstance(io.get_icon('C:/Windows/System32/explorer.exe|0'), QtGui.QIcon)
-        with pytest.raises(IOError) as err:
-            io.get_icon('shell32|9999')  # the maximum icon index should be much less than 9999
-        assert str(err.value).startswith('Requested icon 9999')
+            io.get_icon('C:/Windows/System32/explorer.exe|0')
+    else:
+        assert isinstance(io.get_icon('C:/Windows/System32/explorer.exe|0'), QtGui.QIcon)
+    with pytest.raises(IOError) as err:
+        io.get_icon('shell32|9999')  # the maximum icon index should be much less than 9999
+    assert str(err.value).startswith('Requested icon 9999')
+
+
+@pytest.mark.skipif(not (has_pythonnet() and sys.platform == 'win32'), reason='requires pythonnet and win32')
+def test_icon_to_base64_exe():
+    assert isinstance(io.icon_to_base64('explorer|0'), QtCore.QByteArray)
+
+    # index number is < 0
+    with pytest.raises(IOError):
+        io.icon_to_base64('explorer|-1')
+
+    # the filename not a DLL in C:/Windows/System32/ nor an EXE in C:/Windows/
+    with pytest.raises(IOError):
+        io.icon_to_base64('unknown_default|1')
 
 
 def test_icon_to_base64():
-
-    # reading from a .EXE file does not raise any errors
-    if has_pythonnet() and sys.platform == 'win32':
-        assert isinstance(io.icon_to_base64('explorer|0'), QtCore.QByteArray)
-
-        # index number is < 0
-        with pytest.raises(IOError):
-            io.icon_to_base64('explorer|-1')
-
-        # the filename not a DLL in C:/Windows/System32/ nor an EXE in C:/Windows/
-        with pytest.raises(IOError):
-            io.icon_to_base64('unknown_default|1')
-
     # reading from a standard Qt icon does not raise any errors
     assert isinstance(io.icon_to_base64(QtWidgets.QStyle.SP_TitleBarMenuButton), QtCore.QByteArray)
 
