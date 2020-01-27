@@ -87,7 +87,7 @@ def fetch_init(key):
 
 
 tests_require = ['pytest', 'pytest-cov', 'PySide2']
-if sys.platform == 'win32':
+if sys.platform == 'win32' and sys.version_info[:2] != (3, 8):
     tests_require.append('pythonnet')
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)

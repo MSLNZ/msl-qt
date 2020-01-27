@@ -7,6 +7,15 @@ from msl.qt import application, io, QtWidgets, QtCore, QtGui, Qt
 app = application()
 
 
+def has_pythonnet():
+    try:
+        import clr
+    except ImportError:
+        return False
+    else:
+        return True
+
+
 def test_get_icon():
 
     assert isinstance(io.get_icon(QtGui.QIcon()), QtGui.QIcon)
@@ -45,7 +54,12 @@ def test_get_icon():
     sys.path.insert(0, os.path.dirname(__file__))
     assert isinstance(io.get_icon('gamma.png'), QtGui.QIcon)
 
-    if sys.platform == 'win32':
+    icon_1 = io.get_icon('gamma.png').availableSizes()[0]
+    icon_2 = io.get_icon('gamma.png', size=0.5).availableSizes()[0]
+    assert int(icon_1.width() * 0.5) == icon_2.width()
+    assert int(icon_1.height() * 0.5) == icon_2.height()
+
+    if has_pythonnet() and sys.platform == 'win32':
         assert isinstance(io.get_icon('C:/Windows/System32/shell32.dll|0'), QtGui.QIcon)
         assert isinstance(io.get_icon('shell32.dll|0'), QtGui.QIcon)
         assert isinstance(io.get_icon('shell32|0'), QtGui.QIcon)
@@ -64,16 +78,11 @@ def test_get_icon():
             io.get_icon('shell32|9999')  # the maximum icon index should be much less than 9999
         assert str(err.value).startswith('Requested icon 9999')
 
-    icon_1 = io.get_icon('gamma.png').availableSizes()[0]
-    icon_2 = io.get_icon('gamma.png', size=0.5).availableSizes()[0]
-    assert int(icon_1.width() * 0.5) == icon_2.width()
-    assert int(icon_1.height() * 0.5) == icon_2.height()
-
 
 def test_icon_to_base64():
 
     # reading from a .EXE file does not raise any errors
-    if sys.platform == 'win32':
+    if has_pythonnet() and sys.platform == 'win32':
         assert isinstance(io.icon_to_base64('explorer|0'), QtCore.QByteArray)
 
         # index number is < 0
