@@ -162,9 +162,10 @@ def test_rescale_icon():
     assert isinstance(io.rescale_icon(icon.pixmap(size), 1.0), QtGui.QPixmap)
     assert isinstance(io.rescale_icon(icon.pixmap(size).toImage(), 1.0), QtGui.QPixmap)
 
-    with pytest.raises(TypeError) as err:
-        io.rescale_icon('explorer|0', None)
-    assert str(err.value).startswith('Unsupported "size"')
+    if sys.platform == 'win32':
+        with pytest.raises(TypeError) as err:
+            io.rescale_icon('explorer|0', None)
+        assert str(err.value).startswith('Unsupported "size"')
 
     # if a list/tuple then must contain 2 elements
     for item in [(), [], (256,), [256,], (256, 256, 256), [256, 256, 256]]:
