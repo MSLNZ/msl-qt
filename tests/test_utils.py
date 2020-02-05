@@ -152,7 +152,7 @@ def test_to_qcolor():
     assert_rgba(utils.to_qcolor((34/255., 58/255., 129/255., 0.45)), 34, 58, 129, 114)
 
     # wrong number of arguments
-    for obj in [(1, 2), (1, 2, 3, 4, 5)]:
+    for obj in [(1, 2), (1, 2, 3, 4, 5, 6, 7)]:
         with pytest.raises(TypeError):
             utils.to_qcolor(obj)
 
