@@ -90,9 +90,9 @@ def get_icon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
 
     Raises
     ------
-    :exc:`IOError`
+    IOError
         If the icon cannot be found.
-    :exc:`TypeError`
+    TypeError
         If the data type of `obj` or `size` is not supported.
 
     Example
@@ -175,9 +175,9 @@ def icon_to_base64(icon, *, fmt='png'):
 
     Raises
     ------
-    :exc:`IOError`
+    IOError
         If the icon file cannot be found.
-    :exc:`ValueError`
+    ValueError
         If the icon format, `fmt`, to use for converting is not supported.
     """
     fmt = fmt.upper()
