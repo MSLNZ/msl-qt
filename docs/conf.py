@@ -117,7 +117,7 @@ extensions = [
 ]
 
 # autodoc options
-if sphinx.version_info < (1, 8):
+if sphinx.version_info[:2] < (1, 8):
     # 'alphabetical', 'bysource', 'groupwise'
     autodoc_member_order = 'bysource'
 
@@ -238,7 +238,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'MSL-Qt.tex', 'MSL-Qt Documentation',
-     'Measurement Standards Laboratory', 'manual'),
+     'Measurement Standards Laboratory of New Zealand', 'manual'),
 ]
 
 
