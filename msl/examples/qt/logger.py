@@ -4,7 +4,10 @@ Example to show the :class:`~msl.qt.widgets.logger.Logger`.
 import random
 import logging
 
-from msl.qt import application, Logger
+from msl.qt import (
+    application,
+    Logger
+)
 
 
 def show():

@@ -1,7 +1,10 @@
 """
 A :class:`~msl.qt.widget.button.Button` example.
 """
-from msl.qt import application, Button
+from msl.qt import (
+    application,
+    Button
+)
 
 
 def left():

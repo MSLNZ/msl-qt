@@ -4,7 +4,13 @@ Repeatedly perform a task until aborted by the user.
 import datetime
 import traceback
 
-from . import QtWidgets, QtCore, QtGui, application, prompt
+from . import (
+    QtWidgets,
+    QtCore,
+    QtGui,
+    application,
+    prompt
+)
 
 
 class LoopUntilAbort(object):

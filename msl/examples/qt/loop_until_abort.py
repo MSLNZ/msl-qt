@@ -3,7 +3,10 @@ Example script to repeatedly write data to a file until aborted by the user.
 """
 import tempfile
 
-from msl.qt import prompt, LoopUntilAbort
+from msl.qt import (
+    prompt,
+    LoopUntilAbort
+)
 
 
 class LoopExample(LoopUntilAbort):

@@ -5,7 +5,13 @@ import os
 import sys
 import fnmatch
 
-from . import QtWidgets, QtGui, QtCore, Qt, application
+from . import (
+    QtWidgets,
+    QtGui,
+    QtCore,
+    Qt,
+    application
+)
 
 __all__ = (
     'get_drag_enter_paths',
