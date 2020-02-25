@@ -1,12 +1,16 @@
 """
 General helper functions.
 """
+import logging
+
 from . import (
     QtGui,
     Qt,
     QtWidgets,
     application,
 )
+
+logger = logging.getLogger(__package__)
 
 
 def to_qfont(*args):

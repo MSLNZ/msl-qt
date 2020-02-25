@@ -1,9 +1,9 @@
 """
 Exception handling.
 """
-import logging
 import traceback as tb
 
+from .utils import logger
 from . import (
     Qt,
     QtGui,
@@ -11,8 +11,6 @@ from . import (
     application,
     prompt,
 )
-
-logger = logging.getLogger(__name__)
 
 
 def excepthook(exctype, value, traceback):

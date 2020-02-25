@@ -2,12 +2,13 @@
 Base classes for starting a process in a new :class:`QThread`.
 """
 import sys
-import logging
 import traceback as tb
 
-from . import QtCore, Signal, prompt
-
-logger = logging.getLogger(__name__)
+from . import (
+    QtCore,
+    Signal,
+    prompt
+)
 
 
 class Worker(QtCore.QObject):
