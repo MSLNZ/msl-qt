@@ -302,6 +302,9 @@ def test_si_to_number():
     check('0', 0)
     check('123456789', 123456789.0)
     check('1.2', 1.2)
+    check('1e8', 1e8)
+    check('-1.e8', -1.0e8)
+    check('1.234e13', 1.234e13)
     check('123.4', 123.4)
     check('0.12m', 1.2e-4)
     check('-1.2m', -1.2e-3)
@@ -336,9 +339,8 @@ def test_si_to_number():
     check('123.4   m    ', 1.234e-1)
     check('  123.4   m    ', 1.234e-1)
     for item in ['', '    ', '\t', ' \t  ']:
-        with pytest.raises(ValueError) as err:
+        with pytest.raises(ValueError):
             utils.si_to_number(item)
-        assert str(err.value).startswith("could not convert string to float: ''")
 
     # nan, +/-inf
     assert math.isnan(utils.si_to_number('nan'))
@@ -350,12 +352,9 @@ def test_si_to_number():
     assert math.isinf(value) and value < 0
 
     for c in 'bcdeghijloqrstvwxABCDFHIJKLNOQRSUVWX':
-        with pytest.raises(ValueError) as err:
+        with pytest.raises(ValueError):
             utils.si_to_number('1.2'+c)
-        assert str(err.value).startswith('could not convert string to float: {!r}'.format('1.2'+c))
 
         for prefix in 'yzafpnu\u00b5mkMGTPEZY':
-            with pytest.raises(ValueError) as err:
+            with pytest.raises(ValueError):
                 utils.si_to_number('1.2'+c+prefix)
-            # the prefix is not at the end of the error message
-            assert str(err.value).startswith('could not convert string to float: {!r}'.format('1.2'+c))

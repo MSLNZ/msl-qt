@@ -221,7 +221,7 @@ def number_to_si(number):
 
 
 def si_to_number(string):
-    """Convert an SI string to a number.
+    """Convert a string with an SI prefix to a number.
 
     Parameters
     ----------
@@ -245,21 +245,17 @@ def si_to_number(string):
     1.23e-13
     """
     string_ = string.strip()
-    if not string_:
-        # mimic the builtin error message if one did float('')
-        raise ValueError("could not convert string to float: ''")
-
-    if string_ in ['nan', 'inf', '+inf', '-inf']:
+    if not string_ or string_ == 'nan' or string_.endswith('inf'):
+        # let the builtin implementation handle an empty string
+        # nan would be mistaken for the nano (n) SI prefix
+        # +/-inf would be mistaken for the femto (f) SI prefix
         return float(string_)
 
     prefix = string_[-1]
-    if prefix.isdigit():
-        return float(string_)
     if prefix == 'u':
         prefix = '\u00b5'
     for n, value in SI_PREFIX_MAP.items():
         if prefix == value:
             return float(string_[:-1]) * 10 ** (3 * n)
 
-    # mimic the builtin error message
-    raise ValueError('could not convert string to float: {!r}'.format(string))
+    return float(string_)
