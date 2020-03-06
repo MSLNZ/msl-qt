@@ -292,7 +292,6 @@ intersphinx_mapping = {
     # 'PyQt5': ('', 'pyqt5-modified-objects.inv'),
     # 'PySide2': ('https://doc.qt.io/qtforpython/', None),
     'PySide2': ('', 'pyside2-modified-objects.inv'),
-    'msl.equipment': ('https://msl-equipment.readthedocs.io/en/latest/', None),
 }
 
 # show all the Qt linking warnings
