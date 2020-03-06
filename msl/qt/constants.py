@@ -5,14 +5,14 @@ import os
 from enum import Enum
 
 HOME_DIR = os.path.join(os.path.expanduser('~'), '.msl')
-""":class:`str`: The default ``$HOME`` directory where all files are to be located."""
+""":class:`str`: The default ``$HOME`` directory where all files used by MSL-Qt are to be located."""
 
 SI_PREFIX_MAP = {i: prefix for i, prefix in enumerate('yzafpn\u00b5m kMGTPEZY', start=-8)}
 """:class:`dict`: The SI prefixes used to form multiples of 10**(3*n), n=-8..8"""
 
 
 class GREEK(Enum):
-    """Unicode representation of Greek letters."""
+    """Greek letters."""
     Alpha = '\u0391'
     Beta = '\u0392'
     Gamma = '\u0393'
