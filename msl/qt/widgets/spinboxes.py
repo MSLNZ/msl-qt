@@ -22,12 +22,68 @@ following events occur:
 * the Up, Down, PageUp or PageDown keys are pressed
 * the Increment and Decrement buttons are clicked
 """
-from .. import QtWidgets
+from enum import Enum
+
+from ..utils import (
+    si_to_number,
+    number_to_si,
+)
+from .. import (
+    QtWidgets,
+    QtGui,
+)
+
+
+class SpinBox(QtWidgets.QSpinBox):
+
+    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100, step=1, unit='', tooltip=''):
+        """A :class:`~QtWidgets.QSpinBox` that emits
+        :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
+        :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
+
+        Parameters
+        ----------
+        parent : :class:`QtWidgets.QWidget`, optional
+            The parent widget.
+        value : :class:`int`, optional
+            The initial value.
+        minimum : :class:`int`, optional
+            The minimum value.
+        maximum : :class:`int`, optional
+            The maximum value.
+        step : :class:`int`, optional
+            The step-by size.
+        unit : :class:`str` or :class:`enum.Enum`, optional
+            The text to display after the value.
+        tooltip : :class:`str`, optional
+            The tooltip to use for the :class:`SpinBox`.
+        """
+        super(SpinBox, self).__init__(parent=parent)
+        self.setMinimum(minimum)
+        self.setMaximum(maximum)
+        self.setValue(value)
+        self.setSingleStep(step)
+        self.setToolTip(tooltip)
+        if isinstance(unit, Enum):
+            self.setSuffix(unit.value)
+        else:
+            self.setSuffix(unit)
+
+    def stepBy(self, steps):
+        """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
+
+         Allows Increment/Decrement button clicks and Up/Down/PageUp/PageDown
+         key presses to update the value of the spinbox and then emit the
+         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` signal.
+        """
+        super(SpinBox, self).stepBy(steps)
+        self.editingFinished.emit()
 
 
 class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
-    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100, step=1, decimals=2, tooltip=None):
+    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100,
+                 step=1, decimals=2, use_si_prefix=False, unit='', tooltip=''):
         """A :class:`~QtWidgets.QDoubleSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -46,65 +102,137 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             The step-by size.
         decimals : :class:`int`, optional
             The number of digits after the decimal place to use to show the value.
+        use_si_prefix : :class:`bool`, optional
+            Whether to use an SI prefix to represent the number, e.g. a value of
+            1.2e-9 would be represented as '1.2 n'
+        unit : :class:`str` or :class:`enum.Enum`, optional
+            The text to display after the value.
         tooltip : :class:`str`, optional
             The tooltip to use for the :class:`DoubleSpinBox`.
         """
         super(DoubleSpinBox, self).__init__(parent=parent)
+        if use_si_prefix:
+            self._validator = _SIPrefixValidator()
+            si_prefix_limit = 0.99999999999999e27
+            if minimum < -si_prefix_limit:
+                minimum = -si_prefix_limit
+            if maximum > si_prefix_limit:
+                maximum = si_prefix_limit
+        else:
+            self._validator = None
         self.setMinimum(minimum)
         self.setMaximum(maximum)
         self.setValue(value)
         self.setSingleStep(step)
         self.setDecimals(decimals)
-        if tooltip:
-            self.setToolTip(tooltip)
+        self.setToolTip(tooltip)
+        if isinstance(unit, Enum):
+            self.setSuffix(unit.value)
+        else:
+            self.setSuffix(unit)
 
-    def stepBy(self, step):
+    def validate(self, text, position):
+        """Overrides :meth:`QtWidgets.QAbstractSpinBox.validate`."""
+        if self._validator is None:
+            return super(DoubleSpinBox, self).validate(text, position)
+        # don't pass self.cleanText() to the validator, use rstrip()
+        return self._validator.validate(text.rstrip(self.suffix()), position)
+
+    def fixup(self, text):
+        """Overrides :meth:`QtWidgets.QAbstractSpinBox.fixup`."""
+        if self._validator is None:
+            return super(DoubleSpinBox, self).fixup(text)
+        return self._validator.fixup(self.cleanText())
+
+    def valueFromText(self, text):
+        """Overrides :meth:`QtWidgets.QDoubleSpinBox.valueFromText`."""
+        if self._validator is None:
+            return super(DoubleSpinBox, self).valueFromText(text)
+        return si_to_number(self.cleanText())
+
+    def textFromValue(self, value):
+        """Overrides :meth:`QtWidgets.QDoubleSpinBox.textFromValue`."""
+        if self._validator is None:
+            return super(DoubleSpinBox, self).textFromValue(value)
+        val, si_prefix = number_to_si(value)
+        return '{value:.{decimals}f} {si_prefix}'.format(value=val, decimals=self.decimals(), si_prefix=si_prefix)
+
+    def setValue(self, value):
+        """Overrides :meth:`QtWidgets.QDoubleSpinBox.setValue`."""
+        if self._validator is None:
+            super(DoubleSpinBox, self).setValue(value)
+        else:
+            truncated = max(min(si_to_number(str(value)), self.maximum()), self.minimum())
+            self.lineEdit().setText(self.textFromValue(truncated))
+
+    def stepBy(self, steps):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
 
          Allows Increment/Decrement button clicks and Up/Down/PageUp/PageDown
          key presses to update the value of the spinbox and then emit the
          :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` signal.
+
+         If an SI prefix is enabled then uses a step size that is rescaled
+         for the current value.
         """
-        super(DoubleSpinBox, self).stepBy(step)
+        if self._validator is None:
+            super(DoubleSpinBox, self).stepBy(steps)
+        else:
+            number = si_to_number(self.cleanText())
+            truncated = max(min(number, self.maximum()), self.minimum())
+            _, si_prefix = number_to_si(truncated)
+            value = number + si_to_number(str(steps * self.singleStep()) + si_prefix)
+            self.setValue(value)
         self.editingFinished.emit()
 
 
-class SpinBox(QtWidgets.QSpinBox):
+class _SIPrefixValidator(QtGui.QValidator):
+    """Validate text that may or may not contain an SI prefix for the :class:`DoubleSpinBox`."""
 
-    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100, step=1, tooltip=None):
-        """A :class:`~QtWidgets.QSpinBox` that emits
-        :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
-        :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
+    def validate(self, string, position):
+        """Overrides :meth:`QtGui.QValidator.validate`."""
+        if not string:
+            return self.State.Intermediate
 
-        Parameters
-        ----------
-        parent : :class:`QtWidgets.QWidget`, optional
-            The parent widget.
-        value : :class:`int`, optional
-            The initial value.
-        minimum : :class:`int`, optional
-            The minimum value.
-        maximum : :class:`int`, optional
-            The maximum value.
-        step : :class:`int`, optional
-            The step-by size.
-        tooltip : :class:`str`, optional
-            The tooltip to use for the :class:`SpinBox`.
-        """
-        super(SpinBox, self).__init__(parent=parent)
-        self.setMinimum(minimum)
-        self.setMaximum(maximum)
-        self.setValue(value)
-        self.setSingleStep(step)
-        if tooltip:
-            self.setToolTip(tooltip)
+        if len(string) == 1:
+            if string.isdigit():
+                return self.State.Acceptable
+            if string in '+-.':
+                return self.State.Intermediate
+            return self.State.Invalid
 
-    def stepBy(self, step):
-        """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
+        try:
+            si_to_number(string)
+        except ValueError:
+            pass
+        else:
+            return self.State.Acceptable
 
-         Allows Increment/Decrement button clicks and Up/Down/PageUp/PageDown
-         key presses to update the value of the spinbox and then emit the
-         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` signal.
-        """
-        super(SpinBox, self).stepBy(step)
-        self.editingFinished.emit()
+        string_lower = string.lower()
+
+        # can only have one '.' and it must be before an 'e'
+        if string[position-1] == '.':
+            if (string.count('.') == 1) and ('e' not in string_lower[:position-1]):
+                return self.State.Intermediate
+            return self.State.Invalid
+
+        # can only have one 'e' and everything before it must be in 0123456789 or +-.
+        if string_lower[position-1] == 'e':
+            if string_lower.count('e') == 1 and all(c.isdigit() or c in '+-.' for c in string_lower[:position-1]):
+                return self.State.Intermediate
+            return self.State.Invalid
+
+        # a '+' or '-' symbol can only follow an 'e'
+        if string[position-1] in '+-':
+            if string_lower[position-2] == 'e':
+                return self.State.Intermediate
+            return self.State.Invalid
+
+        return self.State.Invalid
+
+    def fixup(self, text):
+        """Overrides :meth:`QtGui.QValidator.fixup`."""
+        try:
+            return '{} {}'.format(*number_to_si(si_to_number(text)))
+        except ValueError:
+            return ''
