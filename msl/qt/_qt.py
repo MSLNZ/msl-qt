@@ -57,6 +57,14 @@ building_docs = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersectio
 if not building_docs and not (has_pyside or has_pyqt):
     raise ImportError('Either PySide2 or PyQt5 must be installed')
 
+if building_docs and not has_pyside and not has_pyqt:
+    raise ImportError(
+        'To build the docs you must either install PySide2 or PyQt5.\n'
+        'Alternatively, you can temporarily enable mocking in conf.py using\n'
+        '  if on_rtd or True:\n'
+        'WARNING!!! do not commit this temporary change to the conf.py file'
+    )
+
 if use_pyside:
     from PySide2 import QtGui
     from PySide2 import QtCore
