@@ -135,8 +135,15 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.validate`."""
         if self._validator is None:
             return super(DoubleSpinBox, self).validate(text, position)
-        # don't pass self.cleanText() to the validator, use rstrip()
-        return self._validator.validate(text.rstrip(self.suffix()), position)
+        # Don't pass self.cleanText() to the validator because it does not always return
+        # what is expected. For example, if `text`='0.12f3' then self.cleanText() returns
+        # '0.12f' (which has removed the 3 at the end) and this causes the validator to
+        # return Acceptable and the displayed text in the DoubleSpinBox then becomes
+        # '0.12f3' which is Invalid and one can no longer edit the value in the
+        # DoubleSpinBox. It is okay to use self.cleanText() in the methods self.fixup(),
+        # self.valueFromText() and self.stepBy()
+        text = text.rstrip(self.suffix()).lstrip(self.prefix())
+        return self._validator.validate(text, position - len(self.prefix()))
 
     def fixup(self, text):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.fixup`."""
@@ -162,8 +169,8 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         if self._validator is None:
             super(DoubleSpinBox, self).setValue(value)
         else:
-            truncated = max(min(si_to_number(str(value)), self.maximum()), self.minimum())
-            self.lineEdit().setText(self.textFromValue(truncated))
+            coerced = max(min(si_to_number(str(value)), self.maximum()), self.minimum())
+            self.lineEdit().setText(self.textFromValue(coerced))
 
     def stepBy(self, steps):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
@@ -179,8 +186,8 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             super(DoubleSpinBox, self).stepBy(steps)
         else:
             number = si_to_number(self.cleanText())
-            truncated = max(min(number, self.maximum()), self.minimum())
-            _, si_prefix = number_to_si(truncated)
+            coerced = max(min(number, self.maximum()), self.minimum())
+            _, si_prefix = number_to_si(coerced)
             value = number + si_to_number(str(steps * self.singleStep()) + si_prefix)
             self.setValue(value)
         self.editingFinished.emit()
