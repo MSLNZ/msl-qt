@@ -82,6 +82,8 @@ def test_si_prefix_validator():
     assert validator.validate('-1.2 n', 6) is Acceptable
     assert validator.fixup('-1.2 n') == '-1.2 n'
 
+    assert validator.validate('0.12f3', 6) is Invalid
+
 
 def test_doublespinbox():
     dsb = spinboxes.DoubleSpinBox()
