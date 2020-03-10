@@ -82,6 +82,8 @@ def test_si_prefix_validator():
     assert validator.validate('-1.2 n', 6) is Acceptable
     assert validator.fixup('-1.2 n') == '-1.2 n'
 
+    assert validator.validate('0.12f3', 6) is Invalid
+
 
 def test_doublespinbox():
     dsb = spinboxes.DoubleSpinBox()
@@ -154,6 +156,22 @@ def test_doublespinbox():
     assert dsb.minimum() == -0.105
     assert dsb.maximum() == 0.105
     assert isinstance(dsb._validator, spinboxes._SIPrefixValidator)
+    dsb.setValue('12n')
+    assert dsb.value() == pytest.approx(12e-9)
+    dsb.setValue(0.012)
+    assert dsb.value() == 0.012
+    for value in [-1e2, -math.inf, '-1e5', '-1P', -1.1e30]:
+        dsb.setValue(value)
+        assert dsb.value() == -0.105
+    for steps in [-1, int(-1e30)]:
+        dsb.stepBy(steps)
+        assert dsb.value() == -0.105
+    for value in [1e2, math.inf, '1e5', '1P', 1.1e30]:
+        dsb.setValue(value)
+        assert dsb.value() == 0.105
+    for steps in [1, int(1e30)]:
+        dsb.stepBy(steps)
+        assert dsb.value() == 0.105
 
     dsb = spinboxes.DoubleSpinBox(minimum=-math.inf, maximum=math.inf, use_si_prefix=True)
     dsb.setValue('12n')
@@ -167,8 +185,20 @@ def test_doublespinbox():
     dsb.setValue(3.4e21)
     assert dsb.value() == pytest.approx(3.4e21)
     dsb.setValue('-1000.00 Y')
+    assert dsb.value() == pytest.approx(-1e27)
     dsb.stepBy(10)
     assert dsb.value() == pytest.approx(-9.9e+26)
-    dsb.setValue('1000.00 Y')
+    dsb.setValue('1000Y')
+    assert dsb.value() == pytest.approx(1e27)
     dsb.stepBy(-10)
     assert dsb.value() == pytest.approx(9.9e+26)
+    dsb.setValue(0.0)
+    assert dsb.value() == 0.0
+    dsb.stepBy(100)
+    assert dsb.value() == 100.0
+    dsb.stepBy(-1000)
+    assert dsb.value() == -900.0
+    dsb.setValue('1E')
+    assert dsb.value() == pytest.approx(1e18)
+    dsb.setValue('1E0')
+    assert dsb.value() == pytest.approx(1.0)
