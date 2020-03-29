@@ -6,7 +6,7 @@ Currently only PyQt5_ and PySide2_ are supported.
 Example repositories which unify the syntax for PyQt4_, PyQt5_, PySide_ and PySide2_:
 
 * https://github.com/mottosso/Qt.py
-* https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
+* https://github.com/jupyter/qtconsole
 * https://github.com/spyder-ide/qtpy
 * https://github.com/pyQode/pyqode.qt
 * https://github.com/silx-kit/silx/blob/master/silx/gui/qt/_qt.py
@@ -67,6 +67,10 @@ if use_pyside:
     Slot = QtCore.Slot
     if not hasattr(QtWidgets, 'QWIDGETSIZE_MAX'):
         QtWidgets.QWIDGETSIZE_MAX = (1 << 24) - 1
+    if not hasattr(QtWidgets.QApplication, 'exec'):
+        QtWidgets.QApplication.exec = QtWidgets.QApplication.exec_
+    if not hasattr(QtWidgets.QDialog, 'exec'):
+        QtWidgets.QDialog.exec = QtWidgets.QDialog.exec_
 else:
     from PyQt5 import QtGui
     from PyQt5 import QtCore
