@@ -60,7 +60,10 @@ from . import io
 from .loop_until_abort import LoopUntilAbort
 from . import prompt
 from .sleep import Sleep
-from .threading import Thread, Worker
+from .threading import (
+    Thread,
+    Worker,
+)
 from .widgets import (
     Button,
     Logger,

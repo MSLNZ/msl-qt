@@ -5,7 +5,12 @@ import random
 import logging
 import datetime
 
-from .. import QtWidgets, QtGui, prompt, io
+from .. import (
+    QtWidgets,
+    QtGui,
+    prompt,
+    io
+)
 
 
 class Logger(logging.Handler, QtWidgets.QWidget):

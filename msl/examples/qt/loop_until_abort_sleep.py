@@ -4,7 +4,10 @@ in *single shot* mode using a random :class:`~msl.qt.sleep.Sleep` time.
 """
 import random
 
-from msl.qt import LoopUntilAbort, Sleep
+from msl.qt import (
+    LoopUntilAbort,
+    Sleep
+)
 
 
 class LoopExampleSleep(LoopUntilAbort):

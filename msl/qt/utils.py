@@ -1,12 +1,24 @@
 """
 General helper functions.
 """
+import logging
+from math import (
+    isinf,
+    isnan,
+    floor,
+    log10,
+    fabs,
+)
+
+from .constants import SI_PREFIX_MAP
 from . import (
     QtGui,
     Qt,
     QtWidgets,
     application,
 )
+
+logger = logging.getLogger(__package__)
 
 
 def to_qfont(*args):
@@ -168,3 +180,82 @@ def screen_geometry(widget=None):
 
     # the Qt docs say that this function is deprecated
     return QtWidgets.QDesktopWidget().availableGeometry(widget)
+
+
+def number_to_si(number):
+    """Convert a number to be represented with an SI prefix.
+
+    The hecto (h), deka (da), deci (d) and centi (c) prefixes are not used.
+
+    Parameters
+    ----------
+    number : :class:`int` or :class:`float`
+        The number to convert.
+
+    Returns
+    -------
+    :class:`float`
+        The number rescaled.
+    :class:`str`
+        The SI prefix.
+
+    Examples
+    --------
+    >>> number_to_si(0.0123)
+    (12.3, 'm')
+    >>> number_to_si(123456.789)
+    (123.456789, 'k')
+    >>> number_to_si(712.123e14)
+    (71.2123, 'P')
+    >>> number_to_si(1.23e-13)
+    (123.0, 'f')
+    """
+    if isnan(number) or isinf(number) or number == 0:
+        return number, ''
+    n = int(floor(log10(fabs(number)) / 3))
+    if n == 0:
+        return number, ''
+    if n > 8 or n < -8:
+        raise ValueError('The number {} cannot be expressed with an SI prefix'.format(number))
+    return number * 10 ** (-3 * n), SI_PREFIX_MAP[n]
+
+
+def si_to_number(string):
+    """Convert a string with an SI prefix to a number.
+
+    Parameters
+    ----------
+    string : :class:`str`
+        The string to convert.
+
+    Returns
+    -------
+    :class:`float`
+        The number.
+
+    Examples
+    --------
+    >>> si_to_number('12.3m')
+    0.0123
+    >>> si_to_number('123.456789k')
+    123456.789
+    >>> si_to_number('71.2123P')
+    7.12123e+16
+    >>> si_to_number('123f')
+    1.23e-13
+    """
+    string_ = string.strip()
+    if not string_ or string_ == 'nan' or string_.endswith('inf'):
+        # let the builtin implementation handle an empty string
+        # nan would be mistaken for the nano (n) SI prefix
+        # +/-inf would be mistaken for the femto (f) SI prefix
+        return float(string_)
+
+    prefix = string_[-1]
+    if prefix == 'u':
+        prefix = '\u00b5'
+    for n, value in SI_PREFIX_MAP.items():
+        if prefix == value:
+            return float(string_[:-1]) * 10 ** (3 * n)
+
+    return float(string_)
