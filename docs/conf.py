@@ -30,7 +30,7 @@ if on_rtd:
             pass
 
         class QDialog(object):
-            pass
+            exec_ = None
 
         class QTableWidget(object):
             pass
@@ -52,6 +52,9 @@ if on_rtd:
 
         class QSpinBox(object):
             pass
+
+        class QApplication(object):
+            exec_ = None
 
     class QtCore(object):
 
