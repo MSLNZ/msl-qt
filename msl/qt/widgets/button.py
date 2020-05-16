@@ -143,13 +143,17 @@ class Button(QtWidgets.QToolButton):
     def _set_icon(self, icon, icon_size):
         icon = io.get_icon(icon)  # make sure that it's a QIcon
         if icon_size is not None:
-            icon = io.rescale_icon(icon, icon_size)
-            self.setIconSize(icon.size())
+            pixmap = io.rescale_icon(icon, icon_size)
+            self.setIconSize(pixmap.size())
+            icon = io.get_icon(pixmap)
         elif icon.availableSizes():
-            available = icon.availableSizes()[-1]
-            if self.iconSize().width() < available.width() or \
-                    self.iconSize().height() < available.height():
-                self.setIconSize(available)
+            style = self.style()
+            metric = style.pixelMetric(style.PM_ButtonIconSize)
+            s = icon.availableSizes()[0]
+            size = QtCore.QSize(max(s.width(), metric), max(s.height(), metric))
+            if self.iconSize().width() < size.width() or \
+                    self.iconSize().height() < size.height():
+                self.setIconSize(size)
         self.setIcon(icon)
 
 
