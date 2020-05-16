@@ -14,7 +14,7 @@ from . import (
 )
 
 __all__ = (
-    'get_drag_enter_paths',
+    'drag_drop_paths',
     'get_icon',
     'icon_to_base64',
     'rescale_icon',
@@ -266,13 +266,13 @@ def icon_to_base64(icon, *, fmt='png'):
     return array.toBase64()
 
 
-def get_drag_enter_paths(event, *, pattern=None):
-    """Returns the list of file paths from a :class:`QtGui.QDragEnterEvent`.
+def drag_drop_paths(event, *, pattern=None):
+    """Returns the list of file paths from a drag-enter or drop event.
 
     Parameters
     ----------
-    event : :class:`QtGui.QDragEnterEvent`
-        A drag-enter event.
+    event : :class:`QtGui.QDragEnterEvent` or :class:`QtGui.QDropEvent`
+        A drag-enter or drop event.
     pattern : :class:`str`, optional
         Include only the file paths that match the `pattern`. For example,
         to only include JPEG or JPG image files use ``'*.jp*g'``.
@@ -286,7 +286,7 @@ def get_drag_enter_paths(event, *, pattern=None):
     """
     if event.mimeData().hasUrls():
         urls = event.mimeData().urls()
-        paths = [str(url.toLocalFile()) for url in urls if url.isValid() and url.scheme() == 'file']
+        paths = [url.toLocalFile() for url in urls if url.isValid() and url.scheme() == 'file']
         if pattern is None:
             return paths
         return fnmatch.filter(paths, pattern)

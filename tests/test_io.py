@@ -178,7 +178,7 @@ def test_drag_enter_paths():
     mime = QtCore.QMimeData()
 
     event = QtGui.QDragEnterEvent(QtCore.QPoint(0, 0), Qt.CopyAction, mime, Qt.LeftButton, Qt.NoModifier)
-    paths = io.get_drag_enter_paths(event)
+    paths = io.drag_drop_paths(event)
     assert len(paths) == 0
 
     url1 = QtCore.QUrl('/path/to/image.jpeg')
@@ -198,17 +198,17 @@ def test_drag_enter_paths():
     mime.setUrls([url1, url2, url3, url4, url5])
     event = QtGui.QDragEnterEvent(QtCore.QPoint(0, 0), Qt.CopyAction, mime, Qt.LeftButton, Qt.NoModifier)
 
-    paths = io.get_drag_enter_paths(event)
+    paths = io.drag_drop_paths(event)
     assert len(paths) == 3
     assert '/path/to/image.jpeg' in paths
     assert '/path/to/image.png' in paths
     assert '/path/to/image2.jpg' in paths
 
-    paths = io.get_drag_enter_paths(event, pattern='*.jp*g')
+    paths = io.drag_drop_paths(event, pattern='*.jp*g')
     assert len(paths) == 2
     assert '/path/to/image.jpeg' in paths
     assert '/path/to/image2.jpg' in paths
 
-    paths = io.get_drag_enter_paths(event, pattern='*.png')
+    paths = io.drag_drop_paths(event, pattern='*.png')
     assert len(paths) == 1
     assert '/path/to/image.png' in paths
