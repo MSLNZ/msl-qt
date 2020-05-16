@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from msl.qt import io, Button, QtWidgets, QtCore, Qt
@@ -12,6 +14,31 @@ def test_text():
     assert b.text() == 'hello'
     assert b.icon().isNull()
     assert b.toolButtonStyle() == Qt.ToolButtonTextOnly
+
+
+def test_icon():
+    path = os.path.dirname(__file__) + '/gamma.png'
+    gamma_size = QtCore.QSize(191, 291)
+
+    int_val = 10
+    largest_icon_size = io.get_icon(int_val).availableSizes()[-1]
+    b = Button(icon=int_val)
+    assert b.text() == ''
+    assert not b.icon().isNull()
+    assert b.iconSize() == largest_icon_size
+    assert b.toolButtonStyle() == Qt.ToolButtonIconOnly
+
+    b = Button(icon=path)
+    assert b.text() == ''
+    assert not b.icon().isNull()
+    assert b.iconSize() == gamma_size
+    assert b.toolButtonStyle() == Qt.ToolButtonIconOnly
+
+    b = Button(icon=io.icon_to_base64(io.get_icon(path)))
+    assert b.text() == ''
+    assert not b.icon().isNull()
+    assert b.iconSize() == gamma_size
+    assert b.toolButtonStyle() == Qt.ToolButtonIconOnly
 
 
 def test_icon_size():
