@@ -141,16 +141,15 @@ class Button(QtWidgets.QToolButton):
         self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
 
     def _set_icon(self, icon, icon_size):
-        icon = io.get_icon(icon)
-        self.setIcon(icon)
         if icon_size is not None:
-            pixmap = io.rescale_icon(icon, icon_size)
-            self.setIconSize(pixmap.size())
+            icon = io.rescale_icon(icon, icon_size)
+            self.setIconSize(icon.size())
         elif icon.availableSizes():
             available = icon.availableSizes()[-1]
             if self.iconSize().width() < available.width() or \
                     self.iconSize().height() < available.height():
                 self.setIconSize(available)
+        self.setIcon(io.get_icon(icon))
 
 
 class ButtonMenu(QtWidgets.QMenu):
