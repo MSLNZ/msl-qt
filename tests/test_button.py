@@ -1,4 +1,5 @@
 import os
+import sys
 
 import pytest
 
@@ -19,7 +20,8 @@ def test_icon():
     int_val = QtWidgets.QStyle.SP_DriveNetIcon
     icon = convert.to_qicon(int_val)
     sizes = icon.availableSizes()
-    assert len(sizes) > 1
+    if sys.platform == 'win32':
+        assert len(sizes) > 1
 
     b = Button(icon=int_val)
     assert b.text() == ''
@@ -44,7 +46,8 @@ def test_icon_size():
     int_val = QtWidgets.QStyle.SP_DriveNetIcon
     icon = convert.to_qicon(int_val)
     sizes = icon.availableSizes()
-    assert len(sizes) > 1
+    if sys.platform == 'win32':
+        assert len(sizes) > 1
 
     #
     # specify the size to the get_icon function
