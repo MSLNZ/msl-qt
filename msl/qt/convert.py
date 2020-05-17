@@ -3,6 +3,7 @@ Functions to convert objects.
 """
 import os
 import sys
+import textwrap
 from math import (
     isinf,
     isnan,
@@ -24,6 +25,7 @@ __all__ = (
     'icon_to_base64',
     'rescale_icon',
     'number_to_si',
+    'print_base64',
     'si_to_number',
     'to_qcolor',
     'to_qfont',
@@ -534,3 +536,58 @@ def rescale_icon(icon, size, *, aspect_mode=Qt.KeepAspectRatio):
         pixmap = pixmap.scaled(size, aspect_mode)
 
     return pixmap
+
+
+def print_base64(icon, *, size=None, name='', line_width=80, file=None):
+    """Print the Base64_ representation of an icon.
+
+    Parameters
+    ----------
+    icon
+        Passed to :func:`~msl.qt.convert.to_qicon`.
+    size
+        Passed to :func:`~msl.qt.convert.to_qicon`.
+    name : :class:`str`, optional
+        The name of the icon.
+    line_width : :class:`int`, optional
+        The maximum number of characters in a line.
+    file : :term:`file-like object`
+        Where to print the output. Default is :data:`sys.stdout`.
+
+    Examples
+    --------
+    >>> print_base64(QtWidgets.QStyle.SP_MediaPlay, size=16)
+    b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAk6AAAJOgHwZJJKAAA' \\
+    b'AGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJ9JREFUOI3djzEKwlAQRGcXO1' \\
+    b'ERrIQw/i7gCTyOvZfyTtaBjaCVEH9n8V3bID/GpBKnnJ157AA/p6Io1kPy8m6QjCLyVFVWVXXvA' \\
+    b'2jOdPdFSqkheRoFaGlL8hFCOHQFshMAzDLZCKA0s+uQD9qaA7iQPI8FAEBjZpsxgCgiOzNbAkjt' \\
+    b'w6Sn6O5+rOt63xX4BLiZ2arvtdyEqaqW35T/RC/uTS/6P1rpJAAAAABJRU5ErkJggg=='
+
+    >>> print_base64(QtWidgets.QStyle.SP_MediaPlay, name='my_play_icon')
+    my_play_icon = b'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAk6' \\
+                   b'AAAJOgHwZJJKAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48' \\
+                   b'GgAAAaVJREFUWIXtlLFuE0EURc8bO8gyiiMhUYC8M2vHldPhz+AD6LDSp0FU' \\
+                   b'QMsHUEJBAx+QjoKGKlIKhCihcDSzcYEsCylGXoTA+yhQUBSReLXebINPOzP3' \\
+                   b'Hr0nDaxZs4Qoim5fZb657LDf718zxhw7595ba3cqF0jT1ABz4I4x5sBa+7zb' \\
+                   b'7W5VJnAGUdUtERkuFoujOI53ASlD4NKQOI4bqjoBNs8dzYBj4H4I4cMqAnkn' \\
+                   b'cJ4WsAO8s9a+arfbN6oW+CsiIvdqtdqo0+nsFckruoJ/8Q2YqOowSZKDvAKr' \\
+                   b'TuAsm8C2iLxxzu07525VLXBKC7gLfHLOPR4MBhtVCwBsAC1VfTSdTo+iKNqu' \\
+                   b'WgAAEVHglzEmu+hO/Yq6f/LnB30aQngGLKoUOAHe1uv1vdFoNFl2uUyBmYh8' \\
+                   b'AYbe+8O8j8oQ+AGkIvLEe/8CuHDfZQsoMFPV/SzLHo7H469FQgoJiMgJEIBh' \\
+                   b'COFjkYyiAt+BNMuyB0mSvF6l+JS8/4CKyAx42Wg0OmWVw5IJNJvNbD6fXwcO' \\
+                   b'RWTXe/+5rOLc9Hq9m5WXrlnzX/EbbYB/8sxND3cAAAAASUVORK5CYII='
+    """
+    b64 = icon_to_base64(to_qicon(icon, size=size)).data()
+    if name:
+        name += ' = '
+    indent = ' ' * len(name)
+    # the 5 comes from the additional characters that are printed: b'' \
+    lines = textwrap.wrap(b64.decode(), width=line_width - len(name) - 5)
+    for i, line in enumerate(lines):
+        line = line.encode()
+        if i == 0:
+            print('{}{} \\'.format(name, line), file=file)
+        elif i == len(lines) - 1:
+            print('{}{}'.format(indent, line), file=file)
+        else:
+            print('{}{} \\'.format(indent, line), file=file)

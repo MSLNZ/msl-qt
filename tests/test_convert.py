@@ -1,6 +1,7 @@
 import os
 import sys
 import math
+from io import StringIO
 
 import pytest
 
@@ -521,3 +522,31 @@ def test_si_to_number():
         for prefix in 'yzafpnu\u00b5mkMGTPEZY':
             with pytest.raises(ValueError):
                 convert.si_to_number('1.2' + c + prefix)
+
+
+def test_print_base64():
+
+    with StringIO() as s:
+        convert.print_base64(QtWidgets.QStyle.SP_MediaPlay, size=16, file=s)
+        s.seek(0)
+        actual = [line.rstrip() for line in s.readlines()]
+        expected = r"""b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAk6AAAJOgHwZJJKAAA' \
+b'AGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJ9JREFUOI3djzEKwlAQRGcXO1' \
+b'ERrIQw/i7gCTyOvZfyTtaBjaCVEH9n8V3bID/GpBKnnJ157AA/p6Io1kPy8m6QjCLyVFVWVXXvA' \
+b'2jOdPdFSqkheRoFaGlL8hFCOHQFshMAzDLZCKA0s+uQD9qaA7iQPI8FAEBjZpsxgCgiOzNbAkjt' \
+b'w6Sn6O5+rOt63xX4BLiZ2arvtdyEqaqW35T/RC/uTS/6P1rpJAAAAABJRU5ErkJggg=='
+""".splitlines()
+        assert actual == expected
+
+    with StringIO() as s:
+        convert.print_base64(QtWidgets.QStyle.SP_MediaPlay, size=16, name='my_icon', file=s)
+        s.seek(0)
+        actual = [line.rstrip() for line in s.readlines()]
+        expected = r"""my_icon = b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAk6AAAJO' \
+          b'gHwZJJKAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJ9JRE' \
+          b'FUOI3djzEKwlAQRGcXO1ERrIQw/i7gCTyOvZfyTtaBjaCVEH9n8V3bID/GpBKnnJ1' \
+          b'57AA/p6Io1kPy8m6QjCLyVFVWVXXvA2jOdPdFSqkheRoFaGlL8hFCOHQFshMAzDLZ' \
+          b'CKA0s+uQD9qaA7iQPI8FAEBjZpsxgCgiOzNbAkjtw6Sn6O5+rOt63xX4BLiZ2arvt' \
+          b'dyEqaqW35T/RC/uTS/6P1rpJAAAAABJRU5ErkJggg=='
+""".splitlines()
+        assert actual == expected
