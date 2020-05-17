@@ -9,6 +9,7 @@ from msl.qt import (
     QtGui,
     QtSvg,
     Signal,
+    convert,
     utils,
 )
 
@@ -51,10 +52,10 @@ class LED(QtWidgets.QWidget):
             The shape to draw the :class:`LED`. If a :class:`str` then the name of one of the
             :class:`Shapes`, e.g. ``0``, ``'circle'`` and :obj:`Shapes.Circle` are equivalent.
         on_color
-            The color when the :class:`LED` is on. See :func:`~msl.qt.utils.to_qcolor` for details
+            The color when the :class:`LED` is on. See :func:`~.convert.to_qcolor` for details
             about the different data types that are supported.
         off_color
-            The color when the :class:`LED` is off. See :func:`~msl.qt.utils.to_qcolor` for details
+            The color when the :class:`LED` is off. See :func:`~.convert.to_qcolor` for details
             about the different data types that are supported.
         clickable : :class:`bool`
             Whether the state of the :class:`LED` can be changed by clicking on it.
@@ -125,10 +126,10 @@ class LED(QtWidgets.QWidget):
         Parameters
         -------
         color
-            The color when the :class:`LED` is off. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`LED` is off. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
         """
-        self._off_color = utils.to_qcolor(color)
+        self._off_color = convert.to_qcolor(color)
         self.update()
 
     def on_color(self):
@@ -147,10 +148,10 @@ class LED(QtWidgets.QWidget):
         Parameters
         -------
         color
-            The color when the :class:`LED` is on. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`LED` is on. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
         """
-        self._on_color = utils.to_qcolor(color)
+        self._on_color = convert.to_qcolor(color)
         self.update()
 
     def shape(self):

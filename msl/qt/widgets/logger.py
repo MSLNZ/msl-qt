@@ -9,7 +9,7 @@ from .. import (
     QtWidgets,
     QtGui,
     prompt,
-    io
+    convert,
 )
 
 
@@ -113,7 +113,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._update_label()
 
         self._save_button = QtWidgets.QPushButton()
-        self._save_button.setIcon(io.get_icon(QtWidgets.QStyle.SP_DialogSaveButton))
+        self._save_button.setIcon(convert.to_qicon(QtWidgets.QStyle.SP_DialogSaveButton))
         self._save_button.clicked.connect(self._save_records)
         self._save_button.setToolTip('Save the log records')
 

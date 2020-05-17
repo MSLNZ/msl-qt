@@ -6,6 +6,7 @@ from .. import (
     QtGui,
     QtCore,
     QtWidgets,
+    convert,
     utils,
 )
 
@@ -25,10 +26,10 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         height : :class:`int`, optional
             The height, in pixels, of the toggle switch.
         on_color
-            The color when the :class:`ToggleSwitch` is on. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`ToggleSwitch` is on. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
         off_color
-            The color when the :class:`ToggleSwitch` is off. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`ToggleSwitch` is off. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
         tooltip : :class:`str`, optional
             The tooltip to use for the :class:`ToggleSwitch`.
@@ -43,7 +44,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         super(ToggleSwitch, self).__init__(parent=parent)
 
         if height is None:
-            self._height = int(utils.screen_geometry(self).height()*0.03)
+            self._height = int(utils.screen_geometry(self).height() * 0.03)
         else:
             self._height = int(height)
 
@@ -75,10 +76,10 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         Parameters
         -------
         color
-            The color when the :class:`ToggleSwitch` is off. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`ToggleSwitch` is off. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
         """
-        self._off_brush = QtGui.QBrush(utils.to_qcolor(color))
+        self._off_brush = QtGui.QBrush(convert.to_qcolor(color))
         self.update()
 
     def on_color(self):
@@ -97,10 +98,10 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         Parameters
         -------
         color
-            The color when the :class:`ToggleSwitch` is on. See :func:`~msl.qt.utils.to_qcolor`
+            The color when the :class:`ToggleSwitch` is on. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
         """
-        self._on_brush = QtGui.QBrush(utils.to_qcolor(color))
+        self._on_brush = QtGui.QBrush(convert.to_qcolor(color))
         self.update()
 
     def turn_off(self):

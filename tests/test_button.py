@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from msl.qt import io, Button, QtWidgets, QtCore, Qt
+from msl.qt import convert, Button, QtWidgets, QtCore, Qt
 
 
 def test_text():
@@ -17,7 +17,7 @@ def test_icon():
     gamma_size = QtCore.QSize(191, 291)
 
     int_val = QtWidgets.QStyle.SP_DriveNetIcon
-    icon = io.get_icon(int_val)
+    icon = convert.to_qicon(int_val)
     sizes = icon.availableSizes()
     assert len(sizes) > 1
 
@@ -33,7 +33,7 @@ def test_icon():
     assert b.iconSize() == gamma_size
     assert b.toolButtonStyle() == Qt.ToolButtonIconOnly
 
-    b = Button(icon=io.icon_to_base64(io.get_icon(path)))
+    b = Button(icon=convert.icon_to_base64(convert.to_qicon(path)))
     assert b.text() == ''
     assert not b.icon().isNull()
     assert b.iconSize() == gamma_size
@@ -42,7 +42,7 @@ def test_icon():
 
 def test_icon_size():
     int_val = QtWidgets.QStyle.SP_DriveNetIcon
-    icon = io.get_icon(int_val)
+    icon = convert.to_qicon(int_val)
     sizes = icon.availableSizes()
     assert len(sizes) > 1
 
@@ -50,45 +50,45 @@ def test_icon_size():
     # specify the size to the get_icon function
     #
 
-    b = Button(icon=io.get_icon(int_val))
+    b = Button(icon=convert.to_qicon(int_val))
     assert b.text() == ''
     assert b.toolButtonStyle() == Qt.ToolButtonIconOnly
     assert b.iconSize() == sizes[0]
 
-    b = Button(icon=io.get_icon(int_val, size=789))
+    b = Button(icon=convert.to_qicon(int_val, size=789))
     assert b.iconSize() == QtCore.QSize(789, 789)
 
-    b = Button(icon=io.get_icon(int_val, size=3.0))
+    b = Button(icon=convert.to_qicon(int_val, size=3.0))
     # specifying a scale factor will use the largest available size
     assert b.iconSize() == QtCore.QSize(3*sizes[-1].width(), 3*sizes[-1].height())
 
-    b = Button(icon=io.get_icon(int_val, size=QtCore.QSize(50, 50)))
+    b = Button(icon=convert.to_qicon(int_val, size=QtCore.QSize(50, 50)))
     assert b.iconSize() == QtCore.QSize(50, 50)
 
     for size in [(256,), (256, 256, 256)]:
         with pytest.raises(ValueError, match='(width, height)'):
-            Button(icon=io.get_icon(int_val, size=size))
+            Button(icon=convert.to_qicon(int_val, size=size))
 
     #
     # use the icon_size kwarg
     #
 
-    b = Button(icon=io.get_icon(int_val), icon_size=1234)
+    b = Button(icon=convert.to_qicon(int_val), icon_size=1234)
     assert b.iconSize() == QtCore.QSize(1234, 1234)
 
-    b = Button(icon=io.get_icon(int_val), icon_size=3.0)
+    b = Button(icon=convert.to_qicon(int_val), icon_size=3.0)
     # specifying a scale factor will use the largest available size
     assert b.iconSize() == QtCore.QSize(3*sizes[-1].width(), 3*sizes[-1].height())
 
-    b = Button(icon=io.get_icon(int_val), icon_size=(312, 312))
+    b = Button(icon=convert.to_qicon(int_val), icon_size=(312, 312))
     assert b.iconSize() == QtCore.QSize(312, 312)
 
-    b = Button(icon=io.get_icon(int_val), icon_size=QtCore.QSize(500, 500))
+    b = Button(icon=convert.to_qicon(int_val), icon_size=QtCore.QSize(500, 500))
     assert b.iconSize() == QtCore.QSize(500, 500)
 
     for size in [(256,), (256, 256, 256)]:
         with pytest.raises(ValueError, match='(width, height)'):
-            Button(icon=io.get_icon(int_val), icon_size=size)
+            Button(icon=convert.to_qicon(int_val), icon_size=size)
 
 
 def test_text_and_icon():

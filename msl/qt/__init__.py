@@ -49,17 +49,18 @@ def application(*args):
                'wg+l4cFJPH1ynI9qM6dLwwPPIPecsKvBXytvXi4U9vpc8oaMfFSbeQ1QaeixEyCP2Yfnahe+KA0PPm9SCeP' \
                'ns7XZd0pDR49A8qrM3Eht5lgF/H9lKAuFC5KM1me5V48ZAVgBwJTNgwLD3/f3Q2sm57LA/SbCSuMiUggKpK' \
                'QbQN4KwgXy9AA4r13gAhPhxfL6T8y/FrQlyIjl7wYAAAAASUVORK5CYII='
-        app.setWindowIcon(io.get_icon(QtCore.QByteArray(logo.encode())))
+        app.setWindowIcon(convert.to_qicon(QtCore.QByteArray(logo.encode())))
 
     return app
 
 
 from ._qt import *
 from .exceptions import excepthook
-from . import io
+from . import utils
 from .loop_until_abort import LoopUntilAbort
 from . import prompt
 from .sleep import Sleep
+from . import convert
 from .threading import (
     Thread,
     Worker,
@@ -72,4 +73,3 @@ from .widgets import (
     SpinBox,
     LED,
 )
-from . import utils

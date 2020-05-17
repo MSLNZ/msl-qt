@@ -11,7 +11,7 @@ from . import (
     Qt,
     application,
 )
-from .utils import to_qfont
+from .convert import to_qfont
 
 
 def critical(message, *, title=None, font=None):
@@ -259,11 +259,11 @@ def comments(*, path=None, title=None, even_row_color='#FFFFFF', odd_row_color='
         The text to display in the title bar of the dialog window.
     even_row_color
         The background color of the even-numbered rows in the history table.
-        See :func:`~msl.qt.utils.to_qcolor` for details about the different
+        See :func:`~.convert.to_qcolor` for details about the different
         data types that are supported.
     odd_row_color
         The background color of the odd-numbered rows in the history table.
-        See :func:`~msl.qt.utils.to_qcolor` for details about the different
+        See :func:`~.convert.to_qcolor` for details about the different
         data types that are supported.
 
     Returns

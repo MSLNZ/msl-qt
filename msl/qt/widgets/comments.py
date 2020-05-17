@@ -10,6 +10,7 @@ from .. import (
     Qt,
     prompt,
     Button,
+    convert,
     utils,
 )
 from ..constants import HOME_DIR
@@ -28,8 +29,8 @@ class Comments(QtWidgets.QDialog):
         self.path = json_path if json_path else os.path.join(HOME_DIR, 'msl-qt-comments.json')
 
         self.comments = []
-        self.even_row_color = utils.to_qcolor(even_row_color)
-        self.odd_row_color = utils.to_qcolor(odd_row_color)
+        self.even_row_color = convert.to_qcolor(even_row_color)
+        self.odd_row_color = convert.to_qcolor(odd_row_color)
 
         self.load_json()
         self.create_widgets()

@@ -1,27 +1,245 @@
 """
-I/O helper functions.
+Functions to convert objects.
 """
 import os
 import sys
-import fnmatch
+from math import (
+    isinf,
+    isnan,
+    floor,
+    log10,
+    fabs,
+)
 
+from .constants import SI_PREFIX_MAP
 from . import (
-    QtWidgets,
+    Qt,
     QtGui,
     QtCore,
-    Qt,
-    application
+    QtWidgets,
+    application,
 )
 
 __all__ = (
-    'drag_drop_paths',
-    'get_icon',
     'icon_to_base64',
     'rescale_icon',
+    'number_to_si',
+    'si_to_number',
+    'to_qcolor',
+    'to_qfont',
+    'to_qicon',
 )
 
 
-def get_icon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
+def to_qfont(*args):
+    """Convert the input argument(s) into a :class:`QtGui.QFont`.
+
+    Parameters
+    ----------
+    args
+        The argument(s) to convert to a :class:`QtGui.QFont`.
+
+        * If :class:`int` or :class:`float` then the point size.
+        * If :class:`str` then the font family name.
+        * If :class:`QtGui.QFont` then returns a copy.
+        * If multiple arguments then
+
+          - family name, point size
+
+          - family name, point size, weight
+
+          - family name, point size, weight, is italic
+
+    Returns
+    -------
+    :class:`QtGui.QFont`
+        The input argument(s) converted to a :class:`QtGui.QFont`.
+
+    Examples
+    --------
+    >>> font = to_qfont(48)
+    >>> font = to_qfont(23.4)
+    >>> font = to_qfont('Papyrus')
+    >>> font = to_qfont('Ariel', 16)
+    >>> font = to_qfont('Ariel', 16, QtGui.QFont.Bold)
+    >>> font = to_qfont('Ariel', 16, 50, True)
+    """
+
+    def parse_tuple(a):
+        if not isinstance(a[0], str):
+            raise TypeError('The first argument must be the family name (as a string)')
+
+        if len(a) == 1:
+            return QtGui.QFont(a[0])
+        elif len(a) == 2:
+            return QtGui.QFont(a[0], pointSize=int(a[1]))
+        elif len(a) == 3:
+            return QtGui.QFont(a[0], pointSize=int(a[1]), weight=int(a[2]))
+        else:
+            return QtGui.QFont(a[0], pointSize=int(a[1]), weight=int(a[2]), italic=bool(a[3]))
+
+    if not args:
+        return QtGui.QFont()
+    elif len(args) == 1:
+        value = args[0]
+        if isinstance(value, QtGui.QFont):
+            return QtGui.QFont(value)
+        elif isinstance(value, int):
+            f = QtGui.QFont()
+            f.setPointSize(value)
+            return f
+        elif isinstance(value, float):
+            f = QtGui.QFont()
+            f.setPointSizeF(value)
+            return f
+        elif isinstance(value, str):
+            return QtGui.QFont(value)
+        elif isinstance(value, (list, tuple)):
+            return parse_tuple(value)
+        else:
+            raise TypeError('Cannot create a QFont from {!r}'.format(value))
+    else:
+        return parse_tuple(args)
+
+
+def to_qcolor(*args):
+    """Convert the input argument(s) into a :class:`QtGui.QColor`.
+
+    Parameters
+    ----------
+    args
+        The argument(s) to convert to a :class:`QtGui.QColor`.
+
+        * R, G, B, [A] :math:`\\rightarrow` values can be :class:`int` 0-255 or :class:`float` 0.0-1.0
+        * (R, G, B, [A]) :math:`\\rightarrow` :class:`tuple` of :class:`int` 0-255 or :class:`float` 0.0-1.0
+        * :class:`int` or :obj:`QtCore.Qt.GlobalColor` :math:`\\rightarrow` a pre-defined enum value
+        * :class:`float` :math:`\\rightarrow` a greyscale value between 0.0-1.0
+        * :class:`QtGui.QColor` :math:`\\rightarrow` returns a copy
+        * :class:`str` :math:`\\rightarrow` see `here <https://doc.qt.io/qt-5/qcolor.html#setNamedColor>`_ for examples
+
+    Returns
+    -------
+    :class:`QtGui.QColor`
+        The input argument(s) converted to a :class:`QtGui.QColor`.
+
+    Examples
+    --------
+    >>> color = to_qcolor(48, 127, 69)
+    >>> color = to_qcolor((48, 127, 69))
+    >>> color = to_qcolor(0.5)  # greyscale -> (127, 127, 127, 255)
+    >>> color = to_qcolor(0.2, 0.45, 0.3, 0.5)
+    >>> color = to_qcolor('red')
+    >>> color = to_qcolor(Qt.darkBlue)
+    >>> color = to_qcolor(15)  # 15 == Qt.darkBlue
+    """
+    if not args:
+        return QtGui.QColor()
+
+    def ensure_255(value):
+        # ensure that a value is between 0 and 255
+        if value <= 1 and isinstance(value, float):
+            value = int(value * 255)
+        return min(max(value, 0), 255)
+
+    if len(args) == 1:
+        arg = args[0]
+        if isinstance(arg, str):
+            return QtGui.QColor(arg)
+        elif isinstance(arg, QtGui.QColor):
+            return QtGui.QColor(arg)
+        elif isinstance(arg, (list, tuple)):
+            return QtGui.QColor(*tuple(ensure_255(v) for v in arg))
+        elif isinstance(arg, float):
+            val = ensure_255(arg)
+            return QtGui.QColor(val, val, val)
+        elif isinstance(arg, (int, Qt.GlobalColor)):
+            return QtGui.QColor(Qt.GlobalColor(arg))
+        else:
+            raise TypeError('Cannot convert {!r} to a QColor'.format(args))
+    else:
+        return QtGui.QColor(*tuple(ensure_255(v) for v in args))
+
+
+def number_to_si(number):
+    """Convert a number to be represented with an SI prefix.
+
+    The hecto (h), deka (da), deci (d) and centi (c) prefixes are not used.
+
+    Parameters
+    ----------
+    number : :class:`int` or :class:`float`
+        The number to convert.
+
+    Returns
+    -------
+    :class:`float`
+        The number rescaled.
+    :class:`str`
+        The SI prefix.
+
+    Examples
+    --------
+    >>> number_to_si(0.0123)
+    (12.3, 'm')
+    >>> number_to_si(123456.789)
+    (123.456789, 'k')
+    >>> number_to_si(712.123e14)
+    (71.2123, 'P')
+    >>> number_to_si(1.23e-13)
+    (123.0, 'f')
+    """
+    if isnan(number) or isinf(number) or number == 0:
+        return number, ''
+    n = int(floor(log10(fabs(number)) / 3))
+    if n == 0:
+        return number, ''
+    if n > 8 or n < -8:
+        raise ValueError('The number {} cannot be expressed with an SI prefix'.format(number))
+    return number * 10 ** (-3 * n), SI_PREFIX_MAP[n]
+
+
+def si_to_number(string):
+    """Convert a string with an SI prefix to a number.
+
+    Parameters
+    ----------
+    string : :class:`str`
+        The string to convert.
+
+    Returns
+    -------
+    :class:`float`
+        The number.
+
+    Examples
+    --------
+    >>> si_to_number('12.3m')
+    0.0123
+    >>> si_to_number('123.456789k')
+    123456.789
+    >>> si_to_number('71.2123P')
+    7.12123e+16
+    >>> si_to_number('123f')
+    1.23e-13
+    """
+    string_ = string.strip()
+    if not string_ or string_ == 'nan' or string_.endswith('inf'):
+        # let the builtin implementation handle an empty string
+        # nan would be mistaken for the nano (n) SI prefix
+        # +/-inf would be mistaken for the femto (f) SI prefix
+        return float(string_)
+
+    prefix = string_[-1]
+    if prefix == 'u':
+        prefix = '\u00b5'
+    for n, value in SI_PREFIX_MAP.items():
+        if prefix == value:
+            return float(string_[:-1]) * 10 ** (3 * n)
+
+    return float(string_)
+
+
+def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
     """Convert the input object to a :class:`QtGui.QIcon`.
 
     Parameters
@@ -35,8 +253,8 @@ def get_icon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
         * `QtWidgets.QStyle.StandardPixmap <http://doc.qt.io/qt-5/qstyle.html#StandardPixmap-enum>`_:
           One of the built-in Qt pixmaps. Example::
 
-              get_icon(QtWidgets.QStyle.SP_TitleBarMenuButton)
-              get_icon(14)  # the QtWidgets.QStyle.SP_TrashIcon enum value
+              to_qicon(QtWidgets.QStyle.SP_TitleBarMenuButton)
+              to_qicon(14)  # the QtWidgets.QStyle.SP_TrashIcon enum value
 
         * :class:`QtCore.QByteArray`: A `Base64 <https://en.wikipedia.org/wiki/Base64>`_
           representation of an encoded icon.
@@ -55,30 +273,30 @@ def get_icon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
           in a :class:`str` argument::
 
               # provide the full path to the icon file
-              get_icon('D:/code/resources/icons/msl.png')
-              get_icon('D:/code/resources/icons/photon.png')
+              to_qicon('D:/code/resources/icons/msl.png')
+              to_qicon('D:/code/resources/icons/photon.png')
 
               # insert the folder where the icons are located in to sys.path
               sys.path.insert(0, 'D:/code/resources/icons/')
               # so now only the filename needs to be specified to load the icon
-              get_icon('msl.png')
-              get_icon('photon.png')
+              to_qicon('msl.png')
+              to_qicon('photon.png')
 
               # load icon 23 from the Windows shell32.dll file
-              get_icon('C:/Windows/System32/shell32.dll|23')
+              to_qicon('C:/Windows/System32/shell32.dll|23')
 
               # load icon 0 from the Windows explorer.exe file
-              get_icon('C:/Windows/explorer.exe|0')
+              to_qicon('C:/Windows/explorer.exe|0')
 
               # it is assumed that the DLL/EXE file is located in a default directory:
               #   - a DLL file in C:/Windows/System32/
               #   - an EXE file in C:/Windows/
               # so the following is a simplified way to load an icon in a DLL file
-              get_icon('shell32|23')
-              get_icon('imageres|1')
-              get_icon('compstui|51')
+              to_qicon('shell32|23')
+              to_qicon('imageres|1')
+              to_qicon('compstui|51')
               # and the following is a simplified way to load an icon in an EXE file
-              get_icon('explorer|0')
+              to_qicon('explorer|0')
 
     size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
         Rescale the icon to the specified `size`.
@@ -114,7 +332,7 @@ def get_icon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
         _icon = obj
     elif isinstance(obj, str):
         if '|' in obj:  # then loading an icon from a Windows DLL/EXE file
-            _icon = get_icon(icon_to_base64(obj))
+            _icon = to_qicon(icon_to_base64(obj))
         elif os.path.isfile(obj):
             _icon = QtGui.QIcon(obj)
         else:
@@ -168,8 +386,8 @@ def icon_to_base64(icon, *, fmt='png'):
 
     Parameters
     ----------
-    icon : :class:`object`
-        An icon with a data type that is handled by :func:`get_icon`.
+    icon
+        An icon with a data type that is handled by :func:`to_qicon`.
     fmt : :class:`str`, optional
         The icon format to use when converting. The supported values are: ``BMP``,
         ``JPG``, ``JPEG`` and ``PNG``.
@@ -251,7 +469,7 @@ def icon_to_base64(icon, *, fmt='png'):
         stream.Dispose()
         return base
 
-    icon = get_icon(icon)
+    icon = to_qicon(icon)
     try:
         size = icon.availableSizes()[-1]  # use the largest size as the default size
     except IndexError:
@@ -266,40 +484,13 @@ def icon_to_base64(icon, *, fmt='png'):
     return array.toBase64()
 
 
-def drag_drop_paths(event, *, pattern=None):
-    """Returns the list of file paths from a drag-enter or drop event.
-
-    Parameters
-    ----------
-    event : :class:`QtGui.QDragEnterEvent` or :class:`QtGui.QDropEvent`
-        A drag-enter or drop event.
-    pattern : :class:`str`, optional
-        Include only the file paths that match the `pattern`. For example,
-        to only include JPEG or JPG image files use ``'*.jp*g'``.
-
-        See :func:`fnmatch.fnmatch`.
-
-    Returns
-    -------
-    :class:`list` of :class:`str`
-        The list of file paths.
-    """
-    if event.mimeData().hasUrls():
-        urls = event.mimeData().urls()
-        paths = [url.toLocalFile() for url in urls if url.isValid() and url.scheme() == 'file']
-        if pattern is None:
-            return paths
-        return fnmatch.filter(paths, pattern)
-    return []
-
-
 def rescale_icon(icon, size, *, aspect_mode=Qt.KeepAspectRatio):
     """Rescale an icon.
 
     Parameters
     ----------
-    icon : :class:`object`
-        Any object that is supported by :func:`~msl.qt.io.get_icon`.
+    icon
+        Any object that is supported by :func:`to_qicon`.
     size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`
         Rescale the icon to the specified `size`.
         If an :class:`int` then set the width and the height to be the `size` value.
@@ -321,7 +512,7 @@ def rescale_icon(icon, size, *, aspect_mode=Qt.KeepAspectRatio):
     elif isinstance(icon, QtGui.QPixmap):
         pixmap = icon
     else:
-        return rescale_icon(get_icon(icon), size, aspect_mode=aspect_mode)
+        return rescale_icon(to_qicon(icon), size, aspect_mode=aspect_mode)
 
     default_size = pixmap.size()
     if isinstance(size, int):

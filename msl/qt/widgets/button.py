@@ -6,7 +6,7 @@ from .. import (
     QtCore,
     Qt,
     QtGui,
-    io,
+    convert,
 )
 
 
@@ -21,7 +21,7 @@ class Button(QtWidgets.QToolButton):
         text : :class:`str`, optional
             The text to display on the button.
         icon : :class:`object`, optional
-            Any icon object that is supported by :func:`~msl.qt.io.get_icon`.
+            Any icon object that is supported by :func:`~.convert.to_qicon`.
         icon_size : :class:`int`, :class:`float`, :class:`tuple` of :class:`int` or :class:`QtCore.QSize`, optional
             Rescale the icon to the specified `size`.
             If the value is :data:`None` then do not rescale the icon.
@@ -84,7 +84,7 @@ class Button(QtWidgets.QToolButton):
             The function to be called when this item is selected.
             If :data:`None` then the item is displayed but it is disabled.
         icon : :class:`object`, optional
-            Any icon object that is supported by :func:`~msl.qt.io.get_icon`.
+            Any icon object that is supported by :func:`~.convert.to_qicon`.
         shortcut : :class:`str`, optional
           The keyboard shortcut to use to select this item, e.g., ``'CTRL+A'``
         tooltip : :class:`str`, optional
@@ -102,7 +102,7 @@ class Button(QtWidgets.QToolButton):
         if shortcut is not None:
             action.setShortcut(QtGui.QKeySequence(shortcut))
         if icon is not None:
-            action.setIcon(io.get_icon(icon))
+            action.setIcon(convert.to_qicon(icon))
         if tooltip is not None:
             action.setToolTip(tooltip)
             action.setStatusTip(tooltip)
@@ -141,11 +141,11 @@ class Button(QtWidgets.QToolButton):
         self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
 
     def _set_icon(self, icon, icon_size):
-        icon = io.get_icon(icon)  # make sure that it's a QIcon
+        icon = convert.to_qicon(icon)  # make sure that it's a QIcon
         if icon_size is not None:
-            pixmap = io.rescale_icon(icon, icon_size)
+            pixmap = convert.rescale_icon(icon, icon_size)
             self.setIconSize(pixmap.size())
-            icon = io.get_icon(pixmap)
+            icon = convert.to_qicon(pixmap)
         elif icon.availableSizes():
             style = self.style()
             metric = style.pixelMetric(style.PM_ButtonIconSize)

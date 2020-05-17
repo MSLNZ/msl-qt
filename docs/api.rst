@@ -1,4 +1,4 @@
-.. _api:
+.. _msl-qt-api:
 
 ========================
 MSL-Qt API Documentation
@@ -15,8 +15,8 @@ which has the following modules
 .. autosummary::
 
    msl.qt.constants
+   msl.qt.convert
    msl.qt.exceptions
-   msl.qt.io
    msl.qt.prompt
    msl.qt.threading
    msl.qt.utils
@@ -47,8 +47,8 @@ Package Structure
 
    msl.qt <_api/msl.qt>
    msl.qt.constants <_api/msl.qt.constants>
+   msl.qt.convert <_api/msl.qt.convert>
    msl.qt.exceptions <_api/msl.qt.exceptions>
-   msl.qt.io <_api/msl.qt.io>
    msl.qt.loop_until_abort <_api/msl.qt.loop_until_abort>
    msl.qt.prompt <_api/msl.qt.prompt>
    msl.qt.sleep <_api/msl.qt.sleep>

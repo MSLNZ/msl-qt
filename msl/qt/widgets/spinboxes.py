@@ -24,7 +24,7 @@ following events occur:
 """
 from enum import Enum
 
-from ..utils import (
+from ..convert import (
     si_to_number,
     number_to_si,
 )

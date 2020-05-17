@@ -6,7 +6,7 @@ from msl.qt import (
     QtWidgets,
     QtCore,
     application,
-    io
+    convert
 )
 
 try:
@@ -103,7 +103,7 @@ class ShowStandardIcons(object):
         num_cols = 4
         for i in icons:
             button = QtWidgets.QPushButton(i)
-            ico = io.get_icon(getattr(QtWidgets.QStyle, i))
+            ico = convert.to_qicon(getattr(QtWidgets.QStyle, i))
             button.setIcon(ico)
             button.clicked.connect(lambda *args, ic=ico, n=i: self.zoom(ic, n))
 
@@ -132,7 +132,7 @@ class ShowStandardIcons(object):
             button = QtWidgets.QPushButton(str(index))
             try:
                 name = '{}|{}'.format(filename, str(index))
-                ico = io.get_icon(name)
+                ico = convert.to_qicon(name)
             except IOError:
                 break
 
@@ -165,6 +165,7 @@ class ShowStandardIcons(object):
 
     def close_event(self, event):
         self.zoom_widget.close()
+        event.accept()
 
 
 if __name__ == '__main__':
