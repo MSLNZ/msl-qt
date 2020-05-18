@@ -352,6 +352,29 @@ def text(message, *, title=None, font=None, value='', multi_line=False, echo=QtW
     return dialog.textValue().strip() if ok else None
 
 
+def password(message, *, title=None, font=None):
+    """Request a password.
+
+    Parameters
+    ----------
+    message : :class:`str`
+        The message that is shown to the user to describe what the list of items represent.
+        The message can use HTML/CSS markup.
+    title : :class:`str`, optional
+        The text to display in the title bar of the dialog window.
+        If :data:`None` then uses the text in the title bar of the active window.
+    font : :class:`int`, :class:`str`, :class:`tuple` or :class:`QtGui.QFont`, optional
+        The font to use. If an :class:`int` then the point size, if a :class:`str` then
+        the family name, if a :class:`tuple` then the (family name, point size).
+
+    Returns
+    -------
+    :class:`str` or :data:`None`
+        The password or :data:`None` if the user cancelled the request.
+    """
+    return text(message, title=title, font=font, echo=QtWidgets.QLineEdit.Password)
+
+
 def warning(message, *, title=None, font=None):
     """Display a `warning` message in a dialog window.
 
