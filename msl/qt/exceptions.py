@@ -46,6 +46,7 @@ def excepthook(exctype, value, traceback):
             self.icon_label.setPixmap(critical_icon.pixmap(largest_size))
 
             self.error_label = QtWidgets.QLabel(value.__class__.__name__ + ':\n\n' + str(value))
+            self.error_label.setWordWrap(True)
 
             self.ok_button = QtWidgets.QPushButton('Close')
             self.ok_button.clicked.connect(self.close)
