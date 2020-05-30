@@ -62,7 +62,6 @@ class Thread(QtCore.QObject):
         super(Thread, self).__init__()
         self._thread = None
         self._worker = None
-        self._callbacks = []
         self._finished = False
 
         if not callable(worker):
