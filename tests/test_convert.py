@@ -158,7 +158,7 @@ def test_rescale_icon():
     assert new_size.height() == size2[1]
 
     # passing different objects does not raise an error
-    if sys.platform == 'win32':
+    if sys.platform == 'win32' and has_pythonnet():
         assert isinstance(convert.rescale_icon('explorer|0', 1.0), QtGui.QPixmap)
     assert isinstance(convert.rescale_icon(QtWidgets.QStyle.SP_TitleBarMenuButton, 1.0), QtGui.QPixmap)
     assert isinstance(convert.rescale_icon(25, 1.0), QtGui.QPixmap)
