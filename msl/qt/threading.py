@@ -133,7 +133,6 @@ class Thread(QtCore.QObject):
         self._worker.error.connect(lambda *ignore: self._thread.exit(-1))
         self._worker.error.connect(self.error_handler)
         self._worker.finished.connect(self._worker_finished)
-        self._worker.finished.connect(self._worker.deleteLater)
         self._thread.started.connect(self._worker._process)
         self._thread.finished.connect(self._thread.deleteLater)
         self._thread.finished.connect(self.finished)
