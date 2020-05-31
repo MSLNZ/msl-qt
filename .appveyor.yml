@@ -6,9 +6,8 @@ environment:
     - PYTHON: C:\Python36-x64
     - PYTHON: C:\Python37
     - PYTHON: C:\Python37-x64
-    # wait for Python 3.8.1 to be available on AppVeyor
-    # - PYTHON: C:\Python38
-    # - PYTHON: C:\Python38-x64
+    - PYTHON: C:\Python38
+    - PYTHON: C:\Python38-x64
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
