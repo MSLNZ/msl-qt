@@ -14,75 +14,75 @@ def test_si_prefix_validator():
     Invalid = QtGui.QValidator.State.Invalid
 
     validator = spinboxes._SIPrefixValidator()
-    assert validator.validate('', 0) is Intermediate
+    assert validator.validate('', 0) == Intermediate
 
     # must start with a digit, '+', '-' or '.'
     for c in string.ascii_letters + '~`!@#$%^&*()_= {[}]|\\:;"\'<,>?/':
-        assert validator.validate(c, 1) is Invalid
+        assert validator.validate(c, 1) == Invalid
     for c in string.digits:
-        assert validator.validate(c, 1) is Acceptable
+        assert validator.validate(c, 1) == Acceptable
         assert validator.fixup(c) == c+'.0 '
-    assert validator.validate('-', 1) is Intermediate
-    assert validator.validate('+', 1) is Intermediate
-    assert validator.validate('.', 1) is Intermediate
+    assert validator.validate('-', 1) == Intermediate
+    assert validator.validate('+', 1) == Intermediate
+    assert validator.validate('.', 1) == Intermediate
 
-    assert validator.validate('+-', 2) is Invalid
-    assert validator.validate('-+', 2) is Invalid
-    assert validator.validate('++', 2) is Invalid
-    assert validator.validate('--', 2) is Invalid
-    assert validator.validate('..', 2) is Invalid
+    assert validator.validate('+-', 2) == Invalid
+    assert validator.validate('-+', 2) == Invalid
+    assert validator.validate('++', 2) == Invalid
+    assert validator.validate('--', 2) == Invalid
+    assert validator.validate('..', 2) == Invalid
 
-    assert validator.validate('-.', 2) is Intermediate
+    assert validator.validate('-.', 2) == Intermediate
 
-    assert validator.validate('+.', 2) is Intermediate
+    assert validator.validate('+.', 2) == Intermediate
 
-    assert validator.validate('-0.', 3) is Acceptable
+    assert validator.validate('-0.', 3) == Acceptable
     assert validator.fixup('-0.') == '-0.0 '
 
-    assert validator.validate('+1.', 3) is Acceptable
+    assert validator.validate('+1.', 3) == Acceptable
     assert validator.fixup('-1.') == '-1.0 '
 
-    assert validator.validate('-02.', 4) is Acceptable
+    assert validator.validate('-02.', 4) == Acceptable
     assert validator.fixup('-02.') == '-2.0 '
 
-    assert validator.validate('+00001.', 7) is Acceptable
+    assert validator.validate('+00001.', 7) == Acceptable
     assert validator.fixup('+00001.') == '1.0 '
 
-    assert validator.validate('1e', 2) is Intermediate
+    assert validator.validate('1e', 2) == Intermediate
 
     # SI prefix cannot follow a letter
-    assert validator.validate('1ef', 3) is Invalid
+    assert validator.validate('1ef', 3) == Invalid
     # exponential cannot follow a SI prefix
-    assert validator.validate('1fe', 3) is Invalid
+    assert validator.validate('1fe', 3) == Invalid
 
-    assert validator.validate('1.23.', 5) is Invalid
-    assert validator.validate('1.23+', 5) is Invalid
-    assert validator.validate('1.23-', 5) is Invalid
+    assert validator.validate('1.23.', 5) == Invalid
+    assert validator.validate('1.23+', 5) == Invalid
+    assert validator.validate('1.23-', 5) == Invalid
 
-    assert validator.validate('1ee', 3) is Invalid
-    assert validator.validate('1eE', 3) is Invalid
-    assert validator.validate('1e.', 3) is Invalid
-    assert validator.validate('1.e', 3) is Intermediate
-    assert validator.validate('1.1e', 4) is Intermediate
-    assert validator.validate('-1.11436e', 9) is Intermediate
-    assert validator.validate('-1.11436e2', 10) is Acceptable
+    assert validator.validate('1ee', 3) == Invalid
+    assert validator.validate('1eE', 3) == Invalid
+    assert validator.validate('1e.', 3) == Invalid
+    assert validator.validate('1.e', 3) == Intermediate
+    assert validator.validate('1.1e', 4) == Intermediate
+    assert validator.validate('-1.11436e', 9) == Intermediate
+    assert validator.validate('-1.11436e2', 10) == Acceptable
     assert validator.fixup('1.11436e6') == '1.11436 M'
 
     # 'E' is an SI prefix (exa -> 1e18)
-    assert validator.validate('1E', 2) is Acceptable
+    assert validator.validate('1E', 2) == Acceptable
     assert validator.fixup('1E') == '1.0 E'
-    assert validator.validate('1En', 3) is Invalid
-    assert validator.validate('1E2', 3) is Acceptable
+    assert validator.validate('1En', 3) == Invalid
+    assert validator.validate('1E2', 3) == Acceptable
     assert validator.fixup('1E2') == '100.0 '
-    assert validator.validate('-1.E-15', 7) is Acceptable
+    assert validator.validate('-1.E-15', 7) == Acceptable
     assert validator.fixup('-1.E-15') == '-1.0 f'
 
-    assert validator.validate('-1.2n', 5) is Acceptable
+    assert validator.validate('-1.2n', 5) == Acceptable
     assert validator.fixup('-1.2n') == '-1.2 n'
-    assert validator.validate('-1.2 n', 6) is Acceptable
+    assert validator.validate('-1.2 n', 6) == Acceptable
     assert validator.fixup('-1.2 n') == '-1.2 n'
 
-    assert validator.validate('0.12f3', 6) is Invalid
+    assert validator.validate('0.12f3', 6) == Invalid
 
 
 def test_doublespinbox():

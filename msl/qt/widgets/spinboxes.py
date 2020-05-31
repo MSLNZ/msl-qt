@@ -31,6 +31,7 @@ from ..convert import (
 from .. import (
     QtWidgets,
     QtGui,
+    USING_PYSIDE,
 )
 
 
@@ -143,7 +144,11 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         # DoubleSpinBox. It is okay to use self.cleanText() in the methods self.fixup(),
         # self.valueFromText() and self.stepBy()
         text = text.rstrip(self.suffix()).lstrip(self.prefix())
-        return self._validator.validate(text, position - len(self.prefix()))
+        state = self._validator.validate(text, position - len(self.prefix()))
+        if USING_PYSIDE:
+            return state
+        # PyQt5 expects Tuple[QValidator.State, str, int] to be returned
+        return state, text, position
 
     def fixup(self, text):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.fixup`."""

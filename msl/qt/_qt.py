@@ -24,9 +24,9 @@ import sys
 try:
     import PySide2
     has_pyside = True
-    use_pyside = True
+    USING_PYSIDE = True
 except ImportError:
-    use_pyside = False
+    USING_PYSIDE = False
     has_pyside = False
 
 try:
@@ -45,9 +45,9 @@ except ImportError:
 #   QT_API = 'pyqt5'
 QT_API = os.getenv('QT_API', 'pyside').lower()
 if QT_API.startswith('pyside'):
-    use_pyside = has_pyside
+    USING_PYSIDE = has_pyside
 elif QT_API.startswith('pyqt'):
-    use_pyside = not has_pyqt
+    USING_PYSIDE = not has_pyqt
 else:
     raise ValueError('Invalid environment variable QT_API -> {!r}'.format(QT_API))
 
@@ -65,7 +65,7 @@ if building_docs and not has_pyside and not has_pyqt:
         'WARNING!!! do not commit this temporary change to the conf.py file'
     )
 
-if use_pyside:
+if USING_PYSIDE:
     from PySide2 import QtGui
     from PySide2 import QtCore
     from PySide2 import QtWidgets
@@ -97,4 +97,5 @@ __all__ = (
     'QtSvg',
     'Signal',
     'Slot',
+    'USING_PYSIDE',
 )
