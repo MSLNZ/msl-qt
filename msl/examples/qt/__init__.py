@@ -1,3 +1,5 @@
+import os
+
 from .loop_until_abort import LoopExample
 from .show_standard_icons import ShowStandardIcons
 from . import logger
@@ -6,3 +8,5 @@ from . import button
 from . import comments
 from .loop_until_abort_sleep import LoopExampleSleep
 from . import led
+
+EXAMPLES_DIR = os.path.dirname(__file__)
