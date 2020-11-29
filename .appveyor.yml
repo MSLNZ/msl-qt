@@ -23,7 +23,7 @@ install:
   - python -m pip install --upgrade PySide2 pytest pytest-cov pytest-runner
   - IF "%CLONE_PYTHONNET%"=="true" (
       python -m pip install pycparser &&
-      python -m pip install git+https://github.com/pythonnet/pythonnet.git &&
+      python -m pip install git+https://github.com/pythonnet/pythonnet.git
     )
   - python -m pip list
   - python -c "from PySide2.QtWidgets import QApplication; QApplication([])"
