@@ -134,7 +134,7 @@ def get_version():
 
 install_requires = []
 
-tests_require = ['pytest', 'pytest-cov', 'PySide2']
+tests_require = ['pytest', 'pytest-cov', 'PySide2', 'jedi', 'pycodestyle', 'pyflakes']
 if sys.platform == 'win32':
     tests_require.append('pythonnet')
 
