@@ -11,7 +11,9 @@ environment:
     - PYTHON: C:\Python38
     - PYTHON: C:\Python38-x64
     - PYTHON: C:\Python39
+      CLONE_PYTHONNET: "true"
     - PYTHON: C:\Python39-x64
+      CLONE_PYTHONNET: "true"
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
@@ -19,6 +21,10 @@ install:
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
   - python -m pip install --upgrade PySide2 pytest pytest-cov pytest-runner
+  - IF "%CLONE_PYTHONNET%"=="true" (
+      python -m pip install pycparser &&
+      python -m pip install git+https://github.com/pythonnet/pythonnet.git &&
+    )
   - python -m pip list
   - python -c "from PySide2.QtWidgets import QApplication; QApplication([])"
 
