@@ -5,9 +5,6 @@ This package implements the code from https://github.com/atom/first-mate
 to create tokens to use for syntax highlighting.
 
 The code was written based from first-mate v7.1.0 (commit 4216f7d)
-
-Tested with the grammar files from MagicPython v1.0.12.
-See: tester_grammer.py, tester_scope_selector.py
 """
 import logging
 
