@@ -174,8 +174,10 @@ setup(
     tests_require=tests_require,
     install_requires=install_requires,
     extras_require={
-        'pyside': ['PySide2'],
-        'pyqt': ['PyQt5'],
+        'PySide6': ['PySide6'],
+        'PySide2': ['PySide2'],
+        'PyQt6': ['PyQt6'],
+        'PyQt5': ['PyQt5'],
     },
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),

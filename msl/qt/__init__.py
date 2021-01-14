@@ -73,3 +73,6 @@ from .widgets import (
     SpinBox,
     LED,
 )
+
+binding = binding
+""":obj:`~collections.namedtuple`: The Python binding for the Qt framework."""

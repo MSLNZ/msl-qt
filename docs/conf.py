@@ -8,14 +8,8 @@ import sphinx
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-
-on_rtd = os.environ.get('READTHEDOCS') == 'True'
+on_rtd = os.getenv('READTHEDOCS') == 'True'
 if on_rtd:
-    from unittest.mock import MagicMock
-
     html_theme = 'default'
 
     class QtWidgets(object):
@@ -58,10 +52,15 @@ if on_rtd:
 
     class QtCore(object):
 
+        __version__ = ''
+
         class Qt(object):
             KeepAspectRatio = 1
 
         class QThread(object):
+            pass
+
+        class QObject(object):
             pass
 
         @staticmethod
@@ -80,20 +79,22 @@ if on_rtd:
         def Slot(*args, **kwargs):
             pass
 
-        class QObject(object):
+    class QtGui(object):
+
+        class QValidator(object):
             pass
 
-    class Mock(MagicMock):
-        @classmethod
-        def __getattr__(cls, name):
-            if name == 'QtWidgets':
-                return QtWidgets
-            if name == 'QtCore':
-                return QtCore
-            return MagicMock()
+    class QtSvg(object):
+        pass
 
-    MOCK_MODULES = ['PyQt5', 'PySide2']
-    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+    class PySide6(object):
+        __version__ = ''
+
+    sys.modules['PySide6'] = PySide6
+    sys.modules['PySide6.QtGui'] = QtGui
+    sys.modules['PySide6.QtCore'] = QtCore
+    sys.modules['PySide6.QtWidgets'] = QtWidgets
+    sys.modules['PySide6.QtSvg'] = QtSvg
 
 else:
     html_theme = 'sphinx_rtd_theme'
@@ -291,10 +292,10 @@ epub_exclude_files = ['search.html']
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
+    'PySide6': ('', 'PySide6-aliases.inv'),
+    # 'PySide6': ('https://doc.qt.io/qtforpython/', None),
     # 'PyQt5': ('http://pyqt.sourceforge.net/Docs/PyQt5/', None),
     # 'PyQt5': ('', 'pyqt5-modified-objects.inv'),
-    # 'PySide2': ('https://doc.qt.io/qtforpython/', None),
-    'PySide2': ('', 'pyside2-modified-objects.inv'),
 }
 
 # show all the Qt linking warnings

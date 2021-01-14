@@ -4,7 +4,7 @@ General functions.
 import fnmatch
 import logging
 
-from . import application, QtWidgets
+from . import application
 
 __all__ = (
     'drag_drop_paths',
@@ -69,5 +69,5 @@ def screen_geometry(widget=None):
         if handle is not None:
             return handle.screen().geometry()
 
-    # the Qt docs say that this function is deprecated
-    return QtWidgets.QDesktopWidget().availableGeometry(widget)
+    # then just ignore the QWidget
+    return screen_geometry()

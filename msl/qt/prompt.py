@@ -10,6 +10,7 @@ from . import (
     QtWidgets,
     Qt,
     application,
+    binding,
 )
 from .convert import to_qfont
 
@@ -33,7 +34,7 @@ def critical(message, *, title=None, font=None):
         message = traceback.format_exc()
     app, mb = _message_box(title=title, message=message, font=font)
     mb.setIcon(QtWidgets.QMessageBox.Critical)
-    mb.exec_()
+    mb.exec()
 
 
 def double(message, *, title=None, font=None, value=0, minimum=-2147483647, maximum=2147483647, step=1, decimals=2):
@@ -72,7 +73,7 @@ def double(message, *, title=None, font=None, value=0, minimum=-2147483647, maxi
     dialog.setDoubleStep(step)
     dialog.setDoubleDecimals(decimals)
     dialog.setDoubleValue(value)
-    ok = dialog.exec_()
+    ok = dialog.exec()
     return dialog.doubleValue() if ok else None
 
 
@@ -153,7 +154,7 @@ def information(message, *, title=None, font=None):
         message = traceback.format_exc()
     app, mb = _message_box(title=title, message=message, font=font)
     mb.setIcon(QtWidgets.QMessageBox.Information)
-    mb.exec_()
+    mb.exec()
 
 
 def integer(message, *, title=None, font=None, value=0, minimum=-2147483647, maximum=2147483647, step=1):
@@ -189,7 +190,7 @@ def integer(message, *, title=None, font=None, value=0, minimum=-2147483647, max
     dialog.setIntRange(minimum, maximum)
     dialog.setIntStep(step)
     dialog.setIntValue(value)
-    ok = dialog.exec_()
+    ok = dialog.exec()
     return dialog.intValue() if ok else None
 
 
@@ -228,7 +229,7 @@ def item(message, items, *, title=None, font=None, index=0):
     dialog.setTextValue(items_[index])
     dialog.setComboBoxEditable(False)
     dialog.setInputMethodHints(Qt.ImhNone)
-    ok = dialog.exec_()
+    ok = dialog.exec()
     return items[items_.index(dialog.textValue())] if ok else None
 
 
@@ -275,7 +276,7 @@ def comments(*, path=None, title=None, even_row_color='#FFFFFF', odd_row_color='
     from .widgets.comments import Comments
     app, title = _get_app_and_title(title)
     nh = Comments(path, title, even_row_color, odd_row_color)
-    nh.exec_()
+    nh.exec()
     return nh.text()
 
 
@@ -348,7 +349,7 @@ def text(message, *, title=None, font=None, value='', multi_line=False, echo=QtW
         dialog.setOption(QtWidgets.QInputDialog.UsePlainTextEditForTextInput)
     else:
         dialog.setTextEchoMode(QtWidgets.QLineEdit.EchoMode(echo))
-    ok = dialog.exec_()
+    ok = dialog.exec()
     return dialog.textValue().strip() if ok else None
 
 
@@ -394,7 +395,7 @@ def warning(message, *, title=None, font=None):
         message = traceback.format_exc()
     app, mb = _message_box(title=title, message=message, font=font)
     mb.setIcon(QtWidgets.QMessageBox.Warning)
-    mb.exec_()
+    mb.exec()
 
 
 def ok_cancel(message, *, title=None, font=None, default=True):
@@ -423,8 +424,10 @@ def ok_cancel(message, *, title=None, font=None, default=True):
     mb.setIcon(QtWidgets.QMessageBox.Question)
     mb.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
     mb.setDefaultButton(QtWidgets.QMessageBox.Ok if default else QtWidgets.QMessageBox.Cancel)
-    response = mb.exec_()
-    return True if response == QtWidgets.QMessageBox.Ok else None
+    response = mb.exec()
+    if _equal(response, QtWidgets.QMessageBox.Ok):
+        return True
+    return None
 
 
 def yes_no(message, *, title=None, font=None, default=True):
@@ -453,8 +456,8 @@ def yes_no(message, *, title=None, font=None, default=True):
     mb.setIcon(QtWidgets.QMessageBox.Question)
     mb.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
     mb.setDefaultButton(QtWidgets.QMessageBox.Yes if default else QtWidgets.QMessageBox.No)
-    response = mb.exec_()
-    return response == QtWidgets.QMessageBox.Yes
+    response = mb.exec()
+    return _equal(response, QtWidgets.QMessageBox.Yes)
 
 
 def yes_no_cancel(message, *, title=None, font=None, default=True):
@@ -490,10 +493,10 @@ def yes_no_cancel(message, *, title=None, font=None, default=True):
         mb.setDefaultButton(QtWidgets.QMessageBox.Yes)
     else:
         mb.setDefaultButton(QtWidgets.QMessageBox.No)
-    response = mb.exec_()
-    if response == QtWidgets.QMessageBox.Yes:
+    response = mb.exec()
+    if _equal(response, QtWidgets.QMessageBox.Yes):
         return True
-    elif response == QtWidgets.QMessageBox.No:
+    elif _equal(response, QtWidgets.QMessageBox.No):
         return False
     return None
 
@@ -564,3 +567,10 @@ def _get_file_filters(filters):
         return filters[:-2]
 
     return filters
+
+
+def _equal(response, enum):
+    """In PyQt6 all enums are implemented as an enum.Enum not enum.IntEnum"""
+    if binding.name == 'PyQt6':
+        return response == enum.value
+    return response == enum

@@ -19,6 +19,7 @@ from . import (
     QtCore,
     QtWidgets,
     application,
+    binding,
 )
 
 __all__ = (
@@ -351,6 +352,8 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
         _icon = QtGui.QIcon(app.style().standardIcon(obj))
     elif isinstance(obj, int):
         std_icons = [value for name, value in vars(QtWidgets.QStyle).items() if name.startswith('SP_')]
+        if binding.name == 'PyQt6':
+            std_icons = [i.value for i in std_icons]
         if obj in std_icons:
             app = application()
             _icon = QtGui.QIcon(app.style().standardIcon(QtWidgets.QStyle.StandardPixmap(obj)))

@@ -255,7 +255,7 @@ class LoopUntilAbort(object):
         self._loop_timer.start(self._loop_delay)
         self._elapsed_time_timer.start(1000)
         self._main_window.show()
-        self._app.exec_()
+        self._app.exec()
 
     def _call_loop(self):
         """Call the loop method once."""

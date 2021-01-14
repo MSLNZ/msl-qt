@@ -31,7 +31,7 @@ from ..convert import (
 from .. import (
     QtWidgets,
     QtGui,
-    USING_PYSIDE,
+    binding,
 )
 
 
@@ -112,6 +112,7 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             The tooltip to use for the :class:`DoubleSpinBox`.
         """
         super(DoubleSpinBox, self).__init__(parent=parent)
+        self._using_pyside = binding.name.startswith('PySide')
         if use_si_prefix:
             self._validator = _SIPrefixValidator()
             si_prefix_limit = 0.99999999999999e27
@@ -145,9 +146,9 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         # self.valueFromText() and self.stepBy()
         text = text.rstrip(self.suffix()).lstrip(self.prefix())
         state = self._validator.validate(text, position - len(self.prefix()))
-        if USING_PYSIDE:
+        if self._using_pyside:
             return state
-        # PyQt5 expects Tuple[QValidator.State, str, int] to be returned
+        # PyQt expects Tuple[QValidator.State, str, int] to be returned
         return state, text, position
 
     def fixup(self, text):

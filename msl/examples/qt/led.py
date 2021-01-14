@@ -56,7 +56,7 @@ def show():
     app = application()
     b = BlinkingLEDs()
     b.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == "__main__":

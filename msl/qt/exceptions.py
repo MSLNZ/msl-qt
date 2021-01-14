@@ -91,7 +91,9 @@ def excepthook(exctype, value, traceback):
         def save_screenshot(self):
             filename = prompt.save(filters='Images (*.png *.jpg *.jpeg *.bmp)')
             if filename:
-                QtGui.QPixmap.grabWidget(self).toImage().save(filename)
+                pixmap = QtGui.QPixmap(self.size())
+                self.render(pixmap)
+                pixmap.toImage().save(filename)
 
         def show_hide_details(self):
             if self.detailed_textedit.isVisible():
@@ -115,4 +117,4 @@ def excepthook(exctype, value, traceback):
 
     dialog = ErrorDialog()
     dialog.raise_()
-    dialog.exec_()
+    dialog.exec()

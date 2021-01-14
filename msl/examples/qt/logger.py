@@ -12,28 +12,29 @@ from msl.qt import (
 
 def show():
     log = logging.getLogger()
+    log.setLevel(logging.DEBUG)
 
     app = application()
 
-    logger = Logger()
+    logger = Logger(fmt='%(message)s')
     logger.setWindowTitle('Logger Widget')
 
-    for i in range(100):
+    for i in range(1, 101):
         level = random.randint(10, 60)
         if level < logging.INFO:
-            log.debug('debug message {}'.format(i+1))
+            log.debug('DEBUG {}'.format(i))
         elif level < logging.WARNING:
-            log.info('info message {}'.format(i+1))
+            log.info('INFO {}'.format(i))
         elif level < logging.ERROR:
-            log.warning('warning message {}'.format(i+1))
+            log.warning('WARN {}'.format(i))
         elif level < logging.CRITICAL:
-            log.error('error message {}'.format(i+1))
+            log.error('ERROR {}'.format(i))
         else:
-            log.critical('critical message {}'.format(i+1))
+            log.critical('CRITICAL {}'.format(i))
 
     logger.resize(800, 400)
     logger.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ def show():
     hbox.addWidget(ts)
     window.setLayout(hbox)
     window.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':
