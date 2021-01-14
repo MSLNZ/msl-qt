@@ -33,7 +33,7 @@ def application(*args):
     if app is None:
         app = QtWidgets.QApplication(args if args else sys.argv)
 
-        # use a default *MSL logo* as the app icon
+        # use a default MSL logo as the app icon
         logo = 'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHR' \
                'Db21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAx9JREFUWIXNlk9oXFUYxX/fnZmmmQ6aVt+rBCsEgo' \
                'UWLBNjRUg0sxA3ihsHEwKiGxcWQ1ZunYIrt0IpuunKRKYgal0I2j47qIsmThTqQvy3i2m0pqmkSX3vHhfJj' \
@@ -74,5 +74,6 @@ from .widgets import (
     LED,
 )
 
+# the following object is imported from _qt.py
 binding = binding
 """:obj:`~collections.namedtuple`: The Python binding for the Qt framework."""
