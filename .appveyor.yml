@@ -39,7 +39,7 @@ install:
   - python --version
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
-  - python -m pip install --upgrade pytest pytest-cov pytest-runner
+  - python -m pip install --upgrade pytest pytest-cov pytest-runner jedi pycodestyle pyflakes
   - python -m pip install %QT_API%
   - IF "%CLONE_PYTHONNET%"=="true" (
       python -m pip install --upgrade pycparser &&
@@ -48,11 +48,11 @@ install:
       python -m pip install --upgrade pythonnet
     )
   - python -m pip list
-  - python -c "from msl import qt; print(qt.binding)"
 
 build: off
 
 test_script:
+  - python -c "from msl import qt; print(qt.binding)"
   - python -m pytest
 
 after_test:

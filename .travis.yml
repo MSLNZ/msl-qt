@@ -73,7 +73,7 @@ install:
   - python --version
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
-  - python -m pip install --upgrade pytest pytest-cov pytest-runner
+  - python -m pip install --upgrade pytest pytest-cov pytest-runner jedi pycodestyle pyflakes
   - python -m pip install --upgrade $QT_API
   - python -m pip list
 
@@ -83,7 +83,7 @@ before_script:
       herbstluftwm &
       sleep 1
     fi
-  - python -c "from msl import qt; print(qt.binding)"
 
 script:
+  - python -c "from msl import qt; print(qt.binding)"
   - python -m pytest
