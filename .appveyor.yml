@@ -48,11 +48,11 @@ install:
       python -m pip install --upgrade pythonnet
     )
   - python -m pip list
-  - python -c "from msl import qt; print(qt.binding)"
 
 build: off
 
 test_script:
+  - python -c "from msl import qt; print(qt.binding)"
   - python -m pytest
 
 after_test:

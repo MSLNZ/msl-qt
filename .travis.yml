@@ -1,6 +1,5 @@
 dist: focal  # https://docs.travis-ci.com/user/reference/linux
 language: python
-sudo: required
 
 os: osx
 osx_image: xcode12.2  # https://docs.travis-ci.com/user/reference/osx/#macos-version
@@ -83,7 +82,7 @@ before_script:
       herbstluftwm &
       sleep 1
     fi
-  - python -c "from msl import qt; print(qt.binding)"
 
 script:
+  - python -c "from msl import qt; print(qt.binding)"
   - python -m pytest
