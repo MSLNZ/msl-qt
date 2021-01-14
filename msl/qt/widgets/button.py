@@ -92,7 +92,7 @@ class Button(QtWidgets.QToolButton):
         """
         if self._menu is None:
             self._create_menu()
-        action = QtWidgets.QAction(self)
+        action = QtGui.QAction(self)
         if triggered is not None:
             action.triggered.connect(triggered)
         else:

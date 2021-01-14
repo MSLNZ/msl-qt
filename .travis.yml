@@ -1,4 +1,4 @@
-dist: xenial  # https://docs.travis-ci.com/user/reference/linux
+dist: focal  # https://docs.travis-ci.com/user/reference/linux
 language: python
 sudo: required
 
@@ -9,29 +9,43 @@ jobs:
   include:
     - os: linux
       python: 3.5
+      env: QT_API=PySide2
     - os: linux
       python: 3.6
+      env: QT_API=PySide6
     - os: linux
       python: 3.7
+      env: QT_API=PySide6
     - os: linux
       python: 3.8
+      env: QT_API=PySide6
     - os: linux
       python: 3.9
+      env: QT_API=PySide6
+    - os: linux
+      python: 3.9
+      env: QT_API=PySide2
+    - os: linux
+      python: 3.9
+      env: QT_API=PyQt6
+    - os: linux
+      python: 3.9
+      env: QT_API=PyQt5
     - os: osx
       language: shell
-      env: PYTHON=3.5.10
+      env: PYTHON=3.5.10 QT_API=PySide2
     - os: osx
       language: shell
-      env: PYTHON=3.6.12
+      env: PYTHON=3.6.12 QT_API=PySide6
     - os: osx
       language: shell
-      env: PYTHON=3.7.9
+      env: PYTHON=3.7.9 QT_API=PySide6
     - os: osx
       language: shell
-      env: PYTHON=3.8.6
+      env: PYTHON=3.8.6 QT_API=PySide6
     - os: osx
       language: shell
-      env: PYTHON=3.9.0
+      env: PYTHON=3.9.0 QT_API=PySide6
 
 before_install:
   - |
@@ -48,8 +62,8 @@ before_install:
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       sudo apt update
-      sudo apt install xvfb herbstluftwm libdbus-1-3 libxkbcommon-x11-0 -y
-      sudo apt install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 -y
+      sudo apt install -y xvfb herbstluftwm libdbus-1-3 libxkbcommon-x11-0 libglvnd-dev
+      sudo apt install -y libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0
       export DISPLAY=:99.0
       /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX +render -noreset
       sleep 3
@@ -59,7 +73,8 @@ install:
   - python --version
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
-  - python -m pip install --upgrade PySide2 pytest pytest-cov pytest-runner
+  - python -m pip install --upgrade pytest pytest-cov pytest-runner
+  - python -m pip install --upgrade $QT_API
   - python -m pip list
 
 before_script:
@@ -68,7 +83,7 @@ before_script:
       herbstluftwm &
       sleep 1
     fi
-  - python -c "from PySide2.QtWidgets import QApplication; QApplication([])"
+  - python -c "from msl import qt; print(qt.binding)"
 
 script:
-  - python setup.py tests
+  - python -m pytest

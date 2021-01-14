@@ -41,7 +41,7 @@ def show():
     b.add_menu_separator()
     b.add_menu_item(text='My item #4', triggered=item4, tooltip='Fourth')
     b.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':

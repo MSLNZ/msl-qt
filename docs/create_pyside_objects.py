@@ -8,24 +8,28 @@ from sphinx.ext.intersphinx import inspect_main
 from sphinx.util.inventory import InventoryFileReader
 
 pyside_uri = 'https://doc.qt.io/qtforpython/'
+package_name = 'PySide6'
 
 # make it so that the following statements are equivalent
 #    :class:`QWidget`
 #    :class:`QtWidgets.QWidget`
-#    :class:`PySide2.QtWidgets.QWidget`
+#    :class:`PySide6.QtWidgets.QWidget`
 # only do this for some of the Qt modules
-modules = ('QtWidgets', 'QtCore', 'QtGui')
+alias_modules = ('QtWidgets', 'QtCore', 'QtGui')
 
 # the filename to use to save the original objects.inv file
-original_inv = 'pyside2-original-objects.inv'
-original_txt = 'pyside2-original-objects.txt'
+original_inv = package_name + '-original.inv'
+original_txt = package_name + '-original.txt'
 
 # the filename to use to save the Sphinx-compatible object.inv file
-modified_inv = 'pyside2-modified-objects.inv'
-modified_txt = 'pyside2-modified-objects.txt'
+modified_inv = package_name + '-aliases.inv'
+modified_txt = package_name + '-aliases.txt'
 
 
 def create_modified_inv():
+    def write(*args):
+        fout.write(compressor.compress((' '.join(args) + '\n').encode('utf-8')))
+
     # download the original objects.inv file
     with open(original_inv, 'wb') as f:
         f.write(requests.get(pyside_uri + 'objects.inv').content)
@@ -49,36 +53,28 @@ def create_modified_inv():
         m = re.match(r'(?x)(.+?)\s+(\S*:\S*)\s+(-?\d+)\s+(\S+)\s+(.*)', line.rstrip())
         if not m:
             continue
-        name, typ, prio, location, dispname = m.groups()
 
+        name, typ, prio, location, dispname = m.groups()
         location = pyside_uri + location.rstrip('#$')
 
+        write(name, typ, prio, location, dispname)
+
         # apply the aliases
-        for module in modules:
-            prefix = 'PySide2.{}.'.format(module)
-            if name.count(prefix) == 1:
-                for item in [prefix, 'PySide2.']:
-                    entry = ' '.join((name[len(item):], typ, prio, location, dispname))
-                    fout.write(compressor.compress((entry + '\n').encode('utf-8')))
+        for module in alias_modules:
+            m = re.match(r'{0}\.{1}\.{0}\.{1}\.(\w+)(\.\w+)?'.format(package_name, module), name)
+            if m:
+                cls, method = m.groups()
+                if method is None:
+                    method = ''
 
-        entry = ' '.join((name, typ, prio, location, dispname))
-        fout.write(compressor.compress((entry + '\n').encode('utf-8')))
+                aliases = [
+                    package_name + '.' + module + '.' + cls + method,
+                    module + '.' + cls + method,
+                    cls + method
+                ]
 
-        found = re.search(r'(PySide2)\.(\w+)(\.)*(PySide2.)*', name)
-        if found:
-            index = found.end()
-            name = name[index:]
-
-        found = re.search(r'(\w+)\.(\w+)', name)
-        if found and found.group(1) == found.group(2):
-            index = (found.end()+1)//2
-            name = name[index:]
-
-        if not found:
-            continue
-
-        entry = ' '.join((name, typ, prio, location, dispname))
-        fout.write(compressor.compress((entry + '\n').encode('utf-8')))
+                for alias in aliases:
+                    write(alias, typ, prio, location, dispname)
 
     fout.write(compressor.flush())
     fin.close()

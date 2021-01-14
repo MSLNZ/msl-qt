@@ -1,92 +1,76 @@
 """
-A wrapper over different Python Qt bindings (e.g., PyQt4_, PyQt5_, PySide_, PySide2_).
-
-Currently only PyQt5_ and PySide2_ are supported.
-
-Example repositories which unify the syntax for PyQt4_, PyQt5_, PySide_ and PySide2_:
-
-* https://github.com/mottosso/Qt.py
-* https://github.com/jupyter/qtconsole
-* https://github.com/spyder-ide/qtpy
-* https://github.com/pyQode/pyqode.qt
-* https://github.com/silx-kit/silx/blob/master/silx/gui/qt/_qt.py
-
-.. _PyQt4: http://pyqt.sourceforge.net/Docs/PyQt4/
-.. _PyQt5: http://pyqt.sourceforge.net/Docs/PyQt5/
-.. _PySide: https://wiki.qt.io/PySide
-.. _PySide2: https://wiki.qt.io/PySide2
+A wrapper for different Python bindings for Qt.
 """
 import os
-import sys
+import importlib
+from collections import namedtuple
 
-# Qt for Python (PySide2) is the project that provides the official
-# set of Python bindings to Qt, see https://www.qt.io/qt-for-python
-try:
-    import PySide2
-    has_pyside = True
-    USING_PYSIDE = True
-except ImportError:
-    USING_PYSIDE = False
-    has_pyside = False
+# the order in the tuple represents the search order when importing the package
+packages = ('PySide6', 'PyQt6', 'PySide2', 'PyQt5')
 
-try:
-    import PyQt5
-    has_pyqt = True
-except ImportError:
-    has_pyqt = False
-
-# One can create a QT_API environment variable to select which Qt API is used.
-# For example,
-#   QT_API = 'PySide'
-#   QT_API = 'PyQt'
-# the value is case insensitive and independent of the version number at the end,
-# for example, the following are equivalent to the above
-#   QT_API = 'pyside2'
-#   QT_API = 'pyqt5'
-QT_API = os.getenv('QT_API', 'pyside').lower()
-if QT_API.startswith('pyside'):
-    USING_PYSIDE = has_pyside
-elif QT_API.startswith('pyqt'):
-    USING_PYSIDE = not has_pyqt
+# one can create a QT_API environment variable to select which Qt API to use
+qt_api = os.getenv('QT_API')
+if qt_api:
+    if qt_api not in packages:
+        raise ValueError('Invalid QT_API environment variable {!r}'.format(qt_api))
 else:
-    raise ValueError('Invalid environment variable QT_API -> {!r}'.format(QT_API))
+    for package in packages:
+        try:
+            importlib.import_module(package)
+        except ImportError:
+            continue
+        else:
+            qt_api = package
+            break
 
-# PySide2/PyQt5 is not required if building the documentation
-# since the package gets mocked, see docs/conf.py
-building_docs = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
-if not building_docs and not (has_pyside or has_pyqt):
-    raise ImportError('Either PySide2 or PyQt5 must be installed')
+if not qt_api:
+    raise ImportError('One of the following Qt packages must be installed: ' + ', '.join(packages))
 
-if building_docs and not has_pyside and not has_pyqt:
-    raise ImportError(
-        'To build the docs you must either install PySide2 or PyQt5.\n'
-        'Alternatively, you can temporarily enable mocking in conf.py using\n'
-        '  if on_rtd or True:\n'
-        'WARNING!!! do not commit this temporary change to the conf.py file'
-    )
+Binding = namedtuple('Binding', ['name', 'version', 'qt_version'])
 
-if USING_PYSIDE:
-    from PySide2 import QtGui
-    from PySide2 import QtCore
-    from PySide2 import QtWidgets
-    from PySide2 import QtSvg
-    Qt = QtCore.Qt
+api = importlib.import_module(qt_api)
+QtGui = importlib.import_module(qt_api + '.QtGui')
+QtCore = importlib.import_module(qt_api + '.QtCore')
+QtWidgets = importlib.import_module(qt_api + '.QtWidgets')
+QtSvg = importlib.import_module(qt_api + '.QtSvg')
+Qt = QtCore.Qt
+
+if qt_api.startswith('PySide'):
     Signal = QtCore.Signal
     Slot = QtCore.Slot
-    if not hasattr(QtWidgets, 'QWIDGETSIZE_MAX'):
-        QtWidgets.QWIDGETSIZE_MAX = (1 << 24) - 1
-    if not hasattr(QtWidgets.QApplication, 'exec'):
-        QtWidgets.QApplication.exec = QtWidgets.QApplication.exec_
-    if not hasattr(QtWidgets.QDialog, 'exec'):
-        QtWidgets.QDialog.exec = QtWidgets.QDialog.exec_
+    binding = Binding(name=api.__name__, version=api.__version__, qt_version=QtCore.__version__)
 else:
-    from PyQt5 import QtGui
-    from PyQt5 import QtCore
-    from PyQt5 import QtWidgets
-    from PyQt5 import QtSvg
-    Qt = QtCore.Qt
     Signal = QtCore.pyqtSignal
     Slot = QtCore.pyqtSlot
+    binding = Binding(name=api.__name__, version=QtCore.PYQT_VERSION_STR, qt_version=QtCore.QT_VERSION_STR)
+
+if not hasattr(QtWidgets.QApplication, 'exec'):
+    QtWidgets.QApplication.exec = QtWidgets.QApplication.exec_
+
+if not hasattr(QtWidgets.QDialog, 'exec'):
+    QtWidgets.QDialog.exec = QtWidgets.QDialog.exec_
+
+# PyQt6 uses scoped enums. Want to support unscoped enums to be
+# consistent with PySide6, PySide2 and PyQt5
+if qt_api == 'PyQt6':
+    from enum import EnumMeta
+    from inspect import getmembers, isclass
+
+    def isenum(obj):
+        return isinstance(obj, EnumMeta)
+
+    for qt in (QtCore, QtWidgets, QtGui, QtSvg):
+        for _, cls in getmembers(qt, isclass):
+            for _, enum in getmembers(cls, isenum):
+                for item in enum:
+                    setattr(cls, item.name, item)
+
+# make Qt5 to be compatible with Qt6
+if qt_api in ('PySide2', 'PyQt5'):
+
+    # QAction and QActionGroup were moved from QtWidgets (Qt5) to QtGui (Qt6)
+    QtGui.QAction = QtWidgets.QAction
+    QtGui.QActionGroup = QtWidgets.QActionGroup
 
 
 __all__ = (
@@ -97,5 +81,5 @@ __all__ = (
     'QtSvg',
     'Signal',
     'Slot',
-    'USING_PYSIDE',
+    'binding',
 )
