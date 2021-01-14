@@ -134,11 +134,11 @@ def get_version():
 
 install_requires = []
 
-tests_require = ['pytest-cov', 'jedi', 'pycodestyle', 'pyflakes']
+tests_require = ['pytest', 'pytest-cov', 'jedi', 'pycodestyle', 'pyflakes']
 if sys.version_info[:2] == (3, 5):
-    tests_require.extend(['zipp<2.0', 'importlib-metadata<3.0', 'pyparsing<3.0', 'pytest~=4.6', 'PySide2'])
+    tests_require.append('PySide2')
 else:
-    tests_require.extend(['pytest', 'PySide6'])
+    tests_require.append('PySide6')
 
 if sys.platform == 'win32' and sys.version_info[:2] < (3, 9):
     tests_require.append('pythonnet')
