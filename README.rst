@@ -8,32 +8,39 @@ This package provides custom Qt_ components that can be used for the graphical u
 Install
 -------
 
-To install **MSL-Qt** run::
+To install **MSL-Qt** run
+
+.. code-block:: console
 
    pip install https://github.com/MSLNZ/msl-qt/archive/master.zip
 
-Alternatively, using the `MSL Package Manager`_ run::
+Alternatively, using the `MSL Package Manager`_
+
+.. code-block:: console
 
    msl install qt
 
 Dependencies
 ------------
 * Python 3.5+
-* PyQt5_ or `Qt for Python`_ -- the Qt package that you want to use (you must install one, but the choice is yours)
+* PySide6_, PyQt6_, PySide2_ or PyQt5_ -- you can chose which Python binding you want to use
 
-You can automatically install one of these Qt packages when **MSL-Qt** is installed.
+You can automatically install one of these Python bindings for the Qt framework when
+**MSL-Qt** is installed. For example, to install PySide6_
 
-To also install PyQt5_::
+.. code-block:: console
 
-   msl install qt[pyqt]
+   msl install qt[PySide6]
 
-or, to also install `Qt for Python`_::
+or to install PyQt6_
 
-   msl install qt[pyside]
+.. code-block:: console
+
+   msl install qt[PyQt6]
 
 Optional Dependencies
 +++++++++++++++++++++
-* `Python for .NET`_ -- only required if you want to load icons from DLL/EXE files on Windows
+* pythonnet_ -- only required if you want to load icons from DLL/EXE files on Windows
 
 .. |docs| image:: https://readthedocs.org/projects/msl-qt/badge/?version=latest
    :target: http://msl-qt.readthedocs.io/en/latest/?badge=latest
@@ -47,7 +54,9 @@ Optional Dependencies
    :target: https://ci.appveyor.com/project/jborbely/msl-qt/branch/master
 
 .. _Qt: https://www.qt.io/
-.. _MSL Package Manager: http://msl-package-manager.readthedocs.io/en/latest/?badge=latest
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/
+.. _PySide6: https://pypi.org/project/PySide6/
+.. _PyQt6: https://pypi.org/project/PyQt6/
+.. _PySide2: https://pypi.org/project/PySide2/
 .. _PyQt5: https://pypi.org/project/PyQt5/
-.. _Qt for Python: https://pypi.org/project/PySide2/
-.. _Python for .NET: https://pypi.org/project/pythonnet/
+.. _pythonnet: https://pypi.org/project/pythonnet/
