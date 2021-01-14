@@ -9,43 +9,43 @@ jobs:
   include:
     - os: linux
       python: 3.5
-      env: BINDING=PySide2
+      env: QT_API=PySide2
     - os: linux
       python: 3.6
-      env: BINDING=PySide6
+      env: QT_API=PySide6
     - os: linux
       python: 3.7
-      env: BINDING=PySide6
+      env: QT_API=PySide6
     - os: linux
       python: 3.8
-      env: BINDING=PySide6
+      env: QT_API=PySide6
     - os: linux
       python: 3.9
-      env: BINDING=PySide6
+      env: QT_API=PySide6
     - os: linux
       python: 3.9
-      env: BINDING=PySide2
+      env: QT_API=PySide2
     - os: linux
       python: 3.9
-      env: BINDING=PyQt6
+      env: QT_API=PyQt6
     - os: linux
       python: 3.9
-      env: BINDING=PyQt5
+      env: QT_API=PyQt5
     - os: osx
       language: shell
-      env: PYTHON=3.5.10 BINDING=PySide2
+      env: PYTHON=3.5.10 QT_API=PySide2
     - os: osx
       language: shell
-      env: PYTHON=3.6.12 BINDING=PySide6
+      env: PYTHON=3.6.12 QT_API=PySide6
     - os: osx
       language: shell
-      env: PYTHON=3.7.9 BINDING=PySide6
+      env: PYTHON=3.7.9 QT_API=PySide6
     - os: osx
       language: shell
-      env: PYTHON=3.8.6 BINDING=PySide6
+      env: PYTHON=3.8.6 QT_API=PySide6
     - os: osx
       language: shell
-      env: PYTHON=3.9.0 BINDING=PySide6
+      env: PYTHON=3.9.0 QT_API=PySide6
 
 before_install:
   - |
@@ -74,7 +74,7 @@ install:
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
   - python -m pip install --upgrade pytest pytest-cov pytest-runner
-  - python -m pip install --upgrade $BINDING
+  - python -m pip install --upgrade $QT_API
   - python -m pip list
 
 before_script:

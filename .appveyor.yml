@@ -3,37 +3,36 @@ image: Visual Studio 2019
 environment:
   matrix:
     - PYTHON: C:\Python35
-      BINDING: PyQt5
+      QT_API: PyQt5
     - PYTHON: C:\Python35-x64
-      BINDING: PySide2
+      QT_API: PySide2
     - PYTHON: C:\Python36
-      BINDING: PyQt6
+      QT_API: PyQt6
     - PYTHON: C:\Python36-x64
-      BINDING: PySide6
+      QT_API: PySide6
     - PYTHON: C:\Python37
-      BINDING: PyQt6
+      QT_API: PyQt6
     - PYTHON: C:\Python37-x64
-      BINDING: PySide6
+      QT_API: PySide6
     - PYTHON: C:\Python38
-      BINDING: PyQt6
+      QT_API: PyQt6
     - PYTHON: C:\Python38-x64
-      BINDING: PySide6
+      QT_API: PySide6
     - PYTHON: C:\Python39
+      QT_API: PySide6
       CLONE_PYTHONNET: "true"
     - PYTHON: C:\Python39-x64
+      QT_API: PySide6
       CLONE_PYTHONNET: "true"
     - PYTHON: C:\Python39-x64
+      QT_API: PyQt6
       CLONE_PYTHONNET: "true"
-      BINDING: PySide6
     - PYTHON: C:\Python39-x64
+      QT_API: PySide2
       CLONE_PYTHONNET: "true"
-      BINDING: PyQt6
     - PYTHON: C:\Python39-x64
+      QT_API: PyQt5
       CLONE_PYTHONNET: "true"
-      BINDING: PySide2
-    - PYTHON: C:\Python39-x64
-      CLONE_PYTHONNET: "true"
-      BINDING: PyQt5
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
@@ -41,7 +40,7 @@ install:
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
   - python -m pip install --upgrade pytest pytest-cov pytest-runner
-  - python -m pip install %BINDING%
+  - python -m pip install %QT_API%
   - IF "%CLONE_PYTHONNET%"=="true" (
       python -m pip install --upgrade pycparser &&
       python -m pip install git+https://github.com/pythonnet/pythonnet.git
