@@ -38,7 +38,7 @@ Optional Dependencies
 +++++++++++++++++++++
 * pythonnet_ -- only required if you want to load icons from DLL/EXE files on Windows
 
-.. _MSL Package Manager: http://msl-package-manager.readthedocs.io/en/stable/
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/
 .. _PySide6: https://pypi.org/project/PySide6/
 .. _PyQt6: https://pypi.org/project/PyQt6/
 .. _PySide2: https://pypi.org/project/PySide2/
