@@ -147,7 +147,7 @@ class Comments(QtWidgets.QDialog):
 
         with open(self.path, 'rb') as fp:
             try:
-                self.comments = json.load(fp, encoding='utf-8')
+                self.comments = json.load(fp)
             except Exception as e:
                 prompt.warning('Error loading JSON file:\n{}\n\n{}'.format(self.path, e))
 
