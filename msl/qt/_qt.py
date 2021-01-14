@@ -59,7 +59,7 @@ if qt_api == 'PyQt6':
     def isenum(obj):
         return isinstance(obj, EnumMeta)
 
-    for qt in (QtCore, QtWidgets, QtGui):
+    for qt in (QtCore, QtWidgets, QtGui, QtSvg):
         for _, cls in getmembers(qt, isclass):
             for _, enum in getmembers(cls, isenum):
                 for item in enum:
