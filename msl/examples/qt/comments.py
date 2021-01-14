@@ -28,7 +28,9 @@ def show():
     with open(dummy_file, 'w') as fp:
         json.dump(dummy, fp, indent=2, ensure_ascii=False)
 
-    print('The comment entered is:\n' + qt.prompt.comments(path=dummy_file))
+    comment = qt.prompt.comments(path=dummy_file)
+    print('The comment entered is: {!r}'.format(comment))
+
     os.remove(dummy_file)
 
 
