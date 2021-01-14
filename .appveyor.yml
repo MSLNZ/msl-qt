@@ -3,39 +3,61 @@ image: Visual Studio 2019
 environment:
   matrix:
     - PYTHON: C:\Python35
+      BINDING: PyQt5
     - PYTHON: C:\Python35-x64
+      BINDING: PySide2
     - PYTHON: C:\Python36
+      BINDING: PyQt6
     - PYTHON: C:\Python36-x64
+      BINDING: PySide6
     - PYTHON: C:\Python37
+      BINDING: PyQt6
     - PYTHON: C:\Python37-x64
+      BINDING: PySide6
     - PYTHON: C:\Python38
+      BINDING: PyQt6
     - PYTHON: C:\Python38-x64
+      BINDING: PySide6
     - PYTHON: C:\Python39
       CLONE_PYTHONNET: "true"
     - PYTHON: C:\Python39-x64
       CLONE_PYTHONNET: "true"
+    - PYTHON: C:\Python39-x64
+      CLONE_PYTHONNET: "true"
+      BINDING: PySide6
+    - PYTHON: C:\Python39-x64
+      CLONE_PYTHONNET: "true"
+      BINDING: PyQt6
+    - PYTHON: C:\Python39-x64
+      CLONE_PYTHONNET: "true"
+      BINDING: PySide2
+    - PYTHON: C:\Python39-x64
+      CLONE_PYTHONNET: "true"
+      BINDING: PyQt5
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
   - python --version
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
-  - python -m pip install --upgrade PySide2 pytest pytest-cov pytest-runner
+  - python -m pip install --upgrade pytest pytest-cov pytest-runner
+  - python -m pip install %BINDING%
   - IF "%CLONE_PYTHONNET%"=="true" (
-      python -m pip install pycparser &&
+      python -m pip install --upgrade pycparser &&
       python -m pip install git+https://github.com/pythonnet/pythonnet.git
+    ) ELSE (
+      python -m pip install --upgrade pythonnet
     )
   - python -m pip list
-  - python -c "from PySide2.QtWidgets import QApplication; QApplication([])"
+  - python -c "from msl import qt; print(qt.binding)"
 
 build: off
 
 test_script:
-  - python setup.py tests
+  - python -m pytest
 
 after_test:
   - python setup.py sdist bdist_wheel
 
 artifacts:
-  # bdist_wheel puts your built wheel in the dist directory
   - path: dist\*
