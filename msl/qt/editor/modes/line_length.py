@@ -3,8 +3,10 @@ Inserts a line at a certain column in the :class:`BaseEditor`.
 """
 import logging
 
-from msl.qt import QtGui, Qt
-
+from ... import (
+    QtGui,
+    Qt,
+)
 from ..types import Mode
 
 logger = logging.getLogger(__name__)
@@ -13,7 +15,7 @@ logger = logging.getLogger(__name__)
 class LineLengthMode(Mode):
 
     def __init__(self, editor, max_line_length=80, color=None):
-        Mode.__init__(self, editor)
+        super(LineLengthMode, self).__init__(editor)
 
         self._column = max_line_length
 

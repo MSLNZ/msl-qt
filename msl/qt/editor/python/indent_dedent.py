@@ -1,4 +1,3 @@
-
 from ..modes import IndentDedentMode
 
 
@@ -10,11 +9,11 @@ class PythonIndentDedentMode(IndentDedentMode):
         if left.rstrip().endswith(':'):
             text = '\u2029' + ' ' * indent + right.lstrip()
             cursor.insertText(text)
-            cursor.movePosition(cursor.EndOfBlock, mode=cursor.KeepAnchor)
+            cursor.movePosition(cursor.EndOfBlock, cursor.KeepAnchor)
             extra = len(cursor.selectedText()) - len(right.lstrip())
             cursor.removeSelectedText()
-            cursor.movePosition(cursor.StartOfBlock, mode=cursor.MoveAnchor)
-            cursor.movePosition(cursor.Right, mode=cursor.MoveAnchor, n=indent)
+            cursor.movePosition(cursor.StartOfBlock, cursor.MoveAnchor)
+            cursor.movePosition(cursor.Right, cursor.MoveAnchor, n=indent)
             self.indent_dedent_event.emit(1 + indent - extra)
             return True
 

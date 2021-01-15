@@ -3,8 +3,10 @@ Highlights matching brackets and parenthesis.
 """
 import logging
 
-from msl.qt import QtGui, QtWidgets
-
+from ... import (
+    QtGui,
+    QtWidgets,
+)
 from ..types import Mode
 
 logger = logging.getLogger(__name__)
@@ -16,7 +18,7 @@ class BracketMatcherMode(Mode):
     CLOSING_BRACKETS = {')': '(', ']': '[', '}': '{'}
 
     def __init__(self, editor):
-        Mode.__init__(self, editor)
+        super(BracketMatcherMode, self).__init__(editor)
 
         self._count = 0
         self._old_format = None
@@ -75,7 +77,7 @@ class BracketMatcherMode(Mode):
         try:
             matching = self.OPENING_BRACKETS[right]
             self._positions[0] = cursor.position()
-            cursor.movePosition(cursor.Right, mode=cursor.MoveAnchor)
+            cursor.movePosition(cursor.Right, cursor.MoveAnchor)
             self._find_closing_bracket(cursor, right, matching)
             return
         except KeyError:
@@ -84,7 +86,7 @@ class BracketMatcherMode(Mode):
         try:
             matching = self.CLOSING_BRACKETS[left]
             self._positions[1] = cursor.position() - 1
-            cursor.movePosition(cursor.Left, mode=cursor.MoveAnchor)
+            cursor.movePosition(cursor.Left, cursor.MoveAnchor)
             self._find_opening_bracket(cursor, left, matching)
             return
         except KeyError:
@@ -115,7 +117,7 @@ class BracketMatcherMode(Mode):
                 return
 
     def _find_matching_bracket(self, cursor, bracket, matching, direction):
-        cursor.movePosition(direction, mode=cursor.KeepAnchor)
+        cursor.movePosition(direction, cursor.KeepAnchor)
         text = cursor.selectedText()
         if text == matching:
             self._count -= 1
@@ -130,8 +132,8 @@ class BracketMatcherMode(Mode):
         for i in range(2):
             selection = self._selections[i]
             selection.cursor = cursor
-            selection.cursor.setPosition(self._positions[i], mode=cursor.MoveAnchor)
-            selection.cursor.movePosition(cursor.Right, mode=cursor.KeepAnchor)
+            selection.cursor.setPosition(self._positions[i], cursor.MoveAnchor)
+            selection.cursor.movePosition(cursor.Right, cursor.KeepAnchor)
             selection.cursor.setCharFormat(self._old_format)
         self._old_format = None
 
@@ -141,8 +143,8 @@ class BracketMatcherMode(Mode):
         for i in range(2):
             selection = self._selections[i]
             selection.cursor = cursor
-            selection.cursor.setPosition(self._positions[i], mode=cursor.MoveAnchor)
-            selection.cursor.movePosition(cursor.Right, mode=cursor.KeepAnchor)
+            selection.cursor.setPosition(self._positions[i], cursor.MoveAnchor)
+            selection.cursor.movePosition(cursor.Right, cursor.KeepAnchor)
             self._old_format = selection.cursor.charFormat()
             selection.cursor.setCharFormat(self._old_format)
             selections.append(selection)

@@ -5,8 +5,7 @@ to the actual home position in the block.
 """
 import logging
 
-from msl.qt import Qt
-
+from ... import Qt
 from ..types import Mode
 
 logger = logging.getLogger(__name__)
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 class SmartHomeMode(Mode):
 
     def __init__(self, editor):
-        Mode.__init__(self, editor)
+        super(SmartHomeMode, self).__init__(editor)
 
         self._original_position = 0
         self._move_to_actual_home = False

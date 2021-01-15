@@ -1,8 +1,10 @@
 """
 Performs automatic completion for the :class:`BaseEditor`.
 """
-from msl.qt import Qt, Signal
-
+from ... import (
+    Qt,
+    Signal,
+)
 from ..types import Mode
 
 
@@ -19,7 +21,7 @@ class AutoCompleteMode(Mode):
         kwargs : Additional auto-complete key-value pairs,
             i.e. for a C/C++ multi-line comment {'/*': '*/'}
         """
-        Mode.__init__(self, editor)
+        super(AutoCompleteMode, self).__init__(editor)
 
         self._maps = {
             '"': '"',
@@ -80,7 +82,7 @@ class AutoCompleteMode(Mode):
                     break
 
             if self._maps.get(left) == right:
-                cursor.movePosition(cursor.Right, mode=cursor.KeepAnchor, n=2*n-1)
+                cursor.movePosition(cursor.Right, cursor.KeepAnchor, n=2*n-1)
                 cursor.removeSelectedText()
 
             return

@@ -8,7 +8,7 @@ class NullGrammar(Grammar):
             'name': 'Null Grammar',
             'scopeName': 'text.plain.null-grammar'
         }
-        Grammar.__init__(self, registry, **options)
+        super(NullGrammar, self).__init__(registry, **options)
 
     def getScore(self):
         return 0

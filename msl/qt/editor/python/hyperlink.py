@@ -1,13 +1,16 @@
 import jedi
-from msl.qt import QtWidgets, QtGui
 
+from ... import (
+    QtWidgets,
+    QtGui,
+)
 from ..modes import HyperlinkMode
 
 
 class PythonHyperlinkMode(HyperlinkMode):
 
     def __init__(self, editor):
-        HyperlinkMode.__init__(self, editor)
+        super(PythonHyperlinkMode, self).__init__(editor)
 
     def draw_hyperlink_from_scopes(self, scopes):
         for scope in scopes[::-1]:

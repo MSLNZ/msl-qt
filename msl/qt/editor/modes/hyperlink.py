@@ -3,8 +3,12 @@ Underlines the word under the cursor and provides a hyperlink action on a mouse 
 """
 import logging
 
-from msl.qt import QtGui, QtWidgets, Qt, Signal
-
+from ... import (
+    QtGui,
+    QtWidgets,
+    Qt,
+    Signal,
+)
 from ..types import Mode
 
 logger = logging.getLogger(__name__)
@@ -15,7 +19,7 @@ class HyperlinkMode(Mode):
     hyperlink_external_event = Signal(str, int)  # module path, cursor position
 
     def __init__(self, editor, color='#0681E0'):
-        Mode.__init__(self, editor)
+        super(HyperlinkMode, self).__init__(editor)
 
         self._word = ''
         self._cursor_start = -1

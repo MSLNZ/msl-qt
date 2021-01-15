@@ -1,15 +1,18 @@
 """
 Draw line numbers on the left margin
 """
-from msl.qt import QtCore, QtGui, Qt
-
+from ... import (
+    QtCore,
+    QtGui,
+    Qt,
+)
 from ..types import Panel
 
 
 class LineNumberPanel(Panel):
 
     def __init__(self, editor):
-        Panel.__init__(self, editor)
+        super(LineNumberPanel, self).__init__(editor)
         if editor.color_scheme:
             self._foreground = editor.color_scheme.foreground
             self._background = editor.color_scheme.background
@@ -26,7 +29,7 @@ class LineNumberPanel(Panel):
         while maximum >= 10:
             maximum /= 10
             digits += 1
-        return 4 + self.editor.fontMetrics().width('9') * digits
+        return 4 + self.editor.fontMetrics().horizontalAdvance('9') * digits
 
     def update_line_number_area_width(self):
         self.editor.setViewportMargins(self.line_number_area_width()-2, 0, 0, 0)

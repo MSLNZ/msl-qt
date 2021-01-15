@@ -2,14 +2,13 @@
 Performs linting using pycodestyle and pyflakes
 """
 import os
-from ast import PyCF_ONLY_AST
 import logging
-
+import tempfile
+from ast import PyCF_ONLY_AST
 # import sys
 # import subprocess
-# from flake8.api import legacy as flake8
 
-import tempfile
+# from flake8.api import legacy as flake8
 import pycodestyle
 from pyflakes import checker, messages
 
@@ -47,7 +46,7 @@ class PythonLinter(LinterMode):
         pep8_ignore ->  ['W291', 'W292', 'W293', 'W391']
 
         """
-        LinterMode.__init__(self, editor)
+        super(PythonLinter, self).__init__(editor)
 
         self.cursor = None
         self.doc = None
@@ -130,13 +129,13 @@ class PythonLinter(LinterMode):
         block = self.doc.findBlockByNumber(line_number - 1)
         self.cursor.setPosition(block.position() + column_number, mode=self.cursor.MoveAnchor)
         if self.cursor.atBlockEnd():
-            self.cursor.movePosition(self.cursor.Left, mode=self.cursor.KeepAnchor)
+            self.cursor.movePosition(self.cursor.Left, self.cursor.KeepAnchor)
             if self.cursor.selectedText() == '\u2029':
-                self.cursor.movePosition(self.cursor.Left, mode=self.cursor.KeepAnchor)
+                self.cursor.movePosition(self.cursor.Left, self.cursor.KeepAnchor)
         else:
-            self.cursor.movePosition(self.cursor.EndOfWord, mode=self.cursor.KeepAnchor)
+            self.cursor.movePosition(self.cursor.EndOfWord, self.cursor.KeepAnchor)
             if not self.cursor.selectedText():
-                self.cursor.movePosition(self.cursor.NextWord, mode=self.cursor.KeepAnchor)
+                self.cursor.movePosition(self.cursor.NextWord, self.cursor.KeepAnchor)
 
         fmt = self.cursor.charFormat()
         fmt.setUnderlineStyle(fmt.WaveUnderline)

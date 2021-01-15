@@ -3,8 +3,13 @@ Performs code completion for the :class:`BaseEditor`.
 """
 import logging
 
-from msl.qt import QtWidgets, QtGui, Qt, Signal
-
+from ... import (
+    QtWidgets,
+    QtGui,
+    Qt,
+    Signal,
+    utils,
+)
 from ..types import Mode
 
 logger = logging.getLogger(__name__)
@@ -35,7 +40,7 @@ class CodeCompleterMode(Mode):
             How the completions are provided to the user. One of ``'Popup'``,
             ``'Inline'`` or ``'UnfilteredPopup'``.
         """
-        Mode.__init__(self, editor)
+        super(CodeCompleterMode, self).__init__(editor)
 
         self._min_prefix_length = min_prefix_length
 
@@ -46,9 +51,7 @@ class CodeCompleterMode(Mode):
         self._is_trigger_text = False  # is the key sequence equal to self._trigger_text ?
         self._is_alnum_uscore = False  # is the key event alphanumeric or an underscore ?
 
-        desktop = QtWidgets.QDesktopWidget()
-        n = desktop.screenNumber(QtGui.QCursor.pos())
-        self._min_popup_width = int(desktop.availableGeometry(n).width() * 0.3)
+        self._min_popup_width = int(utils.screen_geometry().width() * 0.3)
 
         self._model = QtGui.QStandardItemModel()
 
@@ -249,7 +252,7 @@ class CodeCompleterMode(Mode):
 
         # find the prefix
         cursor = self.editor.textCursor()
-        cursor.movePosition(cursor.WordLeft, mode=cursor.KeepAnchor)
+        cursor.movePosition(cursor.WordLeft, cursor.KeepAnchor)
         prefix = cursor.selectedText()
         rect = self.editor.cursorRect(cursor)
 
@@ -345,7 +348,7 @@ class CodeCompleterMode(Mode):
 
         # remove the word under the cursor
         cursor = self.editor.textCursor()
-        cursor.movePosition(cursor.Left, mode=cursor.KeepAnchor, n=len(self._completer.completionPrefix()))
+        cursor.movePosition(cursor.Left, cursor.KeepAnchor, n=len(self._completer.completionPrefix()))
         cursor.select(QtGui.QTextCursor.WordUnderCursor)
         cursor.removeSelectedText()
 

@@ -37,7 +37,7 @@ class SyntaxHighlighterMode(Mode):
         color_scheme_name : :class:`str`
             The name of a Sublime Text color scheme.
         """
-        Mode.__init__(self, editor)
+        super(SyntaxHighlighterMode, self).__init__(editor)
 
         self._grammar = registry.loadGrammarSync(grammar_url)
         self.editor.color_scheme = color_scheme_name
@@ -170,7 +170,7 @@ class SyntaxHighlighterMode(Mode):
     def _paste_event(self, text):
         n = len(text.splitlines())
         cursor = self.editor.textCursor()
-        cursor.movePosition(cursor.PreviousBlock, mode=cursor.MoveAnchor, n=n)
+        cursor.movePosition(cursor.PreviousBlock, cursor.MoveAnchor, n=n)
         block = cursor.block()
         for _ in range(n):
             # don't use "for line in text.splitlines()"

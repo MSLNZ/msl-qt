@@ -7,7 +7,6 @@ import logging
 import jedi
 
 from ..modes import CodeCompleterMode
-from ...utils import logger
 from ... import (
     QtGui,
     Qt,
@@ -30,7 +29,7 @@ class PythonCodeCompleterMode(CodeCompleterMode):
             popup is displayed. To disable the popup based on the length of
             the prefix specify a value < 1.
         """
-        CodeCompleterMode.__init__(self, editor, min_prefix_length=min_prefix_length)
+        super(PythonCodeCompleterMode, self).__init__(editor, min_prefix_length=min_prefix_length)
         self.model.setColumnCount(2)
 
         root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'icons'))

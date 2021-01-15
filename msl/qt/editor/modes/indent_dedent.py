@@ -3,8 +3,10 @@ Automatic indent and dedent for the :class:`BaseEditor`.
 """
 import logging
 
-from msl.qt import Qt, Signal
-
+from ... import (
+    Qt,
+    Signal,
+)
 from .syntax_highlighter import TextBlockUserData
 from ..types import Mode
 
@@ -16,7 +18,7 @@ class IndentDedentMode(Mode):
     indent_dedent_event = Signal(int)
 
     def __init__(self, editor, indent=4):
-        Mode.__init__(self, editor)
+        super(IndentDedentMode, self).__init__(editor)
 
         self._num_spaces = indent
         self._brackets = ('[', '{', '(')
@@ -70,7 +72,7 @@ class IndentDedentMode(Mode):
                 if dedent:
                     iline = 0
                     while iline < self._num_spaces:
-                        cursor.movePosition(cursor.Right, mode=cursor.KeepAnchor)
+                        cursor.movePosition(cursor.Right, cursor.KeepAnchor)
                         text = cursor.selectedText()
                         if text.startswith('\u2029'):
                             # then this is an empty line (an empty block)
@@ -108,7 +110,7 @@ class IndentDedentMode(Mode):
         elif key == Qt.Key_Backspace:
             if self.editor.peek_left(self._num_spaces) == ' ' * self._num_spaces:
                 self.indent_dedent_event.emit(-self._num_spaces)
-                cursor.movePosition(cursor.Left, mode=cursor.KeepAnchor, n=self._num_spaces)
+                cursor.movePosition(cursor.Left, cursor.KeepAnchor, n=self._num_spaces)
                 cursor.removeSelectedText()
                 self.editor.setTextCursor(cursor)
                 event.ignore()
@@ -116,7 +118,7 @@ class IndentDedentMode(Mode):
         elif key == Qt.Key_Delete:
             if self.editor.peek_right(self._num_spaces) == ' ' * self._num_spaces:
                 self.indent_dedent_event.emit(-self._num_spaces)
-                cursor.movePosition(cursor.Right, mode=cursor.KeepAnchor, n=self._num_spaces)
+                cursor.movePosition(cursor.Right, cursor.KeepAnchor, n=self._num_spaces)
                 cursor.removeSelectedText()
                 self.editor.setTextCursor(cursor)
                 event.ignore()

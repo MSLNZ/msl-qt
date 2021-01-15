@@ -89,10 +89,10 @@ class Manager(object):
 class ModeManager(Manager):
 
     def __init__(self, editor):
-        Manager.__init__(self, editor, Mode)
+        super(ModeManager, self).__init__(editor, Mode)
 
 
 class PanelManager(Manager):
 
     def __init__(self, editor):
-        Manager.__init__(self, editor, Panel)
+        super(PanelManager, self).__init__(editor, Panel)

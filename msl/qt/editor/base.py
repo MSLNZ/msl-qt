@@ -1,10 +1,17 @@
 import sys
 import logging
 
-from msl.qt import QtWidgets, QtGui, Qt, Signal
-
+from .. import (
+    QtWidgets,
+    QtGui,
+    Qt,
+    Signal,
+)
 from .modes.syntax_highlighter import ColorScheme
-from .managers import ModeManager, PanelManager
+from .managers import (
+    ModeManager,
+    PanelManager,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +34,7 @@ class BaseEditor(QtWidgets.QPlainTextEdit):
     ControlModifier = Qt.MetaModifier if sys.platform == 'darwin' else Qt.ControlModifier
 
     def __init__(self, *, parent=None, font=None, cursor_width=2):
-        QtWidgets.QPlainTextEdit.__init__(self, parent)
+        super(BaseEditor, self).__init__(parent)
 
         logger.debug('initialized ' + str(self))
 
@@ -294,5 +301,5 @@ class BaseEditor(QtWidgets.QPlainTextEdit):
         if n < 1:
             return ''
         cursor = self.textCursor()
-        cursor.movePosition(operation, mode=cursor.KeepAnchor, n=n)
+        cursor.movePosition(operation, cursor.KeepAnchor, n=n)
         return cursor.selectedText()

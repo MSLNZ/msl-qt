@@ -3,8 +3,12 @@ Performs syntax checking.
 """
 import logging
 
-from msl.qt import QtGui, QtWidgets, Qt, Signal
-
+from ... import (
+    QtGui,
+    QtWidgets,
+    Qt,
+    Signal,
+)
 from ..types import Mode
 from ..profiler import Profile
 
@@ -16,7 +20,7 @@ class LinterMode(Mode):
     indent_dedent_event = Signal(int)
 
     def __init__(self, editor):
-        Mode.__init__(self, editor)
+        super(LinterMode, self).__init__(editor)
 
         self._linter_info = list()  # list of (cursor_start_position, cursor_end_position, message)
         self._error_color = QtGui.QColor(Qt.red)

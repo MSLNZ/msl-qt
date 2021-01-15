@@ -1,3 +1,6 @@
+"""
+Example to show the :class:`~msl.qt.editor.python.PythonEditor`.
+"""
 import os
 import sys
 import time
@@ -54,8 +57,7 @@ class Main(QtWidgets.QWidget):
         )
 
 
-if __name__ == '__main__':
-
+def show():
     sys.excepthook = excepthook
 
     logging.basicConfig(
@@ -70,9 +72,13 @@ if __name__ == '__main__':
     t0 = time.perf_counter()
     app = application()
     main = Main(text, 'Chromodynamics')
-    geo = utils.screen_geometry()
+    geo = utils.screen_geometry(main)
     main.resize(geo.width()*2//3, geo.height()//2)
     main.show()
     took = time.perf_counter()-t0
     print('Inserted {} lines in {:.3f} seconds'.format(main.editor.document().lineCount(), took))
-    sys.exit(app.exec())
+    app.exec()
+
+
+if __name__ == '__main__':
+    show()

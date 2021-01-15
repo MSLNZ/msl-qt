@@ -3,8 +3,11 @@ Highlight the background color of the current line in the :class:`BaseEditor`.
 """
 import logging
 
-from msl.qt import QtWidgets, QtGui
-
+from ... import (
+    QtWidgets,
+    QtGui,
+    binding,
+)
 from ..types import Mode
 
 logger = logging.getLogger(__name__)
@@ -23,10 +26,13 @@ class LineHighlighterMode(Mode):
         editor : :class:`BaseEditor`
             The editor.
         """
-        Mode.__init__(self, editor)
+        super(LineHighlighterMode, self).__init__(editor)
 
         self._selection = QtWidgets.QTextEdit.ExtraSelection()
-        self._selection.format.setProperty(QtGui.QTextFormat.FullWidthSelection, True)
+        prop = QtGui.QTextFormat.FullWidthSelection
+        if binding.name == 'PyQt6':
+            prop = prop.value
+        self._selection.format.setProperty(prop, True)
 
     @property
     def color(self):

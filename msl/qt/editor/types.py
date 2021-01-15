@@ -1,6 +1,9 @@
 import logging
 
-from msl.qt import QtWidgets, QtCore
+from .. import (
+    QtWidgets,
+    QtCore,
+)
 
 logger = logging.getLogger(__name__)
 
