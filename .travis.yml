@@ -72,9 +72,8 @@ install:
   - python --version
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
-  - python -m pip install --upgrade pytest pytest-cov pytest-runner
   - python -m pip install --upgrade $QT_API
-  - python -m pip list
+  - python -m pip install --upgrade --editable .[tests]
 
 before_script:
   - |

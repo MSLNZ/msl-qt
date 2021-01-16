@@ -134,14 +134,11 @@ def get_version():
 
 install_requires = []
 
-tests_require = ['pytest', 'pytest-cov']
-if sys.version_info[:2] == (3, 5):
-    tests_require.append('PySide2')
-else:
-    tests_require.append('PySide6')
-
-if sys.platform == 'win32' and sys.version_info[:2] < (3, 9):
-    tests_require.append('pythonnet')
+tests_require = [
+    'pytest',
+    'pytest-cov',
+    "pythonnet;sys_platform=='win32' and python_version<'3.9'",
+]
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
@@ -184,6 +181,7 @@ setup(
         'PySide2': ['PySide2'],
         'PyQt6': ['PyQt6'],
         'PyQt5': ['PyQt5'],
+        'tests': tests_require,
     },
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
