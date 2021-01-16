@@ -42,6 +42,3 @@ htmlcov/
 junit.xml
 coverage.xml
 condatests.ini
-
-# ignore all scripts in the junk/ folder
-junk/

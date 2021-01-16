@@ -39,15 +39,12 @@ install:
   - python --version
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade setuptools wheel
-  - python -m pip install --upgrade pytest pytest-cov pytest-runner jedi pycodestyle pyflakes
   - python -m pip install %QT_API%
   - IF "%CLONE_PYTHONNET%"=="true" (
       python -m pip install --upgrade pycparser &&
       python -m pip install git+https://github.com/pythonnet/pythonnet.git
-    ) ELSE (
-      python -m pip install --upgrade pythonnet
     )
-  - python -m pip list
+  - python -m pip install --upgrade --editable .[tests]
 
 build: off
 
