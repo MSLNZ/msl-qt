@@ -4,6 +4,7 @@ import logging
 from .. import (
     QtWidgets,
     QtGui,
+    QtCore,
     Qt,
     Signal,
 )
@@ -18,17 +19,17 @@ logger = logging.getLogger(__name__)
 
 class BaseEditor(QtWidgets.QPlainTextEdit):
 
-    key_press_event = Signal(QtGui.QKeyEvent)
-    key_release_event = Signal(QtGui.QKeyEvent)
+    key_press_event = Signal(object)  # QtGui.QKeyEvent
+    key_release_event = Signal(object)  # QtGui.QKeyEvent
     new_text_event = Signal()
     new_color_scheme_event = Signal(ColorScheme)
-    paint_event = Signal(QtGui.QPaintEvent)
-    resize_event = Signal(QtGui.QResizeEvent)
-    mouse_release_event = Signal(QtGui.QMouseEvent)
+    paint_event = Signal(object)  # QtGui.QPaintEvent
+    resize_event = Signal(object)  # QtGui.QResizeEvent
+    mouse_release_event = Signal(object)  # QtGui.QMouseEvent
     paste_event = Signal(str)  # the text from the clipboard
 
     # the QTextCursor has WordUnderCursor selected
-    mouse_move_event = Signal(QtGui.QMouseEvent, QtGui.QTextCursor)
+    mouse_move_event = Signal(object, object)  # QtGui.QMouseEvent, QtGui.QTextCursor
 
     # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum
     ControlModifier = Qt.MetaModifier if sys.platform == 'darwin' else Qt.ControlModifier
@@ -91,66 +92,75 @@ class BaseEditor(QtWidgets.QPlainTextEdit):
         return self._panels
 
     def keyPressEvent(self, event):
-        """Overrides `keyPressEvent <https://doc.qt.io/qt-5/qwidget.html#keyPressEvent>`_."""
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.keyPressEvent`."""
         logger.debug('keyPressEvent: text={!r}, key={}, CTRL={}'.format(
-            event.text(), event.key(), event.modifiers() == self.ControlModifier))
+            event.text(), event.key(), event.modifiers() == self.ControlModifier)
+        )
 
         self.key_press_event.emit(event)
         if event.isAccepted():
-            QtWidgets.QPlainTextEdit.keyPressEvent(self, event)
+            super(BaseEditor, self).keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
-        """Overrides `keyReleaseEvent <https://doc.qt.io/qt-5/qwidget.html#keyReleaseEvent>`_."""
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.keyReleaseEvent`."""
         logger.debug('keyReleaseEvent: text={!r}, key={}, CTRL={}'.format(
-            event.text(), event.key(), event.key() == Qt.Key_Control))
+            event.text(), event.key(), event.key() == Qt.Key_Control)
+        )
 
         self.key_release_event.emit(event)
         if event.isAccepted():
-            QtWidgets.QPlainTextEdit.keyReleaseEvent(self, event)
+            super(BaseEditor, self).keyReleaseEvent(event)
 
     def wheelEvent(self, event):
-        """Overrides `wheelEvent <https://doc.qt.io/qt-5/qwidget.html#wheelEvent>`_."""
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.wheelEvent`."""
         if event.modifiers() == self.ControlModifier:
             if event.angleDelta().y() < 0:
                 self.zoomOut()
             else:
                 self.zoomIn()
         else:
-            QtWidgets.QPlainTextEdit.wheelEvent(self, event)
+            super(BaseEditor, self).wheelEvent(event)
 
     def resizeEvent(self, event):
-        """Overrides `resizeEvent <https://doc.qt.io/qt-5/qwidget.html#resizeEvent>`_."""
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.resizeEvent`."""
         self.resize_event.emit(event)
-        QtWidgets.QPlainTextEdit.resizeEvent(self, event)
+        super(BaseEditor, self).resizeEvent(event)
 
     def paintEvent(self, event):
-        """Overrides `paintEvent <https://doc.qt.io/qt-5/qwidget.html#paintEvent>`_."""
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.paintEvent`."""
         self.paint_event.emit(event)
-        QtWidgets.QPlainTextEdit.paintEvent(self, event)
+        super(BaseEditor, self).paintEvent(event)
 
     def mouseMoveEvent(self, event):
-        """Overrides `mouseMoveEvent <https://doc.qt.io/qt-5/qwidget.html#mouseMoveEvent>`_."""
-        cursor = self.cursorForPosition(event.pos())
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.mouseMoveEvent`."""
+        try:
+            pos = event.pos()
+        except AttributeError:
+            # PyQt6 6.0.0 does not have the pos() attribute defined for QMouseEvent
+            position = event.position()
+            pos = QtCore.QPoint(int(position.x()), int(position.y()))
+
+        cursor = self.cursorForPosition(pos)
         cursor.select(cursor.WordUnderCursor)
         self.mouse_move_event.emit(event, cursor)
-        QtWidgets.QPlainTextEdit.mouseMoveEvent(self, event)
+        super(BaseEditor, self).mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
-        """Overrides `mouseReleaseEvent <https://doc.qt.io/qt-5/qwidget.html#mouseReleaseEvent>`_."""
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.mouseReleaseEvent`."""
         self.mouse_release_event.emit(event)
         if event.isAccepted():
-            QtWidgets.QPlainTextEdit.mouseReleaseEvent(self, event)
+            super(BaseEditor, self).mouseReleaseEvent(event)
 
     def canInsertFromMimeData(self, source):
-        """Overrides `canInsertFromMimeData <http://doc.qt.io/qt-5/qplaintextedit.html#canInsertFromMimeData>`_."""
-        logger.debug('canInsertFromMimeData')
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.canInsertFromMimeData`."""
+        logger.debug('canInsertFromMimeData -- TODO should we do something else?')
         if source.hasUrls():
             for url in source.urls():
-                print(url)
+                print(url)  # TODO should we do something else?
         return False
 
     def insertFromMimeData(self, source):
-        """Overrides `insertFromMimeData <http://doc.qt.io/qt-5/qplaintextedit.html#insertFromMimeData>`_."""
+        """Overrides :meth:`QtWidgets.QPlainTextEdit.insertFromMimeData`."""
         if source.hasText():
             self.insertPlainText(source.text())
             self.paste_event.emit(source.text())
