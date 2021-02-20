@@ -35,10 +35,10 @@ jobs:
       env: PYTHON=3.5.10 QT_API=PySide2
     - os: osx
       language: shell
-      env: PYTHON=3.6.12 QT_API=PySide6
+      env: PYTHON=3.6.13 QT_API=PySide6
     - os: osx
       language: shell
-      env: PYTHON=3.7.9 QT_API=PySide6
+      env: PYTHON=3.7.10 QT_API=PySide6
     - os: osx
       language: shell
       env: PYTHON=3.8.7 QT_API=PySide6
