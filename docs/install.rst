@@ -8,7 +8,7 @@ To install **MSL-Qt** run
 
 .. code-block:: console
 
-   pip install https://github.com/MSLNZ/msl-qt/archive/master.zip
+   pip install https://github.com/MSLNZ/msl-qt/archive/main.zip
 
 Alternatively, using the `MSL Package Manager`_
 
