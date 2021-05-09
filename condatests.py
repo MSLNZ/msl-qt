@@ -19,6 +19,7 @@ except ImportError:
 IS_WINDOWS = sys.platform == 'win32'
 if IS_WINDOWS:
     CONDA_DIR, PYTHON_DIR, EXT = 'Scripts', '', '.exe'
+    # Avoid getting "LookupError: unknown encoding: cp65001"
     if os.environ.get('PYTHONIOENCODING') is None:
         os.environ['PYTHONIOENCODING'] = 'utf-8'
 else:
@@ -187,8 +188,8 @@ def install_packages(env_name, packages_or_files):
     packages.extend(files)
 
     print('Installing {} in the {!r} environment'.format(', '.join(packages), env_name))
-    p = subprocess.Popen(['conda', 'install', '--name', env_name, '--yes'] + packages,
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cmd = ['conda', 'install', '--name', env_name, '--channel', 'conda-forge', '--yes']
+    p = subprocess.Popen(cmd + packages, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     err = err.decode()
     if not err.lstrip().startswith('==> WARNING: A newer version of conda exists. <=='):
