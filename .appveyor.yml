@@ -20,19 +20,19 @@ environment:
       QT_API: PySide6
     - PYTHON: C:\Python39
       QT_API: PySide2
-      CLONE_PYTHONNET: "true"
+      CLONE_PYTHONNET: "false"
     - PYTHON: C:\Python39-x64
       QT_API: PySide6
-      CLONE_PYTHONNET: "true"
+      CLONE_PYTHONNET: "false"
     - PYTHON: C:\Python39-x64
       QT_API: PyQt6
-      CLONE_PYTHONNET: "true"
+      CLONE_PYTHONNET: "false"
     - PYTHON: C:\Python39-x64
       QT_API: PySide2
-      CLONE_PYTHONNET: "true"
+      CLONE_PYTHONNET: "false"
     - PYTHON: C:\Python39-x64
       QT_API: PyQt5
-      CLONE_PYTHONNET: "true"
+      CLONE_PYTHONNET: "false"
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%

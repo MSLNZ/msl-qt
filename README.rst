@@ -12,7 +12,7 @@ To install **MSL-Qt** run
 
 .. code-block:: console
 
-   pip install https://github.com/MSLNZ/msl-qt/archive/master.zip
+   pip install https://github.com/MSLNZ/msl-qt/archive/main.zip
 
 Alternatively, using the `MSL Package Manager`_
 
@@ -47,11 +47,11 @@ Optional Dependencies
    :alt: Documentation Status
    :scale: 100%
 
-.. |travis| image:: https://img.shields.io/travis/MSLNZ/msl-qt/master.svg?label=Travis-CI
+.. |travis| image:: https://img.shields.io/travis/MSLNZ/msl-qt/main.svg?label=Travis-CI
    :target: https://travis-ci.org/MSLNZ/msl-qt
 
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-qt/master.svg?label=AppVeyor
-   :target: https://ci.appveyor.com/project/jborbely/msl-qt/branch/master
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-qt/main.svg?label=AppVeyor
+   :target: https://ci.appveyor.com/project/jborbely/msl-qt/branch/main
 
 .. _Qt: https://www.qt.io/
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/
