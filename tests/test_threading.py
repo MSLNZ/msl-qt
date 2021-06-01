@@ -9,13 +9,11 @@ def test_invalid_constructor():
         def __init__(self):
             super(MyWorker, self).__init__()
 
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match=r'must not be instantiated'):
         Thread(MyWorker())
-    assert str(err.value).endswith('must not be instantiated')
 
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match=r'not a Worker subclass'):
         Thread(QtCore.QTimer)
-    assert str(err.value).endswith('not a Worker subclass')
 
 
 def test_worker_raises_exception():
@@ -89,9 +87,8 @@ def test_worker_raises_exception():
         if index == 1 or index == 3 or index == 5:
             assert thread.result == index
         elif not index % 2:
-            with pytest.raises(AttributeError) as err:
+            with pytest.raises(AttributeError, match=r'You must start the Thread'):
                 r = thread.result
-            assert str(err.value).startswith('You must start the Thread')
         else:
             assert thread.result == -1
 

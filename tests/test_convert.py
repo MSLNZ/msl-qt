@@ -79,9 +79,8 @@ def test_to_qicon_dll_exe():
             convert.to_qicon('C:/Windows/System32/explorer.exe|0')
     else:
         assert isinstance(convert.to_qicon('C:/Windows/System32/explorer.exe|0'), QtGui.QIcon)
-    with pytest.raises(OSError) as err:
+    with pytest.raises(OSError, match=r'Requested icon 9999'):
         convert.to_qicon('shell32|9999')  # the maximum icon index should be much less than 9999
-    assert str(err.value).startswith('Requested icon 9999')
 
 
 @pytest.mark.skipif(not (has_pythonnet() and sys.platform == 'win32'), reason='requires pythonnet and win32')
@@ -166,15 +165,13 @@ def test_rescale_icon():
     assert isinstance(convert.rescale_icon(icon.pixmap(size).toImage(), 1.0), QtGui.QPixmap)
 
     if sys.platform == 'win32' and has_pythonnet():
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'Unsupported "size"'):
             convert.rescale_icon('explorer|0', None)
-        assert str(err.value).startswith('Unsupported "size"')
 
     # if a list/tuple then must contain 2 elements
-    for item in [(), [], (256,), [256,], (256, 256, 256), [256, 256, 256]]:
-        with pytest.raises(ValueError) as err:
+    for item in [(), [], (256,), [256, ], (256, 256, 256), [256, 256, 256]]:
+        with pytest.raises(ValueError, match=r'The size must be in the form (width, height)'):
             convert.rescale_icon(icon, item)
-        assert str(err.value) == 'The size must be in the form (width, height)'
 
 
 def test_to_qfont():
@@ -255,18 +252,15 @@ def test_to_qfont():
 
     # the first item in the list must be a string
     for obj in [None, 1, 23.4, 5j, True, [1]]:
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'(as a string)'):
             convert.to_qfont(obj, 12)
-        assert str(err.value).endswith('(as a string)')
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'(as a string)'):
             convert.to_qfont((obj, 12))
-        assert str(err.value).endswith('(as a string)')
 
     # the first argument is not a QFont, int, float or string
     for obj in [None, 1+6j]:
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'Cannot create'):
             convert.to_qfont(obj)
-        assert str(err.value).startswith('Cannot create')
 
     # the second item cannot be cast to an integer
     with pytest.raises(ValueError):
@@ -349,9 +343,8 @@ def test_number_to_si():
     check(convert.number_to_si(math.inf), math.inf, '')
     check(convert.number_to_si(-math.inf), -math.inf, '')
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match=r'cannot be expressed'):
         convert.number_to_si(0.0012e-24)
-    assert 'cannot be expressed' in str(e.value)
 
     check(convert.number_to_si(-12.34e-25), -1.234, 'y')
     check(convert.number_to_si(0.123e-20), 1.23, 'z')
@@ -385,9 +378,8 @@ def test_number_to_si():
     check(convert.number_to_si(12.678e24), 12.678, 'Y')
     check(convert.number_to_si(12345.678e22), 123.45678, 'Y')
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match=r'cannot be expressed'):
         convert.number_to_si(12345.678e24)
-    assert 'cannot be expressed' in str(e.value)
 
     check(convert.number_to_si(-0), 0., '')
     check(convert.number_to_si(0), 0., '')
@@ -423,9 +415,8 @@ def test_number_to_si():
     check(convert.number_to_si(123456789012345678901234567), 123.456789012345678901234567, 'Y')
     check(convert.number_to_si(-123456789012345678901234567), -123.456789012345678901234567, 'Y')
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match=r'cannot be expressed'):
         convert.number_to_si(1234567890123456789012345678)
-    assert 'cannot be expressed' in str(e.value)
 
 
 def test_si_to_number():
