@@ -26,7 +26,7 @@ else:
 if not qt_api:
     raise ImportError('One of the following Qt packages must be installed: ' + ', '.join(packages))
 
-Binding = namedtuple('Binding', ['name', 'version', 'qt_version'])
+Binding = namedtuple('Binding', ['name', 'version', 'qt_version', 'version_info', 'qt_version_info'])
 
 api = importlib.import_module(qt_api)
 QtGui = importlib.import_module(qt_api + '.QtGui')
@@ -38,11 +38,29 @@ Qt = QtCore.Qt
 if qt_api.startswith('PySide'):
     Signal = QtCore.Signal
     Slot = QtCore.Slot
-    binding = Binding(name=api.__name__, version=api.__version__, qt_version=QtCore.__version__)
+    binding = Binding(
+        name=api.__name__,
+        version=api.__version__,
+        qt_version=QtCore.__version__,
+        version_info=api.__version_info__,
+        qt_version_info=QtCore.__version_info__,
+    )
 else:
+    def _to_version_info(version):
+        major = (version >> 16) & 0xff
+        minor = (version >> 8) & 0xff
+        patch = version & 0xff
+        return major, minor, patch
+
     Signal = QtCore.pyqtSignal
     Slot = QtCore.pyqtSlot
-    binding = Binding(name=api.__name__, version=QtCore.PYQT_VERSION_STR, qt_version=QtCore.QT_VERSION_STR)
+    binding = Binding(
+        name=api.__name__,
+        version=QtCore.PYQT_VERSION_STR,
+        qt_version=QtCore.QT_VERSION_STR,
+        version_info=_to_version_info(QtCore.PYQT_VERSION),
+        qt_version_info=_to_version_info(QtCore.QT_VERSION),
+    )
 
 if not hasattr(QtWidgets.QApplication, 'exec'):
     QtWidgets.QApplication.exec = QtWidgets.QApplication.exec_
