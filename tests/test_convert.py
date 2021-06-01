@@ -45,10 +45,10 @@ def test_to_qicon():
     with pytest.raises(TypeError):
         convert.to_qicon(None)
 
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.to_qicon(99999)  # not a valid QStyle.StandardPixmap enum value
 
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.to_qicon('this is not an icon')
 
     assert isinstance(convert.to_qicon(os.path.join(os.path.dirname(__file__), 'gamma.png')), QtGui.QIcon)
@@ -68,18 +68,18 @@ def test_to_qicon_dll_exe():
     assert isinstance(convert.to_qicon('C:/Windows/System32/shell32.dll|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('shell32.dll|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('shell32|0'), QtGui.QIcon)
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.to_qicon('/shell32|0')  # fails because it appears as though a full path is being specified
     assert isinstance(convert.to_qicon('C:/Windows/explorer.exe|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('explorer.exe|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('explorer|0'), QtGui.QIcon)
     if sys.maxsize > 2**32:
         # the exe is located at 'C:/Windows/explorer.exe'
-        with pytest.raises(IOError):
+        with pytest.raises(OSError):
             convert.to_qicon('C:/Windows/System32/explorer.exe|0')
     else:
         assert isinstance(convert.to_qicon('C:/Windows/System32/explorer.exe|0'), QtGui.QIcon)
-    with pytest.raises(IOError) as err:
+    with pytest.raises(OSError) as err:
         convert.to_qicon('shell32|9999')  # the maximum icon index should be much less than 9999
     assert str(err.value).startswith('Requested icon 9999')
 
@@ -89,11 +89,11 @@ def test_icon_to_base64_exe():
     assert isinstance(convert.icon_to_base64('explorer|0'), QtCore.QByteArray)
 
     # index number is < 0
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.icon_to_base64('explorer|-1')
 
     # the filename not a DLL in C:/Windows/System32/ nor an EXE in C:/Windows/
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.icon_to_base64('unknown_default|1')
 
 

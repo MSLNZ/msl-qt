@@ -133,7 +133,7 @@ class ShowStandardIcons(object):
             try:
                 name = '{}|{}'.format(filename, str(index))
                 ico = convert.to_qicon(name)
-            except IOError:
+            except OSError:
                 break
 
             button.setIcon(ico)

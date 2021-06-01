@@ -317,7 +317,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
 
     Raises
     ------
-    IOError
+    OSError
         If the icon cannot be found.
     TypeError
         If the data type of `obj` or `size` is not supported.
@@ -346,7 +346,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
                     _icon = QtGui.QIcon(full_path)
                     break
             if _icon is None:
-                raise IOError('Cannot find icon file {!r}'.format(obj))
+                raise OSError('Cannot find icon file {!r}'.format(obj))
     elif isinstance(obj, QtWidgets.QStyle.StandardPixmap):
         app = application()
         _icon = QtGui.QIcon(app.style().standardIcon(obj))
@@ -358,7 +358,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
             app = application()
             _icon = QtGui.QIcon(app.style().standardIcon(QtWidgets.QStyle.StandardPixmap(obj)))
         else:
-            raise IOError('Invalid QStyle.StandardPixmap enum value of {}'.format(obj))
+            raise OSError('Invalid QStyle.StandardPixmap enum value of {}'.format(obj))
     elif isinstance(obj, QtGui.QPixmap):
         _icon = QtGui.QIcon(obj)
     elif isinstance(obj, QtGui.QImage):
@@ -404,7 +404,7 @@ def icon_to_base64(icon, *, fmt='png'):
 
     Raises
     ------
-    IOError
+    OSError
         If the icon file cannot be found.
     ValueError
         If the icon format, `fmt`, to use for converting is not supported.
@@ -439,19 +439,19 @@ def icon_to_base64(icon, *, fmt='png'):
         path = s[0]
         icon_index = int(s[1])
         if icon_index < 0:
-            raise IOError('The icon index must be >= 0')
+            raise OSError('The icon index must be >= 0')
 
         if not os.path.isfile(path):
             err_msg = 'Cannot find DLL/EXE file {!r}'.format(s[0])
             if os.path.split(path)[0]:  # then it wasn't just the filename that was specified
-                raise IOError(err_msg)
+                raise OSError(err_msg)
 
             filename = os.path.splitext(os.path.basename(path))[0]
             path = 'C:/Windows/System32/{}.dll'.format(filename)
             if not os.path.isfile(path):
                 path = 'C:/Windows/{}.exe'.format(filename)
                 if not os.path.isfile(path):
-                    raise IOError(err_msg)
+                    raise OSError(err_msg)
 
         # extract the handle to the "large" icon
         path_ptr = ctypes.c_char_p(path.encode())
@@ -459,7 +459,7 @@ def icon_to_base64(icon, *, fmt='png'):
         res = shell32.ExtractIconExA(path_ptr, icon_index, ctypes.byref(handle_large), ctypes.c_void_p(), 1)
         if res != 1:
             max_index = shell32.ExtractIconExA(path_ptr, -1, ctypes.c_void_p(), ctypes.c_void_p(), 0) - 1
-            raise IOError('Requested icon {}, the maximum icon index allowed is {}'.format(icon_index, max_index))
+            raise OSError('Requested icon {}, the maximum icon index allowed is {}'.format(icon_index, max_index))
 
         # get the icon bitmap and convert it to base64
         handle = clr.System.Int32(handle_large.value)

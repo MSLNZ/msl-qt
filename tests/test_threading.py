@@ -31,7 +31,7 @@ def test_worker_raises_exception():
         def process(self):
             QtCore.QThread.sleep(self.seconds)
             if self.raise_exception:
-                raise IOError('Cannot open file')
+                raise OSError('Cannot open file')
             self.result = self.seconds
 
     class MyThread(Thread):
