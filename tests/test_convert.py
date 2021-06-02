@@ -170,7 +170,7 @@ def test_rescale_icon():
 
     # if a list/tuple then must contain 2 elements
     for item in [(), [], (256,), [256, ], (256, 256, 256), [256, 256, 256]]:
-        with pytest.raises(ValueError, match=r'The size must be in the form (width, height)'):
+        with pytest.raises(ValueError, match=r'The size must be in the form \(width, height\)'):
             convert.rescale_icon(icon, item)
 
 
