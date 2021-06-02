@@ -1,7 +1,7 @@
 MSL-Qt
 ======
 
-|docs| |travis| |appveyor|
+|docs| |github tests|
 
 This package provides custom Qt_ components that can be used for the graphical user interface.
 
@@ -22,7 +22,7 @@ Alternatively, using the `MSL Package Manager`_
 
 Dependencies
 ------------
-* Python 3.5+
+* Python 3.6+
 * PySide6_, PyQt6_, PySide2_ or PyQt5_ -- you can chose which Python binding you want to use
 
 You can automatically install one of these Python bindings for the Qt framework when
@@ -47,11 +47,8 @@ Optional Dependencies
    :alt: Documentation Status
    :scale: 100%
 
-.. |travis| image:: https://img.shields.io/travis/MSLNZ/msl-qt/main.svg?label=Travis-CI
-   :target: https://travis-ci.org/MSLNZ/msl-qt
-
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-qt/main.svg?label=AppVeyor
-   :target: https://ci.appveyor.com/project/jborbely/msl-qt/branch/main
+.. |github tests| image:: https://github.com/MSLNZ/msl-qt/actions/workflows/run-tests.yml/badge.svg
+   :target: https://github.com/MSLNZ/msl-qt/actions/workflows/run-tests.yml
 
 .. _Qt: https://www.qt.io/
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/

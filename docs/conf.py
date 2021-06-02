@@ -53,6 +53,7 @@ if on_rtd:
     class QtCore(object):
 
         __version__ = ''
+        __version_info__ = tuple()
 
         class Qt(object):
             KeepAspectRatio = 1
@@ -89,6 +90,7 @@ if on_rtd:
 
     class PySide6(object):
         __version__ = ''
+        __version_info__ = tuple()
 
     sys.modules['PySide6'] = PySide6
     sys.modules['PySide6.QtGui'] = QtGui

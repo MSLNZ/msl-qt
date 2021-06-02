@@ -5,7 +5,7 @@ from io import StringIO
 
 import pytest
 
-from msl.qt import application, QtWidgets, QtCore, QtGui, Qt, convert
+from msl.qt import application, QtWidgets, QtCore, QtGui, Qt, convert, binding
 
 app = application()
 
@@ -45,10 +45,10 @@ def test_to_qicon():
     with pytest.raises(TypeError):
         convert.to_qicon(None)
 
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.to_qicon(99999)  # not a valid QStyle.StandardPixmap enum value
 
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.to_qicon('this is not an icon')
 
     assert isinstance(convert.to_qicon(os.path.join(os.path.dirname(__file__), 'gamma.png')), QtGui.QIcon)
@@ -68,20 +68,19 @@ def test_to_qicon_dll_exe():
     assert isinstance(convert.to_qicon('C:/Windows/System32/shell32.dll|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('shell32.dll|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('shell32|0'), QtGui.QIcon)
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.to_qicon('/shell32|0')  # fails because it appears as though a full path is being specified
     assert isinstance(convert.to_qicon('C:/Windows/explorer.exe|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('explorer.exe|0'), QtGui.QIcon)
     assert isinstance(convert.to_qicon('explorer|0'), QtGui.QIcon)
     if sys.maxsize > 2**32:
         # the exe is located at 'C:/Windows/explorer.exe'
-        with pytest.raises(IOError):
+        with pytest.raises(OSError):
             convert.to_qicon('C:/Windows/System32/explorer.exe|0')
     else:
         assert isinstance(convert.to_qicon('C:/Windows/System32/explorer.exe|0'), QtGui.QIcon)
-    with pytest.raises(IOError) as err:
+    with pytest.raises(OSError, match=r'Requested icon 9999'):
         convert.to_qicon('shell32|9999')  # the maximum icon index should be much less than 9999
-    assert str(err.value).startswith('Requested icon 9999')
 
 
 @pytest.mark.skipif(not (has_pythonnet() and sys.platform == 'win32'), reason='requires pythonnet and win32')
@@ -89,11 +88,11 @@ def test_icon_to_base64_exe():
     assert isinstance(convert.icon_to_base64('explorer|0'), QtCore.QByteArray)
 
     # index number is < 0
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.icon_to_base64('explorer|-1')
 
     # the filename not a DLL in C:/Windows/System32/ nor an EXE in C:/Windows/
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         convert.icon_to_base64('unknown_default|1')
 
 
@@ -166,15 +165,13 @@ def test_rescale_icon():
     assert isinstance(convert.rescale_icon(icon.pixmap(size).toImage(), 1.0), QtGui.QPixmap)
 
     if sys.platform == 'win32' and has_pythonnet():
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'Unsupported "size"'):
             convert.rescale_icon('explorer|0', None)
-        assert str(err.value).startswith('Unsupported "size"')
 
     # if a list/tuple then must contain 2 elements
-    for item in [(), [], (256,), [256,], (256, 256, 256), [256, 256, 256]]:
-        with pytest.raises(ValueError) as err:
+    for item in [(), [], (256,), [256, ], (256, 256, 256), [256, 256, 256]]:
+        with pytest.raises(ValueError, match=r'The size must be in the form \(width, height\)'):
             convert.rescale_icon(icon, item)
-        assert str(err.value) == 'The size must be in the form (width, height)'
 
 
 def test_to_qfont():
@@ -241,7 +238,7 @@ def test_to_qfont():
 
     # the second item in the list will be cast to an integer
     # also test that one can pass in a tuple or a list
-    for obj in [('Comic Sans MS', 36), ['Comic Sans MS', 36.6], ('Comic Sans MS', '36')]:
+    for obj in [('Comic Sans MS', 36), ['Comic Sans MS', 36.6]]:
         f = convert.to_qfont(obj)
         assert f.family() == 'Comic Sans MS'
         assert f.pointSize() == 36
@@ -255,26 +252,60 @@ def test_to_qfont():
 
     # the first item in the list must be a string
     for obj in [None, 1, 23.4, 5j, True, [1]]:
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'The first argument\(s\) must be family name\(s\)'):
             convert.to_qfont(obj, 12)
-        assert str(err.value).endswith('(as a string)')
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'The first argument\(s\) must be family name\(s\)'):
             convert.to_qfont((obj, 12))
-        assert str(err.value).endswith('(as a string)')
 
     # the first argument is not a QFont, int, float or string
     for obj in [None, 1+6j]:
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'Cannot create'):
             convert.to_qfont(obj)
-        assert str(err.value).startswith('Cannot create')
 
     # the second item cannot be cast to an integer
-    with pytest.raises(ValueError):
-        convert.to_qfont(['Ariel', 'xxx'])
+    with pytest.raises(TypeError):
+        convert.to_qfont(['Ariel', {}])
 
     # the third item cannot be cast to an integer
-    with pytest.raises(ValueError):
-        convert.to_qfont('Ariel', 12, 'xxx')
+    with pytest.raises(TypeError):
+        convert.to_qfont('Ariel', 12, {})
+
+
+@pytest.mark.skipif(binding.qt_version_info[:2] < (6, 1), reason='QFont constructor uses obsolete &family')
+def test_to_qfont_families():
+    f = convert.to_qfont('Papyrus', 'Ariel')
+    assert f.family() == 'Papyrus'
+    assert f.families() == ['Papyrus', 'Ariel']
+
+    f = convert.to_qfont('Ariel', 'Papyrus', 48)
+    assert f.family() == 'Ariel'
+    assert f.families() == ['Ariel', 'Papyrus']
+    assert f.pointSize() == 48
+    assert f.weight() == QtGui.QFont.Normal
+    assert not f.italic()
+
+    # family names can occur in any position
+    f = convert.to_qfont('Papyrus', 48, 'Ariel', QtGui.QFont.Bold)
+    assert f.family() == 'Papyrus'
+    assert f.families() == ['Papyrus', 'Ariel']
+    assert f.pointSize() == 48
+    assert f.weight() == QtGui.QFont.Bold
+    assert not f.italic()
+
+    f = convert.to_qfont(48, 'Helvetica [Cronyx]', QtGui.QFont.Bold, True, 'Papyrus', 'Ariel')
+    assert f.family() == 'Helvetica [Cronyx]'
+    assert f.families() == ['Helvetica [Cronyx]', 'Papyrus', 'Ariel']
+    assert f.pointSize() == 48
+    assert f.weight() == QtGui.QFont.Bold
+    assert f.italic()
+
+    f = convert.to_qfont(['Papyrus', 'Ariel', 'Helvetica [Cronyx]'])
+    assert f.family() == 'Papyrus'
+    assert f.families() == ['Papyrus', 'Ariel', 'Helvetica [Cronyx]']
+
+    with pytest.raises(TypeError, match=r'The first argument\(s\) must be family name\(s\)'):
+        # cannot mix a list of family names with other positional arguments
+        convert.to_qfont(['Papyrus'], 48)
 
 
 def test_to_qcolor():
@@ -349,9 +380,8 @@ def test_number_to_si():
     check(convert.number_to_si(math.inf), math.inf, '')
     check(convert.number_to_si(-math.inf), -math.inf, '')
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match=r'cannot be expressed'):
         convert.number_to_si(0.0012e-24)
-    assert 'cannot be expressed' in str(e.value)
 
     check(convert.number_to_si(-12.34e-25), -1.234, 'y')
     check(convert.number_to_si(0.123e-20), 1.23, 'z')
@@ -385,9 +415,8 @@ def test_number_to_si():
     check(convert.number_to_si(12.678e24), 12.678, 'Y')
     check(convert.number_to_si(12345.678e22), 123.45678, 'Y')
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match=r'cannot be expressed'):
         convert.number_to_si(12345.678e24)
-    assert 'cannot be expressed' in str(e.value)
 
     check(convert.number_to_si(-0), 0., '')
     check(convert.number_to_si(0), 0., '')
@@ -423,9 +452,8 @@ def test_number_to_si():
     check(convert.number_to_si(123456789012345678901234567), 123.456789012345678901234567, 'Y')
     check(convert.number_to_si(-123456789012345678901234567), -123.456789012345678901234567, 'Y')
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match=r'cannot be expressed'):
         convert.number_to_si(1234567890123456789012345678)
-    assert 'cannot be expressed' in str(e.value)
 
 
 def test_si_to_number():

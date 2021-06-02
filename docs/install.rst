@@ -18,7 +18,7 @@ Alternatively, using the `MSL Package Manager`_
 
 Dependencies
 ------------
-* Python 3.5+
+* Python 3.6+
 * PySide6_, PyQt6_, PySide2_ or PyQt5_ -- you can chose which Python binding you want to use
 
 You can automatically install one of these Python bindings for the Qt framework when
