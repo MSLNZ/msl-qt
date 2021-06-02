@@ -5,7 +5,7 @@ from io import StringIO
 
 import pytest
 
-from msl.qt import application, QtWidgets, QtCore, QtGui, Qt, convert
+from msl.qt import application, QtWidgets, QtCore, QtGui, Qt, convert, binding
 
 app = application()
 
@@ -238,7 +238,7 @@ def test_to_qfont():
 
     # the second item in the list will be cast to an integer
     # also test that one can pass in a tuple or a list
-    for obj in [('Comic Sans MS', 36), ['Comic Sans MS', 36.6], ('Comic Sans MS', '36')]:
+    for obj in [('Comic Sans MS', 36), ['Comic Sans MS', 36.6]]:
         f = convert.to_qfont(obj)
         assert f.family() == 'Comic Sans MS'
         assert f.pointSize() == 36
@@ -252,9 +252,9 @@ def test_to_qfont():
 
     # the first item in the list must be a string
     for obj in [None, 1, 23.4, 5j, True, [1]]:
-        with pytest.raises(TypeError, match=r'(as a string)'):
+        with pytest.raises(TypeError, match=r'The first argument\(s\) must be family name\(s\)'):
             convert.to_qfont(obj, 12)
-        with pytest.raises(TypeError, match=r'(as a string)'):
+        with pytest.raises(TypeError, match=r'The first argument\(s\) must be family name\(s\)'):
             convert.to_qfont((obj, 12))
 
     # the first argument is not a QFont, int, float or string
@@ -263,12 +263,49 @@ def test_to_qfont():
             convert.to_qfont(obj)
 
     # the second item cannot be cast to an integer
-    with pytest.raises(ValueError):
-        convert.to_qfont(['Ariel', 'xxx'])
+    with pytest.raises(TypeError):
+        convert.to_qfont(['Ariel', {}])
 
     # the third item cannot be cast to an integer
-    with pytest.raises(ValueError):
-        convert.to_qfont('Ariel', 12, 'xxx')
+    with pytest.raises(TypeError):
+        convert.to_qfont('Ariel', 12, {})
+
+
+@pytest.mark.skipif(binding.qt_version_info[:2] < (6, 1), reason='QFont constructor uses obsolete &family')
+def test_to_qfont_families():
+    f = convert.to_qfont('Papyrus', 'Ariel')
+    assert f.family() == 'Papyrus'
+    assert f.families() == ['Papyrus', 'Ariel']
+
+    f = convert.to_qfont('Ariel', 'Papyrus', 48)
+    assert f.family() == 'Ariel'
+    assert f.families() == ['Ariel', 'Papyrus']
+    assert f.pointSize() == 48
+    assert f.weight() == QtGui.QFont.Normal
+    assert not f.italic()
+
+    # family names can occur in any position
+    f = convert.to_qfont('Papyrus', 48, 'Ariel', QtGui.QFont.Bold)
+    assert f.family() == 'Papyrus'
+    assert f.families() == ['Papyrus', 'Ariel']
+    assert f.pointSize() == 48
+    assert f.weight() == QtGui.QFont.Bold
+    assert not f.italic()
+
+    f = convert.to_qfont(48, 'Helvetica [Cronyx]', QtGui.QFont.Bold, True, 'Papyrus', 'Ariel')
+    assert f.family() == 'Helvetica [Cronyx]'
+    assert f.families() == ['Helvetica [Cronyx]', 'Papyrus', 'Ariel']
+    assert f.pointSize() == 48
+    assert f.weight() == QtGui.QFont.Bold
+    assert f.italic()
+
+    f = convert.to_qfont(['Papyrus', 'Ariel', 'Helvetica [Cronyx]'])
+    assert f.family() == 'Papyrus'
+    assert f.families() == ['Papyrus', 'Ariel', 'Helvetica [Cronyx]']
+
+    with pytest.raises(TypeError, match=r'The first argument\(s\) must be family name\(s\)'):
+        # cannot mix a list of family names with other positional arguments
+        convert.to_qfont(['Papyrus'], 48)
 
 
 def test_to_qcolor():

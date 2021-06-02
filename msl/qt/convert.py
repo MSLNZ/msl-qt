@@ -43,15 +43,15 @@ def to_qfont(*args):
         The argument(s) to convert to a :class:`QtGui.QFont`.
 
         * If :class:`int` or :class:`float` then the point size.
-        * If :class:`str` then the font family name.
+        * If :class:`str` then the font family name(s).
         * If :class:`QtGui.QFont` then returns a copy.
         * If multiple arguments then
 
-          - family name, point size
+          - family name(s), point size
 
-          - family name, point size, weight
+          - family name(s), point size, weight
 
-          - family name, point size, weight, is italic
+          - family name(s), point size, weight, is italic
 
     Returns
     -------
@@ -62,28 +62,54 @@ def to_qfont(*args):
     --------
     >>> font = to_qfont(48)
     >>> font = to_qfont(23.4)
-    >>> font = to_qfont('Papyrus')
+    >>> font = to_qfont('Ariel')
     >>> font = to_qfont('Ariel', 16)
     >>> font = to_qfont('Ariel', 16, QtGui.QFont.Bold)
     >>> font = to_qfont('Ariel', 16, 50, True)
+
+    If you are using Qt 6.1+ then you can specify multiple family names
+    >>> font = to_qfont('Ariel', 'Papyrus')
+    >>> font = to_qfont('Ariel', 'Papyrus', 'Helvetica [Cronyx]', 16)
+    >>> font = to_qfont('Ariel', 'Helvetica', 16, QtGui.QFont.Bold)
+    >>> font = to_qfont('Ariel', 'Papyrus', 'Times', 16, QtGui.QFont.Bold, True)
+
     """
-
-    def parse_tuple(a):
-        if not isinstance(a[0], str):
-            raise TypeError('The first argument must be the family name (as a string)')
-
-        if len(a) == 1:
-            return QtGui.QFont(a[0])
-        elif len(a) == 2:
-            return QtGui.QFont(a[0], pointSize=int(a[1]))
-        elif len(a) == 3:
-            return QtGui.QFont(a[0], pointSize=int(a[1]), weight=int(a[2]))
-        else:
-            return QtGui.QFont(a[0], pointSize=int(a[1]), weight=int(a[2]), italic=bool(a[3]))
-
     if not args:
         return QtGui.QFont()
-    elif len(args) == 1:
+
+    def filter_families(options=None):
+        # as of version 6.1 the QFont constructor uses
+        #   QStringList &families
+        # instead of
+        #   QString &family
+        if options is None:
+            options = args
+        families = []
+        rest = []
+        for option in options:
+            if isinstance(option, str):
+                families.append(option)
+            else:
+                rest.append(option)
+        if families and binding.qt_version_info[:2] < (6, 1):
+            return families[0], rest
+        return families, rest
+
+    def parse_tuple(a):
+        families, rest = filter_families(a)
+        if not families:
+            raise TypeError('The first argument(s) must be family name(s)')
+
+        if not rest:
+            return QtGui.QFont(families)
+        elif len(rest) == 1:
+            return QtGui.QFont(families, pointSize=int(rest[0]))
+        elif len(rest) == 2:
+            return QtGui.QFont(families, pointSize=int(rest[0]), weight=int(rest[1]))
+        else:
+            return QtGui.QFont(families, pointSize=int(rest[0]), weight=int(rest[1]), italic=bool(rest[2]))
+
+    if len(args) == 1:
         value = args[0]
         if isinstance(value, QtGui.QFont):
             return QtGui.QFont(value)
@@ -96,7 +122,7 @@ def to_qfont(*args):
             f.setPointSizeF(value)
             return f
         elif isinstance(value, str):
-            return QtGui.QFont(value)
+            return QtGui.QFont(filter_families()[0])
         elif isinstance(value, (list, tuple)):
             return parse_tuple(value)
         else:
