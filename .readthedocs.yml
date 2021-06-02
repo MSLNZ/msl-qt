@@ -17,4 +17,6 @@ python:
   install:
     - method: pip
       path: .
+      extra_requirements:
+        - PySide6
   system_packages: false
