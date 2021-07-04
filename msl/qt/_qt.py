@@ -28,11 +28,33 @@ if not qt_api:
 
 Binding = namedtuple('Binding', ['name', 'version', 'qt_version', 'version_info', 'qt_version_info'])
 
-api = importlib.import_module(qt_api)
-QtGui = importlib.import_module(qt_api + '.QtGui')
-QtCore = importlib.import_module(qt_api + '.QtCore')
-QtWidgets = importlib.import_module(qt_api + '.QtWidgets')
-QtSvg = importlib.import_module(qt_api + '.QtSvg')
+# do not use, for example, QtGui = importlib.import_module(qt_api + '.QtGui')
+# for the following because this does not allow for IDE's to use autocompletion
+if qt_api == 'PyQt5':
+    import PyQt5 as api
+    from PyQt5 import QtGui
+    from PyQt5 import QtCore
+    from PyQt5 import QtWidgets
+    from PyQt5 import QtSvg
+elif qt_api == 'PySide2':
+    import PySide2 as api
+    from PySide2 import QtGui
+    from PySide2 import QtCore
+    from PySide2 import QtWidgets
+    from PySide2 import QtSvg
+elif qt_api == 'PyQt6':
+    import PyQt6 as api
+    from PyQt6 import QtGui
+    from PyQt6 import QtCore
+    from PyQt6 import QtWidgets
+    from PyQt6 import QtSvg
+else:
+    import PySide6 as api
+    from PySide6 import QtGui
+    from PySide6 import QtCore
+    from PySide6 import QtWidgets
+    from PySide6 import QtSvg
+
 Qt = QtCore.Qt
 
 if qt_api.startswith('PySide'):
