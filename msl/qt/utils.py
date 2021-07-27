@@ -4,10 +4,14 @@ General functions.
 import fnmatch
 import logging
 
-from . import application
+from . import (
+    QtGui,
+    application,
+)
 
 __all__ = (
     'drag_drop_paths',
+    'save_image',
     'screen_geometry',
 )
 
@@ -39,6 +43,34 @@ def drag_drop_paths(event, *, pattern=None):
             return paths
         return fnmatch.filter(paths, pattern)
     return []
+
+
+def save_image(widget, path, *, quality=-1):
+    """Save a widget to an image file.
+
+    Parameters
+    ----------
+    widget : :class:`QtWidgets.QWidget`
+        The widget to save as an image.
+    path : :class:`str`
+        The file path to save the image to. The image format is chosen
+        based on the file extension.
+    quality : :class:`int`, optional
+        The quality factor. Must be in the range 0 to 100 or -1. Specify 0 to
+        obtain small compressed files, 100 for large uncompressed files, and
+        -1 (the default) to use the default settings.
+
+    Returns
+    -------
+    :class:`QtGui.QPixmap`
+        The `widget` as a pixmap object.
+    """
+    pixmap = QtGui.QPixmap(widget.size())
+    widget.render(pixmap)
+    success = pixmap.toImage().save(path, quality=quality)
+    if not success:
+        raise OSError(f'Cannot save image to {path!r}')
+    return pixmap
 
 
 def screen_geometry(widget=None):

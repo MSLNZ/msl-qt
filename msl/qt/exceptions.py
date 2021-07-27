@@ -3,10 +3,12 @@ Exception handling.
 """
 import traceback as tb
 
-from .utils import logger
+from .utils import (
+    logger,
+    save_image,
+)
 from . import (
     Qt,
-    QtGui,
     QtWidgets,
     application,
     prompt,
@@ -91,9 +93,7 @@ def excepthook(exctype, value, traceback):
         def save_screenshot(self):
             filename = prompt.save(filters='Images (*.png *.jpg *.jpeg *.bmp)')
             if filename:
-                pixmap = QtGui.QPixmap(self.size())
-                self.render(pixmap)
-                pixmap.toImage().save(filename)
+                save_image(self, filename)
 
         def show_hide_details(self):
             if self.detailed_textedit.isVisible():
