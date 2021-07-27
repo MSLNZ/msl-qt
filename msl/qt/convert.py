@@ -450,6 +450,7 @@ def icon_to_base64(icon, *, fmt='png'):
         import ctypes
 
         clr.AddReference('System.Drawing')
+        import System
         from System.Drawing.Imaging import ImageFormat
 
         shell32 = ctypes.windll.shell32
@@ -488,12 +489,12 @@ def icon_to_base64(icon, *, fmt='png'):
             raise OSError('Requested icon {}, the maximum icon index allowed is {}'.format(icon_index, max_index))
 
         # get the icon bitmap and convert it to base64
-        handle = clr.System.Int32(handle_large.value)
-        handle_ptr = clr.System.IntPtr.op_Explicit(handle)
-        bmp = clr.System.Drawing.Bitmap.FromHicon(handle_ptr)
-        stream = clr.System.IO.MemoryStream()
+        handle = System.Int32(handle_large.value)
+        handle_ptr = System.IntPtr.op_Explicit(handle)
+        bmp = System.Drawing.Bitmap.FromHicon(handle_ptr)
+        stream = System.IO.MemoryStream()
         bmp.Save(stream, img_fmts[fmt])
-        base = QtCore.QByteArray(clr.System.Convert.ToBase64String(stream.GetBuffer()).encode())
+        base = QtCore.QByteArray(System.Convert.ToBase64String(stream.GetBuffer()).encode())
 
         # clean up
         ctypes.windll.user32.DestroyIcon(handle_large)
