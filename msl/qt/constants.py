@@ -1,14 +1,23 @@
 """
-Constants used by the **MSL-Qt** package.
+Package constants.
 """
 import os
 from enum import Enum
 
 HOME_DIR = os.path.join(os.path.expanduser('~'), '.msl')
-""":class:`str`: The default ``$HOME`` directory where all files used by **MSL-Qt** are located."""
+""":class:`str`: The default ``$HOME`` directory where all files used by the package are located."""
 
 SI_PREFIX_MAP = {i: prefix for i, prefix in enumerate('yzafpn\u00b5m kMGTPEZY', start=-8)}
 """:class:`dict`: The SI prefixes used to form multiples of 10**(3*n), n=-8..8"""
+
+DEGREE = '\u00B0'
+""":class:`str`: The degree symbol."""
+
+DEGREE_C = '\u2103'
+""":class:`str`: The degree Centigrade symbol."""
+
+DEGREE_F = '\u2109'
+""":class:`str`: The degree Fahrenheit symbol."""
 
 
 class GREEK(Enum):
