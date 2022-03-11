@@ -6,9 +6,9 @@ import pytest
 from msl.qt import (
     binding,
     QtGui,
+    GREEK,
 )
 from msl.qt.widgets import spinboxes
-from msl.qt.constants import GREEK
 
 
 def test_si_prefix_validator():
