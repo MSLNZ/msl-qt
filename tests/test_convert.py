@@ -5,9 +5,14 @@ from io import StringIO
 
 import pytest
 
-from msl.qt import application, QtWidgets, QtCore, QtGui, Qt, convert, binding
-
-app = application()
+from msl.qt import (
+    QtWidgets,
+    QtCore,
+    QtGui,
+    Qt,
+    convert,
+    binding,
+)
 
 
 def has_pythonnet():
