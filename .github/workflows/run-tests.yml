@@ -40,12 +40,16 @@ jobs:
           sudo apt-get install -y libxkbcommon-x11-0 libglvnd-dev \
             libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
             libxcb-randr0 libxcb-render-util0 libxcb-xinerama0
-      - name: Install dependencies and package
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install --upgrade setuptools wheel
           python -m pip install --upgrade ${{ matrix.qt-binding }}
-          python -m pip install --upgrade --editable .[tests]
+      - name: Install pythonnet from a commit (Windows, Python 3.9)
+        if: ${{ matrix.os == 'windows' }} && ${{ matrix.python-version == '3.9' }}
+        run: python -m pip install --upgrade git+https://github.com/pythonnet/pythonnet.git@76378845d6749a31ea9de187db634c48c2e82a9f
+      - name: Install package
+        run: python -m pip install --upgrade --editable .[tests]
       - name: Run tests (Ubuntu)
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
