@@ -3,7 +3,10 @@ import string
 
 import pytest
 
-from msl.qt import QtGui
+from msl.qt import (
+    binding,
+    QtGui,
+)
 from msl.qt.widgets import spinboxes
 from msl.qt.constants import GREEK
 
@@ -113,8 +116,11 @@ def test_doublespinbox():
     assert dsb.toolTip() == 'hi'
     dsb.setValue(9876)
     assert dsb.value() == 9876.0
-    with pytest.raises(TypeError):
-        dsb.setValue('12n')  # cannot us SI prefix
+
+    # wrong number of arguments (get fatal crash with PySide6 during tests)
+    if binding.name != 'PySide6':
+        with pytest.raises(TypeError):
+            dsb.setValue('12n')  # cannot us SI prefix
 
     dsb = spinboxes.DoubleSpinBox(use_si_prefix=True)
     assert dsb.minimum() == 0.0

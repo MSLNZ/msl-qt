@@ -361,10 +361,15 @@ def test_to_qcolor():
     assert_rgba(convert.to_qcolor((34 / 255., 58 / 255., 129 / 255.)), 34, 58, 129, 255)
     assert_rgba(convert.to_qcolor((34 / 255., 58 / 255., 129 / 255., 0.45)), 34, 58, 129, 114)
 
-    # wrong number of arguments
-    for obj in [(1, 2), (1, 2, 3, 4, 5, 6, 7)]:
-        with pytest.raises(TypeError):
-            convert.to_qcolor(obj)
+    # wrong number of arguments (get fatal crash with PySide6 during tests)
+    if binding.name != 'PySide6':
+        for obj in [(1, 2), (1, 2, 3, 4, 5, 6, 7)]:
+            with pytest.raises(TypeError):
+                convert.to_qcolor(obj)
+
+    # wrong type
+    with pytest.raises(TypeError, match=r'Cannot convert \(None,\) to a QColor'):
+        convert.to_qcolor(None)
 
 
 def test_number_to_si():
