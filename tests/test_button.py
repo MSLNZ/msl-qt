@@ -3,7 +3,13 @@ import sys
 
 import pytest
 
-from msl.qt import convert, Button, QtWidgets, QtCore, Qt
+from msl.qt import (
+    convert,
+    Button,
+    QtWidgets,
+    QtCore,
+    Qt,
+)
 
 
 def test_text():

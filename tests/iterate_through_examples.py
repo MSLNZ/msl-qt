@@ -3,7 +3,10 @@ Run each example script one at a time.
 """
 import os
 import sys
-from inspect import getmembers, isfunction
+from inspect import (
+    getmembers,
+    isfunction,
+)
 
 if 'QT_API' not in os.environ:
     os.environ['QT_API'] = 'PySide6' if sys.version_info.minor > 5 else 'PySide2'

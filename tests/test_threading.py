@@ -1,6 +1,11 @@
 import pytest
 
-from msl.qt import QtCore, Thread, Worker, application
+from msl.qt import (
+    application,
+    QtCore,
+    Thread,
+    Worker,
+)
 
 
 def test_invalid_constructor():
