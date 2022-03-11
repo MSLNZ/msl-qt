@@ -73,6 +73,7 @@ from .widgets import (
     SpinBox,
     LED,
 )
+from .characters import *
 
 # the following object is imported from _qt.py
 binding = binding

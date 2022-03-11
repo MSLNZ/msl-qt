@@ -14,6 +14,7 @@ which has the following modules
 
 .. autosummary::
 
+   msl.qt.characters
    msl.qt.constants
    msl.qt.convert
    msl.qt.exceptions
@@ -46,6 +47,7 @@ Package Structure
    :maxdepth: 1
 
    msl.qt <_api/msl.qt>
+   msl.qt.characters <_api/msl.qt.characters>
    msl.qt.constants <_api/msl.qt.constants>
    msl.qt.convert <_api/msl.qt.convert>
    msl.qt.exceptions <_api/msl.qt.exceptions>
