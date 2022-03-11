@@ -9,7 +9,6 @@ from msl.qt import (
     QtCore,
     QtWidgets,
     utils,
-    application,
 )
 
 
@@ -61,7 +60,6 @@ def test_drag_enter_paths():
 
 
 def test_save_image():
-    app = application()
     file = NamedTemporaryFile()
 
     # no file extension is specified so cannot determine the image format
