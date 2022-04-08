@@ -3,7 +3,10 @@ Unicode characters.
 """
 from enum import Enum
 
-__all__ = ['DEGREE', 'DEGREE_C', 'DEGREE_F', 'GREEK', 'INFINITY', 'PLUS_MINUS']
+__all__ = [
+    'DEGREE', 'DEGREE_C', 'DEGREE_F', 'GREEK',
+    'INFINITY', 'MICRO', 'PLUS_MINUS',
+]
 
 DEGREE = '\u00B0'
 """Degree character."""
@@ -80,6 +83,9 @@ class GREEK(Enum):
 
 INFINITY = '\u221E'
 """Infinity character."""
+
+MICRO = '\u00B5'
+"""Micro character."""
 
 PLUS_MINUS = '\u00B1'
 """Plus-minus character."""
