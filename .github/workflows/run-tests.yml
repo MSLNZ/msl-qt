@@ -47,7 +47,7 @@ jobs:
           python -m pip install --upgrade ${{ matrix.qt-binding }}
       - name: Install pythonnet from a commit (Windows, Python 3.9)
         if: ${{ (matrix.os == 'windows' && matrix.python-version == '3.9') }}
-        run: python -m pip install --upgrade git+https://github.com/pythonnet/pythonnet.git@76378845d6749a31ea9de187db634c48c2e82a9f
+        run: python -m pip install --upgrade git+https://github.com/pythonnet/pythonnet.git@93631aff83b34a0665374cd41313c8552b88b545
       - name: Install package
         run: python -m pip install --upgrade --editable .[tests]
       - name: Run tests (Ubuntu)
