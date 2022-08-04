@@ -57,18 +57,8 @@ else:
 
 Qt = QtCore.Qt
 
-if qt_api.startswith('PySide'):
-    Signal = QtCore.Signal
-    Slot = QtCore.Slot
-    binding = Binding(
-        name=api.__name__,
-        version=api.__version__,
-        qt_version=QtCore.__version__,
-        version_info=api.__version_info__,
-        qt_version_info=QtCore.__version_info__,
-    )
-else:
-    def _to_version_info(version):
+if qt_api.startswith('PyQt'):
+    def to_version_info(version):
         major = (version >> 16) & 0xff
         minor = (version >> 8) & 0xff
         patch = version & 0xff
@@ -80,8 +70,18 @@ else:
         name=api.__name__,
         version=QtCore.PYQT_VERSION_STR,
         qt_version=QtCore.QT_VERSION_STR,
-        version_info=_to_version_info(QtCore.PYQT_VERSION),
-        qt_version_info=_to_version_info(QtCore.QT_VERSION),
+        version_info=to_version_info(QtCore.PYQT_VERSION),
+        qt_version_info=to_version_info(QtCore.QT_VERSION),
+    )
+else:
+    Signal = QtCore.Signal
+    Slot = QtCore.Slot
+    binding = Binding(
+        name=api.__name__,
+        version=api.__version__,
+        qt_version=QtCore.__version__,
+        version_info=api.__version_info__,
+        qt_version_info=QtCore.__version_info__,
     )
 
 if not hasattr(QtWidgets.QApplication, 'exec'):
