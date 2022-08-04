@@ -25,6 +25,8 @@ jobs:
           - qt-binding: PySide6
             os: macos
             python-version: "3.7"
+          - qt-binding: PyQt6
+            python-version: "3.6"
 
     steps:
       - name: Checkout repository
