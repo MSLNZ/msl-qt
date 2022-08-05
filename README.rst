@@ -43,7 +43,7 @@ Optional Dependencies
 * pythonnet_ -- only required if you want to load icons from DLL/EXE files on Windows
 
 .. |docs| image:: https://readthedocs.org/projects/msl-qt/badge/?version=latest
-   :target: http://msl-qt.readthedocs.io/en/latest/
+   :target: https://msl-qt.readthedocs.io/en/latest/
    :alt: Documentation Status
    :scale: 100%
 

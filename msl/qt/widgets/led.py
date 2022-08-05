@@ -252,7 +252,7 @@ class LED(QtWidgets.QWidget):
 
 SVG_MAP = {
     Shapes.Circle: """
-      <svg height="50.000000px" id="svg9493" width="50.000000px" xmlns="http://www.w3.org/2000/svg">
+      <svg height="50.000000px" id="svg9493" width="50.000000px" xmlns="https://www.w3.org/2000/svg">
         <defs id="defs9495">
           <linearGradient gradientUnits="userSpaceOnUse" id="linearGradient6650" x1="23.402565" x2="23.389874" xlink:href="#linearGradient6506" y1="44.066776" y2="42.883698"/>
           <linearGradient id="linearGradient6494">
@@ -299,7 +299,7 @@ SVG_MAP = {
     """,
 
     Shapes.Rounded: """
-      <svg height="50.000000px" id="svg9493" width="100.00000px" xmlns="http://www.w3.org/2000/svg">
+      <svg height="50.000000px" id="svg9493" width="100.00000px" xmlns="https://www.w3.org/2000/svg">
         <defs id="defs9495">
           <linearGradient gradientTransform="matrix(0.928127,0.000000,0.000000,0.639013,13.55634,12.87587)" gradientUnits="userSpaceOnUse" id="linearGradient13424" x1="21.593750" x2="21.593750" xlink:href="#linearGradient6506" y1="47.917328" y2="46.774261"/>
           <linearGradient id="linearGradient6494">
@@ -362,7 +362,7 @@ SVG_MAP = {
     """,
 
     Shapes.Square: """
-      <svg height="50.000000px" id="svg9493" width="50.000000px" xmlns="http://www.w3.org/2000/svg">
+      <svg height="50.000000px" id="svg9493" width="50.000000px" xmlns="https://www.w3.org/2000/svg">
         <defs id="defs9495">
           <linearGradient gradientTransform="matrix(0.388435,0.000000,0.000000,0.618097,2.806900,2.626330)" gradientUnits="userSpaceOnUse" id="linearGradient31681" x1="21.593750" x2="21.593750" xlink:href="#linearGradient6506" y1="47.917328" y2="46.774261"/>
           <linearGradient id="linearGradient6494">
@@ -425,7 +425,7 @@ SVG_MAP = {
     """,
 
     Shapes.Triangle: """
-      <svg height="50.000000px" id="svg9493" width="50.000000px" xmlns="http://www.w3.org/2000/svg" >
+      <svg height="50.000000px" id="svg9493" width="50.000000px" xmlns="https://www.w3.org/2000/svg">
         <defs id="defs9495">
           <linearGradient gradientTransform="matrix(0.389994,0.000000,0.000000,0.403942,4.557010,29.83582)" gradientUnits="userSpaceOnUse" id="linearGradient28861" x1="23.187498" x2="23.187498" xlink:href="#linearGradient6506" y1="28.449617" y2="26.670279"/>
           <linearGradient id="linearGradient6494">

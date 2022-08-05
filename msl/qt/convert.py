@@ -279,7 +279,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
         * :class:`QtGui.QIcon`
         * :class:`QtGui.QPixmap`
         * :class:`QtGui.QImage`
-        * `QtWidgets.QStyle.StandardPixmap <http://doc.qt.io/qt-5/qstyle.html#StandardPixmap-enum>`_:
+        * `QtWidgets.QStyle.StandardPixmap <https://doc.qt.io/qt-6/qstyle.html#StandardPixmap-enum>`_:
           One of the built-in Qt pixmaps. Example::
 
               to_qicon(QtWidgets.QStyle.SP_TitleBarMenuButton)

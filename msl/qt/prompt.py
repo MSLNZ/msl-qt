@@ -299,7 +299,7 @@ def save(*, title='Save As', directory=None, filters=None, options=None):
             ['Images (*.png *.xpm *.jpg)', 'Text files (*.txt)', 'XML files (*.xml)']
             {'Images': ('*.png', '*.xpm', '*.jpg'), 'Text files': '*.txt'}
 
-    options : `QtWidgets.QFileDialog.Option <http://doc.qt.io/qt-5/qfiledialog.html#Option-enum>`_, optional
+    options : `QtWidgets.QFileDialog.Option <https://doc.qt.io/qt-6/qfiledialog.html#Option-enum>`_, optional
         Specify additional options on how to run the dialog.
 
     Returns
