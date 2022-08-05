@@ -25,7 +25,7 @@ def show():
     ]
 
     dummy_file = os.path.join(tempfile.gettempdir(), 'msl-qt-comments-example.json')
-    with open(dummy_file, 'w') as fp:
+    with open(dummy_file, mode='wt') as fp:
         json.dump(dummy, fp, indent=2, ensure_ascii=False)
 
     comment = qt.prompt.comments(path=dummy_file)

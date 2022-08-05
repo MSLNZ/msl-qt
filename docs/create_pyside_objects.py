@@ -31,11 +31,11 @@ def create_modified_inv():
         fout.write(compressor.compress((' '.join(args) + '\n').encode('utf-8')))
 
     # download the original objects.inv file
-    with open(original_inv, 'wb') as f:
+    with open(original_inv, mode='wb') as f:
         f.write(requests.get(pyside_uri + 'objects.inv').content)
 
-    fin = open(original_inv, 'rb')
-    fout = open(modified_inv, 'wb')
+    fin = open(original_inv, mode='rb')
+    fout = open(modified_inv, mode='wb')
 
     # use the same compression for the output file as
     # sphinx.util.inventory.InventoryFile.dump

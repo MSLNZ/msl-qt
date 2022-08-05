@@ -171,7 +171,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             All :class:`~logging.LogRecord`\'s with a :ref:`Logging Level <python:levels>`
             >= `level` will be saved.
         """
-        with open(path, 'a') as fp:
+        with open(path, mode='a') as fp:
             self._write_header(fp)
             for record in self._records:
                 if record.levelno >= level:
@@ -226,7 +226,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             return
         if not path.endswith('.log'):
             path += '.log'
-        with open(path, 'a') as fp:
+        with open(path, mode='a') as fp:
             self._write_header(fp)
             fp.writelines(self._text_browser.toPlainText())
             fp.write('\n\n')

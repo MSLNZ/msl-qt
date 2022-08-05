@@ -145,7 +145,7 @@ class Comments(QtWidgets.QDialog):
             # assume that this is a new file that will be created
             return
 
-        with open(self.path, 'rb') as fp:
+        with open(self.path, mode='rb') as fp:
             try:
                 self.comments = json.load(fp)
             except Exception as e:
@@ -168,7 +168,7 @@ class Comments(QtWidgets.QDialog):
         if root and not os.path.isdir(root):
             os.makedirs(root)
 
-        with open(self.path, 'w') as fp:
+        with open(self.path, mode='wt') as fp:
             json.dump(self.comments, fp, indent=2, ensure_ascii=False)
 
     def table_double_click(self, row, col):

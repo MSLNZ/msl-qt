@@ -19,7 +19,7 @@ class LoopExample(LoopUntilAbort):
         super(LoopExample, self).__init__(loop_delay=250)
 
         self.output_path = tempfile.gettempdir() + '/msl-qt-loop-until-abort.txt'
-        self.f = open(self.output_path, 'w')
+        self.f = open(self.output_path, mode='wt')
         self.f.write('Started at {}\n'.format(self.current_time))
 
     def loop(self):
