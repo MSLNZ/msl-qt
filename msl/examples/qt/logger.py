@@ -22,15 +22,15 @@ def show():
     for i in range(1, 101):
         level = random.randint(10, 60)
         if level < logging.INFO:
-            log.debug('DEBUG {}'.format(i))
+            log.debug('DEBUG %d', i)
         elif level < logging.WARNING:
-            log.info('INFO {}'.format(i))
+            log.info('INFO %d', i)
         elif level < logging.ERROR:
-            log.warning('WARN {}'.format(i))
+            log.warning('WARN %d', i)
         elif level < logging.CRITICAL:
-            log.error('ERROR {}'.format(i))
+            log.error('ERROR %d', i)
         else:
-            log.critical('CRITICAL {}'.format(i))
+            log.critical('CRITICAL %d', i)
 
     logger.resize(800, 400)
     logger.show()
