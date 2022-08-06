@@ -296,8 +296,8 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'PySide6': ('', 'PySide6-aliases.inv'),
     # 'PySide6': ('https://doc.qt.io/qtforpython/', None),
-    # 'PyQt5': ('https://www.riverbankcomputing.com/static/Docs/PyQt5/', None),
-    # 'PyQt5': ('', 'pyqt5-modified-objects.inv'),
+    # 'PyQt6': ('https://www.riverbankcomputing.com/static/Docs/PyQt6/', None),
+    # 'PyQt6': ('', 'PyQt6-modified-objects.inv'),
 }
 
 # show all the Qt linking warnings
