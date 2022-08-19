@@ -543,8 +543,8 @@ def _get_file_filters(filters):
         if '*' in ex:
             return ex
         if ex.startswith('.'):
-            return '*' + ex
-        return '*.' + ex
+            return f'*{ex}'
+        return f'*.{ex}'
 
     all_files = 'All Files (*)'
 
@@ -555,9 +555,10 @@ def _get_file_filters(filters):
         f = ''
         for name, extn in filters.items():
             if isinstance(extn, (list, tuple)):
-                f += '{} ({});;'.format(name, ' '.join(_check_extn(e) for e in extn))
+                extn = ' '.join(_check_extn(e) for e in extn)
+                f += f'{name} ({extn});;'
             else:
-                f += '{} ({});;'.format(name, _check_extn(extn))
+                f += f'{name} ({_check_extn(extn)});;'
         return f[:-2]
 
     if isinstance(filters, (list, tuple)):

@@ -14,7 +14,7 @@ if 'QT_API' not in os.environ:
 from msl import qt
 import msl.examples.qt as example
 
-print('Using {}'.format(qt.binding))
+print(f'Using {qt.binding}')
 
 examples = [
     example.combobox.show,
@@ -42,5 +42,5 @@ for name, item in getmembers(qt.prompt, isfunction):
 n = len(examples)
 for i, example in enumerate(examples, start=1):
     example()
-    if i < n and not qt.prompt.yes_no('{} examples remain.\nContinue?'.format(n-i)):
+    if i < n and not qt.prompt.yes_no(f'{n-i} examples remain.\nContinue?'):
         break

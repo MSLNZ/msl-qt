@@ -126,7 +126,7 @@ def to_qfont(*args):
         elif isinstance(value, (list, tuple)):
             return parse_tuple(value)
         else:
-            raise TypeError('Cannot create a QFont from {!r}'.format(value))
+            raise TypeError(f'Cannot create a QFont from {value!r}')
     else:
         return parse_tuple(args)
 
@@ -184,7 +184,7 @@ def to_qcolor(*args):
         elif isinstance(arg, (int, Qt.GlobalColor)):
             return QtGui.QColor(Qt.GlobalColor(arg))
         else:
-            raise TypeError('Cannot convert {!r} to a QColor'.format(args))
+            raise TypeError(f'Cannot convert {args!r} to a QColor')
     else:
         return QtGui.QColor(*tuple(ensure_255(v) for v in args))
 
@@ -223,7 +223,7 @@ def number_to_si(number):
     if n == 0:
         return number, ''
     if n > 8 or n < -8:
-        raise ValueError('The number {} cannot be expressed with an SI prefix'.format(number))
+        raise ValueError(f'The number {number} cannot be expressed with an SI prefix')
     return number * 10 ** (-3 * n), SI_PREFIX_MAP[n]
 
 
@@ -372,7 +372,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
                     _icon = QtGui.QIcon(full_path)
                     break
             if _icon is None:
-                raise OSError('Cannot find icon file {!r}'.format(obj))
+                raise OSError(f'Cannot find icon file {obj!r}')
     elif isinstance(obj, QtWidgets.QStyle.StandardPixmap):
         app = application()
         _icon = QtGui.QIcon(app.style().standardIcon(obj))
@@ -384,7 +384,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
             app = application()
             _icon = QtGui.QIcon(app.style().standardIcon(QtWidgets.QStyle.StandardPixmap(obj)))
         else:
-            raise OSError('Invalid QStyle.StandardPixmap enum value of {}'.format(obj))
+            raise OSError(f'Invalid QStyle.StandardPixmap enum value of {obj}')
     elif isinstance(obj, QtGui.QPixmap):
         _icon = QtGui.QIcon(obj)
     elif isinstance(obj, QtGui.QImage):
@@ -395,7 +395,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
         _icon = QtGui.QIcon(QtGui.QPixmap.fromImage(img))
 
     if _icon is None:
-        raise TypeError('Icon object has unsupported data type {}'.format(type(obj)))
+        raise TypeError(f'Icon object has unsupported data type {type(obj)}')
 
     if size is None:
         return _icon
@@ -437,7 +437,7 @@ def icon_to_base64(icon, *, fmt='png'):
     """
     fmt = fmt.upper()
     if fmt not in ['BMP', 'JPG', 'JPEG', 'PNG']:
-        raise ValueError('Invalid format {!r}. Must be one of: BMP, JPG, JPEG, PNG'.format(fmt))
+        raise ValueError(f'Invalid format {fmt!r}. Must be one of: BMP, JPG, JPEG, PNG')
 
     if isinstance(icon, str) and '|' in icon:
         # extract an icon from a Windows DLL/EXE file
@@ -469,14 +469,14 @@ def icon_to_base64(icon, *, fmt='png'):
             raise OSError('The icon index must be >= 0')
 
         if not os.path.isfile(path):
-            err_msg = 'Cannot find DLL/EXE file {!r}'.format(s[0])
+            err_msg = f'Cannot find DLL/EXE file {s[0]!r}'
             if os.path.split(path)[0]:  # then it wasn't just the filename that was specified
                 raise OSError(err_msg)
 
             filename = os.path.splitext(os.path.basename(path))[0]
-            path = 'C:/Windows/System32/{}.dll'.format(filename)
+            path = f'C:/Windows/System32/{filename}.dll'
             if not os.path.isfile(path):
-                path = 'C:/Windows/{}.exe'.format(filename)
+                path = f'C:/Windows/{filename}.exe'
                 if not os.path.isfile(path):
                     raise OSError(err_msg)
 
@@ -486,7 +486,7 @@ def icon_to_base64(icon, *, fmt='png'):
         res = shell32.ExtractIconExA(path_ptr, icon_index, ctypes.byref(handle_large), ctypes.c_void_p(), 1)
         if res != 1:
             max_index = shell32.ExtractIconExA(path_ptr, -1, ctypes.c_void_p(), ctypes.c_void_p(), 0) - 1
-            raise OSError('Requested icon {}, the maximum icon index allowed is {}'.format(icon_index, max_index))
+            raise OSError(f'Requested icon {icon_index}, the maximum icon index allowed is {max_index}')
 
         # get the icon bitmap and convert it to base64
         handle = System.Int32(handle_large.value)
@@ -556,7 +556,7 @@ def rescale_icon(icon, size, *, aspect_mode=Qt.KeepAspectRatio):
             raise ValueError('The size must be in the form (width, height)')
         size = QtCore.QSize(size[0], size[1])
     elif not isinstance(size, QtCore.QSize):
-        raise TypeError('Unsupported "size" type of {!r}'.format(type(size)))
+        raise TypeError(f'Unsupported "size" type of {type(size)!r}')
 
     if (size.width() != default_size.width()) or (size.height() != default_size.height()):
         # PyQt uses aspectRatioMode as a kwarg (this is what the Qt docs indicate) however
@@ -616,8 +616,8 @@ def print_base64(icon, *, size=None, name='', line_width=80, file=None):
     for i, line in enumerate(lines):
         line = line.encode()
         if i == 0:
-            print('{}{} \\'.format(name, line), file=file)
+            print(f'{name}{line} \\', file=file)
         elif i == len(lines) - 1:
-            print('{}{}'.format(indent, line), file=file)
+            print(f'{indent}{line}', file=file)
         else:
-            print('{}{} \\'.format(indent, line), file=file)
+            print(f'{indent}{line} \\', file=file)

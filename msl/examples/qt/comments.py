@@ -29,7 +29,7 @@ def show():
         json.dump(dummy, fp, indent=2, ensure_ascii=False)
 
     comment = qt.prompt.comments(path=dummy_file)
-    print('The comment entered is: {!r}'.format(comment))
+    print(f'The comment entered is: {comment!r}')
 
     os.remove(dummy_file)
 

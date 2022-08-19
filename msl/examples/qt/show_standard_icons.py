@@ -85,7 +85,7 @@ class ShowStandardIcons(object):
             self.timer.timeout.connect(self.add_windows_tab)
             self.timer.start(0)
         else:
-            self.update_message('Loaded {} icons.'.format(self.num_icons))
+            self.update_message(f'Loaded {self.num_icons} icons.')
             self.progress_bar.hide()
 
         app.exec()
@@ -120,7 +120,7 @@ class ShowStandardIcons(object):
         """Add the icons from the Windows DLL and EXE files."""
         num_cols = 16
         filename = self.windows_files[self.windows_index]
-        self.update_message('Loading icons from {}...'.format(filename))
+        self.update_message(f'Loading icons from {filename}...')
 
         tab = QtWidgets.QWidget()
         self.tab_widget.addTab(tab, filename)
@@ -130,8 +130,8 @@ class ShowStandardIcons(object):
         index = 0
         while True:
             button = QtWidgets.QPushButton(str(index))
+            name = f'{filename}|{index}'
             try:
-                name = '{}|{}'.format(filename, str(index))
                 ico = convert.to_qicon(name)
             except OSError:
                 break
@@ -150,7 +150,7 @@ class ShowStandardIcons(object):
         self.windows_index += 1
         if self.windows_index == len(self.windows_files):
             self.timer.stop()
-            self.update_message('Loaded {} icons.'.format(self.num_icons))
+            self.update_message(f'Loaded {self.num_icons} icons.')
             self.progress_bar.hide()
 
     def update_message(self, text):

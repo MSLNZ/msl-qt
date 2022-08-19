@@ -20,26 +20,26 @@ class LoopExample(LoopUntilAbort):
 
         self.output_path = tempfile.gettempdir() + '/msl-qt-loop-until-abort.txt'
         self.f = open(self.output_path, mode='wt')
-        self.f.write('Started at {}\n'.format(self.current_time))
+        self.f.write(f'Started at {self.current_time}\n')
 
     def loop(self):
         """Overrides LoopUntilAbort.loop()
 
         This method gets called repeatedly in a loop (every `loop_delay` ms).
         """
-        self.f.write('Iteration: {}\n'.format(self.iteration))
-        self.f.write('Elapsed time: {}\n'.format(self.elapsed_time))
-        self.set_label_text('The current time is\n' + str(self.current_time))
+        self.f.write(f'Iteration: {self.iteration}\n')
+        self.f.write(f'Elapsed time: {self.elapsed_time}\n')
+        self.set_label_text(f'The current time is\n{self.current_time}')
 
     def cleanup(self):
         """Overrides LoopUntilAbort.cleanup()
 
         This method gets called when the LoopExample window is closing.
         """
-        self.f.write('Stopped at {}\n'.format(self.current_time))
+        self.f.write(f'Stopped at {self.current_time}\n')
         self.f.close()
-        msg = 'The data was save to\n{}\n\n... in case you want to look at it'
-        prompt.information(msg.format(self.output_path))
+        prompt.information(f'The data was save to\n{self.output_path}\n\n'
+                           f'... in case you want to look at it')
 
 
 def main():

@@ -96,7 +96,7 @@ class LoopUntilAbort(object):
 
         self._central_widget = QtWidgets.QWidget()
         bg_hex_color = QtGui.QColor(bg_color).name()
-        self._central_widget.setStyleSheet('background:{};'.format(bg_hex_color))
+        self._central_widget.setStyleSheet(f'background:{bg_hex_color};')
 
         self._main_window = QtWidgets.QMainWindow()
         self._main_window.setCentralWidget(self._central_widget)
@@ -111,11 +111,11 @@ class LoopUntilAbort(object):
 
         self._elapsed_time_label = QtWidgets.QLabel()
         self._elapsed_time_label.setFont(font)
-        self._elapsed_time_label.setStyleSheet('color:{};'.format(text_hex_color))
+        self._elapsed_time_label.setStyleSheet(f'color:{text_hex_color};')
 
         self._iteration_label = QtWidgets.QLabel()
         self._iteration_label.setFont(font)
-        self._iteration_label.setStyleSheet('color:{};'.format(text_hex_color))
+        self._iteration_label.setStyleSheet(f'color:{text_hex_color};')
 
         self._user_label = QtWidgets.QLabel()
         self._user_label.setFont(font)
@@ -261,7 +261,7 @@ class LoopUntilAbort(object):
         """Call the loop method once."""
         if self._is_max_reached():
             self._stop_timers()
-            msg = 'Maximum number of iterations reached ({})'.format(self._iteration)
+            msg = f'Maximum number of iterations reached ({self._iteration})'
             self.set_status_bar_text(msg)
             prompt.information(msg)
         else:
@@ -322,14 +322,14 @@ class LoopUntilAbort(object):
         dt = self.elapsed_time
         hours, remainder = divmod(dt.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        base = 'Elapsed time {:02d}:{:02d}:{:02d} '.format(hours, minutes, seconds)
+        base = f'Elapsed time {hours:02d}:{minutes:02d}:{seconds:02d}'
         if dt.days == 0:
             self._elapsed_time_label.setText(base)
         elif dt.days == 1:
-            self._elapsed_time_label.setText(base + '(+1 day)')
+            self._elapsed_time_label.setText(f'{base} (+1 day)')
         else:
-            self._elapsed_time_label.setText(base + '(+{} days)'.format(dt.days))
+            self._elapsed_time_label.setText(f'{base} (+{dt.days} days)')
 
     def _update_iteration_label(self):
         """update the `Iteration` label"""
-        self._iteration_label.setText('Iteration {}'.format(self._iteration))
+        self._iteration_label.setText(f'Iteration {self._iteration}')

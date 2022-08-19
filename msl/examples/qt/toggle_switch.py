@@ -9,7 +9,8 @@ from msl.qt import (
 
 
 def print_state(checked):
-    print('The switch is {}'.format('on' if checked else 'off'))
+    state = 'on' if checked else 'off'
+    print(f'The switch is {state}')
 
 
 def show():

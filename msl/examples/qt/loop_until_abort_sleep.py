@@ -35,7 +35,7 @@ class LoopExampleSleep(LoopUntilAbort):
         print('finished loop #: ' + str(self.iteration))
 
         # you can access attributes from the SleepWorker class, i.e., self.sleep.seconds
-        self.set_status_bar_text('Slept for {:.3f} seconds'.format(self.sleep.seconds))
+        self.set_status_bar_text(f'Slept for {self.sleep.seconds:.3f} seconds')
 
         # run the loop one more time (only if the loop's QTimer still exists)
         # NOTE: do not call self.loop() directly, you should call self.loop_once()
@@ -57,7 +57,7 @@ class LoopExampleSleep(LoopUntilAbort):
         # the self.sleep.start() call does not block (if it did the GUI would freeze)
         # so any code that is after it will be executed immediately -- this is why
         # the text of the "label" gets updated immediately
-        self.set_label_text('Sleeping for {:.3f} seconds'.format(sleep_for_this_many_seconds))
+        self.set_label_text(f'Sleeping for {sleep_for_this_many_seconds:.3f} seconds')
 
     def cleanup(self):
         """Overrides LoopUntilAbort.cleanup()"""

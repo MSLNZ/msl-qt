@@ -149,7 +149,7 @@ class Comments(QtWidgets.QDialog):
             try:
                 self.comments = json.load(fp)
             except Exception as e:
-                prompt.warning('Error loading JSON file:\n{}\n\n{}'.format(self.path, e))
+                prompt.warning(f'Error loading JSON file:\n{self.path}\n\n{e}')
 
     def prepend_and_close(self):
         self.close()
@@ -190,8 +190,8 @@ class Comments(QtWidgets.QDialog):
             self.clear_history()
             return
 
-        msg = 'this item' if len(selected) == 1 else 'these {} items'.format(len(selected))
-        if not prompt.yes_no('Remove ' + msg + ' from the history?', default=False):
+        msg = 'this item' if len(selected) == 1 else f'these {len(selected)} items'
+        if not prompt.yes_no(f'Remove {msg} from the history?', default=False):
             return
 
         for index in selected:

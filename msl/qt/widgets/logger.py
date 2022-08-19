@@ -74,7 +74,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         if logger is None:
             logger = logging.getLogger()
         elif not isinstance(logger, logging.Logger):
-            raise TypeError('the logger must be of type logging.Logger, got {}'.format(type(logger)))
+            raise TypeError(f'the logger must be of type logging.Logger, got {type(logger)}')
 
         if logger.level == logging.NOTSET:
             logger.setLevel(logging.DEBUG)
@@ -238,11 +238,11 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         elif self._num_displayed == len(self._records):
             self._label.setText('Displaying all log records')
         else:
-            self._label.setText('Displaying {} of {} log records'.format(self._num_displayed, len(self._records)))
+            self._label.setText(f'Displaying {self._num_displayed} of {len(self._records)} log records')
 
     def _update_level_checkbox_tooltip(self):
         """Update the ToolTip for self._level_checkbox"""
-        self._level_checkbox.setToolTip('Show {} level only?'.format(self._level_combobox.currentText()))
+        self._level_checkbox.setToolTip(f'Show {self._level_combobox.currentText()} level only?')
 
     def _update_records(self, name):
         """
@@ -259,4 +259,5 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._update_label()
 
     def _write_header(self, fp):
-        fp.write('# Saved {}\n'.format(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        fp.write(f'# Saved {now}\n')

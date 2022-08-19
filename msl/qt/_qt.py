@@ -12,7 +12,7 @@ packages = ('PySide6', 'PyQt6', 'PySide2', 'PyQt5')
 qt_api = os.getenv('QT_API')
 if qt_api:
     if qt_api not in packages:
-        raise ValueError('Invalid QT_API environment variable {!r}'.format(qt_api))
+        raise ValueError(f'Invalid QT_API environment variable {qt_api!r}')
 else:
     for package in packages:
         try:

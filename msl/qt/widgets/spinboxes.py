@@ -190,7 +190,7 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         if self._validator is None:
             return super(DoubleSpinBox, self).textFromValue(value)
         val, si_prefix = number_to_si(value)
-        return '{value:.{decimals}f} {si_prefix}'.format(value=val, decimals=self.decimals(), si_prefix=si_prefix)
+        return f'{val:.{self.decimals()}f} {si_prefix}'
 
     def setValue(self, value):
         """Overrides :meth:`QtWidgets.QDoubleSpinBox.setValue`."""
@@ -268,6 +268,7 @@ class _SIPrefixValidator(QtGui.QValidator):
     def fixup(self, text):
         """Overrides :meth:`QtGui.QValidator.fixup`."""
         try:
-            return '{} {}'.format(*number_to_si(si_to_number(text)))
+            number, si = number_to_si(si_to_number(text))
+            return f'{number} {si}'
         except ValueError:
             return ''
