@@ -23,4 +23,5 @@ python:
       path: .
       extra_requirements:
         - docs
+        - PySide6
   system_packages: false
