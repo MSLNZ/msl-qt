@@ -3,6 +3,7 @@ Run each example script one at a time.
 """
 import os
 import sys
+from functools import partial
 from inspect import (
     getmembers,
     isfunction,
@@ -35,9 +36,9 @@ for name, item in getmembers(qt.prompt, isfunction):
     if name in ['comments', 'filename', 'folder', 'save']:
         examples.append(item)
     elif name == 'item':
-        examples.append(lambda message=name, fcn=item: fcn(message, items=[1, 2, 3]))
+        examples.append(partial(item, name, items=[1, 2, 3]))
     else:
-        examples.append(lambda message=name, fcn=item: fcn(message))
+        examples.append(partial(item, name))
 
 n = len(examples)
 for i, example in enumerate(examples, start=1):
