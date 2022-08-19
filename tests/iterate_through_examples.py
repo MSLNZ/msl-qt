@@ -17,6 +17,7 @@ import msl.examples.qt as example
 print('Using {}'.format(qt.binding))
 
 examples = [
+    example.combobox.show,
     example.comments.show,
     example.button.show,
     example.logger.show,

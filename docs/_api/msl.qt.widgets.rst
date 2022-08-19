@@ -12,6 +12,7 @@ Submodules
 .. toctree::
 
    msl.qt.widgets.button
+   msl.qt.widgets.combobox
    msl.qt.widgets.led
    msl.qt.widgets.logger
    msl.qt.widgets.comments

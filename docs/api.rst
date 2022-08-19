@@ -27,6 +27,7 @@ the following custom :class:`~QtWidgets.QWidget`\'s
 .. autosummary::
 
    ~msl.qt.widgets.button.Button
+   ~msl.qt.widgets.combobox.ComboBox
    ~msl.qt.widgets.led.LED
    ~msl.qt.widgets.logger.Logger
    ~msl.qt.widgets.toggle_switch.ToggleSwitch
