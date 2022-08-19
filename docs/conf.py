@@ -11,92 +11,92 @@ sys.path.insert(0, os.path.abspath('..'))
 on_rtd = os.getenv('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
-
-    class QtWidgets(object):
-
-        class QWidget(object):
-            pass
-
-        class QAbstractButton(object):
-            pass
-
-        class QToolButton(object):
-            pass
-
-        class QDialog(object):
-            exec_ = None
-
-        class QTableWidget(object):
-            pass
-
-        class QTreeWidget(object):
-            pass
-
-        class QMainWindow(object):
-            pass
-
-        class QMenu(object):
-            pass
-
-        class QLineEdit(object):
-            Normal = 0
-
-        class QDoubleSpinBox(object):
-            pass
-
-        class QSpinBox(object):
-            pass
-
-        class QApplication(object):
-            exec_ = None
-
-    class QtCore(object):
-
-        __version__ = ''
-        __version_info__ = tuple()
-
-        class Qt(object):
-            KeepAspectRatio = 1
-
-        class QThread(object):
-            pass
-
-        class QObject(object):
-            pass
-
-        @staticmethod
-        def pyqtSignal(*args, **kwargs):
-            pass
-
-        @staticmethod
-        def pyqtSlot(*args, **kwargs):
-            pass
-
-        @staticmethod
-        def Signal(*args, **kwargs):
-            pass
-
-        @staticmethod
-        def Slot(*args, **kwargs):
-            pass
-
-    class QtGui(object):
-
-        class QValidator(object):
-            pass
-
-    class QtSvg(object):
-        pass
-
-    class PySide6(object):
-        __version__ = ''
-        __version_info__ = tuple()
-
-    sys.modules['PySide6'] = PySide6
-    sys.modules['PySide6.QtGui'] = QtGui
-    sys.modules['PySide6.QtCore'] = QtCore
-    sys.modules['PySide6.QtWidgets'] = QtWidgets
-    sys.modules['PySide6.QtSvg'] = QtSvg
+    #
+    # class QtWidgets(object):
+    #
+    #     class QWidget(object):
+    #         pass
+    #
+    #     class QAbstractButton(object):
+    #         pass
+    #
+    #     class QToolButton(object):
+    #         pass
+    #
+    #     class QDialog(object):
+    #         exec_ = None
+    #
+    #     class QTableWidget(object):
+    #         pass
+    #
+    #     class QTreeWidget(object):
+    #         pass
+    #
+    #     class QMainWindow(object):
+    #         pass
+    #
+    #     class QMenu(object):
+    #         pass
+    #
+    #     class QLineEdit(object):
+    #         Normal = 0
+    #
+    #     class QDoubleSpinBox(object):
+    #         pass
+    #
+    #     class QSpinBox(object):
+    #         pass
+    #
+    #     class QApplication(object):
+    #         exec_ = None
+    #
+    # class QtCore(object):
+    #
+    #     __version__ = ''
+    #     __version_info__ = tuple()
+    #
+    #     class Qt(object):
+    #         KeepAspectRatio = 1
+    #
+    #     class QThread(object):
+    #         pass
+    #
+    #     class QObject(object):
+    #         pass
+    #
+    #     @staticmethod
+    #     def pyqtSignal(*args, **kwargs):
+    #         pass
+    #
+    #     @staticmethod
+    #     def pyqtSlot(*args, **kwargs):
+    #         pass
+    #
+    #     @staticmethod
+    #     def Signal(*args, **kwargs):
+    #         pass
+    #
+    #     @staticmethod
+    #     def Slot(*args, **kwargs):
+    #         pass
+    #
+    # class QtGui(object):
+    #
+    #     class QValidator(object):
+    #         pass
+    #
+    # class QtSvg(object):
+    #     pass
+    #
+    # class PySide6(object):
+    #     __version__ = ''
+    #     __version_info__ = tuple()
+    #
+    # sys.modules['PySide6'] = PySide6
+    # sys.modules['PySide6.QtGui'] = QtGui
+    # sys.modules['PySide6.QtCore'] = QtCore
+    # sys.modules['PySide6.QtWidgets'] = QtWidgets
+    # sys.modules['PySide6.QtSvg'] = QtSvg
 
 else:
     html_theme = 'sphinx_rtd_theme'
