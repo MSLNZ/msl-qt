@@ -37,7 +37,8 @@ from .. import (
 
 class SpinBox(QtWidgets.QSpinBox):
 
-    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100, step=1, unit='', tooltip=''):
+    def __init__(self, *, parent=None, value=0, minimum=0, maximum=100, step=1,
+                 unit='', tooltip='', value_changed=None, editing_finished=None):
         """A :class:`~QtWidgets.QSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -58,6 +59,12 @@ class SpinBox(QtWidgets.QSpinBox):
             The text to display after the value.
         tooltip : :class:`str`, optional
             The tooltip to use for the :class:`SpinBox`.
+        value_changed
+            A callable function to use as a slot for the
+            :meth:`~QtWidgets.QSpinBox.valueChanged` signal.
+        editing_finished
+            A callable function to use as a slot for the
+            :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` signal.
         """
         super(SpinBox, self).__init__(parent=parent)
         self.setMinimum(minimum)
@@ -69,6 +76,10 @@ class SpinBox(QtWidgets.QSpinBox):
             self.setSuffix(unit.value)
         else:
             self.setSuffix(unit)
+        if value_changed:
+            self.valueChanged.connect(value_changed)
+        if editing_finished:
+            self.editingFinished.connect(editing_finished)
 
     def stepBy(self, steps):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
@@ -84,7 +95,8 @@ class SpinBox(QtWidgets.QSpinBox):
 class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
 
     def __init__(self, *, parent=None, value=0, minimum=0, maximum=100,
-                 step=1, decimals=2, use_si_prefix=False, unit='', tooltip=''):
+                 step=1, decimals=2, use_si_prefix=False, unit='', tooltip='',
+                 value_changed=None, editing_finished=None):
         """A :class:`~QtWidgets.QDoubleSpinBox` that emits
         :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` after a
         :meth:`~QtWidgets.QAbstractSpinBox.stepBy` signal.
@@ -110,6 +122,12 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             The text to display after the value.
         tooltip : :class:`str`, optional
             The tooltip to use for the :class:`DoubleSpinBox`.
+        value_changed
+            A callable function to use as a slot for the
+            :meth:`~QtWidgets.QDoubleSpinBox.valueChanged` signal.
+        editing_finished
+            A callable function to use as a slot for the
+            :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` signal.
         """
         super(DoubleSpinBox, self).__init__(parent=parent)
         self._using_pyside = binding.name.startswith('PySide')
@@ -132,6 +150,10 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             self.setSuffix(unit.value)
         else:
             self.setSuffix(unit)
+        if value_changed:
+            self.valueChanged.connect(value_changed)
+        if editing_finished:
+            self.editingFinished.connect(editing_finished)
 
     def validate(self, text, position):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.validate`."""
