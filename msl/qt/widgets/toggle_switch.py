@@ -13,24 +13,31 @@ from .. import (
 
 class ToggleSwitch(QtWidgets.QAbstractButton):
 
-    def __init__(self, *, parent=None, height=None, on_color='#009688', off_color='#B4B4B4', tooltip=None):
-        """Constructs a toggle switch, |toggle_switch|
+    def __init__(self, *, height=None, initial=False, on_color='#009688', off_color='#B4B4B4',
+                 parent=None, toggled=None, tooltip=None):
+        """A toggle switch, |toggle_switch|, :class:`QtWidgets.QWidget`
 
         .. |toggle_switch| image:: ../../docs/_static/toggle_switch.gif
            :scale: 40 %
 
         Parameters
         ----------
-        parent : :class:`QtWidgets.QWidget`, optional
-            The parent widget.
         height : :class:`int`, optional
             The height, in pixels, of the toggle switch.
+        initial : :class:`bool`, optional
+            Whether the toggle switch is initially in the on (:data:`True`) or off
+            (:data:`False`) state.
         on_color
             The color when the :class:`ToggleSwitch` is on. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
         off_color
             The color when the :class:`ToggleSwitch` is off. See :func:`~.convert.to_qcolor`
             for details about the different data types that are supported.
+        parent : :class:`QtWidgets.QWidget`, optional
+            The parent widget.
+        toggled
+            A callable function to use as a slot for the
+            :meth:`~QtWidgets.QAbstractButton.toggled` signal.
         tooltip : :class:`str`, optional
             The tooltip to use for the :class:`ToggleSwitch`.
 
@@ -50,10 +57,13 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
         self._pad = 4
         self.setCheckable(True)
+        self.setChecked(initial)
         self.set_on_color(on_color)
         self.set_off_color(off_color)
         if tooltip:
             self.setToolTip(tooltip)
+        if toggled:
+            self.toggled.connect(toggled)
 
     @property
     def is_on(self):
