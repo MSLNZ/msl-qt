@@ -14,7 +14,7 @@ package_name = 'PySide6'
 #    :class:`QWidget`
 #    :class:`QtWidgets.QWidget`
 #    :class:`PySide6.QtWidgets.QWidget`
-# only do this for some of the Qt modules
+# only do this for some Qt modules
 alias_modules = ('QtWidgets', 'QtCore', 'QtGui')
 
 # the filename to use to save the original objects.inv file
@@ -55,9 +55,12 @@ def create_modified_inv():
             continue
 
         name, typ, prio, location, dispname = m.groups()
-        location = pyside_uri + location.rstrip('#$')
+        location = pyside_uri + location.rstrip('$') + name
 
         write(name, typ, prio, location, dispname)
+        if name.endswith('QtCore.Signal'):
+            # QtCore.SignalInstance maps to QtCore.Signal
+            write(package_name + '.QtCore.SignalInstance', typ, prio, location, dispname)
 
         # apply the aliases
         for module in alias_modules:
