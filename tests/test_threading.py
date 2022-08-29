@@ -7,6 +7,7 @@ from msl.qt import (
     Worker,
     Signal,
     Slot,
+    binding,
 )
 
 
@@ -148,7 +149,7 @@ def test_connect_signal_slot():
     class MyWorker(Worker):
         empty = Signal()
         renamed = Signal(name='new_name')
-        data = Signal(float)
+        data = Signal(float, name='floating_point')
         state = Signal(bool, int)
 
         def process(self):
@@ -196,6 +197,7 @@ def test_connect_signal_slot():
     def on_done():
         values.append('done')
 
+    is_pyqt6 = binding.name == 'PyQt6'
     values = []
 
     app = application()
@@ -210,15 +212,29 @@ def test_connect_signal_slot():
     with pytest.raises(ValueError, match='No Worker signals were connected to slots'):
         t.worker_disconnect('empty', lambda: on_empty())
 
-    t.worker_connect(MyWorker.empty, on_empty)
+    if is_pyqt6:
+        with pytest.raises(TypeError, match='Cannot determine the Signal name'):
+            t.worker_disconnect(MyWorker.empty, on_empty)
+
+    if is_pyqt6:
+        # no 'name' defined in the Signal constructor
+        # must use the class attribute name
+        t.worker_connect('empty', on_empty)
+    else:
+        t.worker_connect(MyWorker.empty, on_empty)
     t.worker_connect('empty', on_empty)
     t.worker_connect(MyWorker.renamed, on_renamed_1)
     t.worker_connect('renamed', on_renamed_3)
     t.worker_connect(MyWorker.renamed, lambda: values.append('renamed-4'))
     t.worker_connect('new_name', on_renamed_2)
     t.worker_connect(MyWorker.data, on_data)
-    t.worker_connect('data', on_data_plus_10)
-    t.worker_connect(MyWorker.state, on_state)
+    t.worker_connect('floating_point', on_data_plus_10)
+    if is_pyqt6:
+        # no 'name' defined in the Signal constructor
+        # must use the class attribute name
+        t.worker_connect('state', on_state)
+    else:
+        t.worker_connect(MyWorker.state, on_state)
     t.worker_connect('state', on_state)
     t.finished.connect(on_done)
     t.start()
@@ -249,8 +265,13 @@ def test_connect_signal_slot():
 
     t.worker_disconnect('renamed', on_renamed_3)
     t.worker_disconnect(MyWorker.renamed, on_renamed_2)
-    t.worker_disconnect('data', on_data)
-    t.worker_disconnect(MyWorker.empty, on_empty)
+    t.worker_disconnect('floating_point', on_data)
+    if is_pyqt6:
+        # no 'name' defined in the Signal constructor
+        # must use the class attribute name
+        t.worker_disconnect('empty', on_empty)
+    else:
+        t.worker_disconnect(MyWorker.empty, on_empty)
 
     values.clear()
     t.start()

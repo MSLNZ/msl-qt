@@ -7,7 +7,8 @@ import traceback as tb
 from . import (
     QtCore,
     Signal,
-    prompt
+    prompt,
+    binding,
 )
 
 
@@ -223,7 +224,7 @@ class Thread(QtCore.QObject):
             try:
                 self._signals_slots.remove((signal, slot))
             except ValueError:
-                options = '\n'.join(f'{a!r} {b}' for a, b in self._signals_slots)
+                options = '\n'.join(f'  {a!r} {b}' for a, b in self._signals_slots)
                 if not options:
                     raise ValueError(
                         'No Worker signals were connected to slots') from None
@@ -241,6 +242,13 @@ class Thread(QtCore.QObject):
             return signal, slot
 
         if isinstance(signal, Signal):
+            if hasattr(signal, 'signatures'):  # PyQt
+                signal = signal.signatures[0]
+                if '(' not in signal:
+                    raise TypeError(
+                        'Cannot determine the Signal name. Either pass in '
+                        'the Signal name as a string or define a name '
+                        'parameter in the Signal constructor.')
             return str(signal).split('(')[0], slot
 
         raise TypeError('signal must be a QtCore.Signal or string')
