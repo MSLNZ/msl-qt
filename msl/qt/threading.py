@@ -8,7 +8,6 @@ from . import (
     QtCore,
     Signal,
     prompt,
-    binding,
 )
 
 
