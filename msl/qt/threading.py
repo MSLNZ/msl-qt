@@ -187,7 +187,7 @@ class Thread(QtCore.QObject):
 
         Parameters
         ----------
-        signal : :class:`~QtCore.Signal` or :class:`str`
+        signal : :class:`str`, :class:`~QtCore.Signal` or :class:`~PySide6.QtCore.SignalInstance`
             The `signal` to connect the `slot` to. If a :class:`str`, then either
             the name of a class attribute of the :class:`Worker` or the `name`
             parameter that was used in the :class:`~QtCore.Signal` constructor.
@@ -210,7 +210,7 @@ class Thread(QtCore.QObject):
 
         Parameters
         ----------
-        signal : :class:`~QtCore.Signal` or :class:`str`
+        signal : :class:`str`, :class:`~QtCore.Signal` or :class:`~PySide6.QtCore.SignalInstance`
             The `signal` to disconnect the `slot` from. Must be the same
             value that was used in :meth:`worker_connect`.
         slot
