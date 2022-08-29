@@ -12,18 +12,25 @@ from . import (
 
 
 class Worker(QtCore.QObject):
-    """Process an expensive or blocking operation in a thread that is separate from the main thread.
-
-    You can access to the attributes of the :class:`Worker` as though they are attributes of the
-    :class:`Thread`.
-
-    Example
-    -------
-    See :class:`~msl.qt.sleep.SleepWorker` for an example of a :class:`Worker`.
-    """
 
     finished = Signal()
-    error = Signal(object, object)  # (exception, traceback)
+    error = Signal(BaseException, object)  # (exception, traceback)
+
+    def __init__(self, *args, **kwargs):
+        """Process an expensive or blocking operation in a thread that is
+        separate from the main thread.
+
+        You can access to the attributes of the :class:`Worker` as though
+        they are attributes of the :class:`Thread`.
+
+        The ``*args`` and ``**kwargs`` parameters are passed to the :class:`Worker`
+        when the :meth:`Thread.start` method is called.
+
+        Example
+        -------
+        See :class:`~msl.qt.sleep.SleepWorker` for an example of a :class:`Worker`.
+        """
+        super(Worker, self).__init__()
 
     def process(self):
         """The expensive or blocking operation to process.
@@ -45,15 +52,16 @@ class Worker(QtCore.QObject):
 class Thread(QtCore.QObject):
 
     finished = Signal()
-    """This :ref:`Signal` is emitted when the thread finishes (i.e., when :meth:`Worker.process` finishes)."""
+    """A :class:`~QtCore.Signal` that is emitted when the thread is finished 
+    (i.e., when :meth:`Worker.process` finishes)."""
 
     def __init__(self, worker):
-        """Moves the `worker` to a new :class:`QtCore.QThread`.
+        """Moves a :class:`Worker` to a new :class:`QtCore.QThread`.
 
         Parameters
         ----------
         worker
-            A :class:`Worker` subclass that has **NOT** been instantiated.
+            A :class:`Worker` subclass that has *not* been instantiated.
 
         Example
         -------
@@ -63,6 +71,7 @@ class Thread(QtCore.QObject):
         self._thread = None
         self._worker = None
         self._finished = False
+        self._signals_slots = []
 
         if not callable(worker):
             raise TypeError('The Worker for the Thread must not be instantiated')
@@ -93,7 +102,7 @@ class Thread(QtCore.QObject):
         prompt.critical(''.join(tb.format_exception(type(exception), exception, traceback)))
 
     def is_finished(self):
-        """Whether the thread successfully finished.
+        """Whether the thread is finished.
 
         Returns
         -------
@@ -130,6 +139,8 @@ class Thread(QtCore.QObject):
         self._thread = QtCore.QThread()
         self._worker = self._worker_class(*args, **kwargs)
         self._worker.moveToThread(self._thread)
+        for signal, slot in self._signals_slots:
+            getattr(self._worker, signal).connect(slot)
         self._worker.error.connect(lambda *ignore: self._thread.exit(-1))
         self._worker.error.connect(self.error_handler)
         self._worker.finished.connect(self._worker_finished)
@@ -151,7 +162,7 @@ class Thread(QtCore.QObject):
         ----------
         milliseconds : :class:`int`, optional
             The number of milliseconds to wait before a timeout occurs.
-            If :data:`None` then this method will never timeout and the
+            If :data:`None` then this method will never time out and the
             thread must return from its `run` method.
 
         Returns
@@ -166,8 +177,76 @@ class Thread(QtCore.QObject):
             return self._check(self._thread.wait)
         return self._check(self._thread.wait, int(milliseconds))
 
+    def worker_connect(self, signal, slot):
+        """Connect a :class:`~QtCore.Signal` from the :class:`Worker` to a :class:`~QtCore.Slot`.
+
+        This method is intended to be called *before* a worker thread starts.
+        Although, you can still call this method when a worker thread is running,
+        it is easier (fewer characters to type) to access the attributes of a
+        :class:`Worker` as though they are attributes of the :class:`Thread`.
+
+        Parameters
+        ----------
+        signal : :class:`~QtCore.Signal` or :class:`str`
+            The `signal` to connect the `slot` to. If a :class:`str`, then either
+            the name of a class attribute of the :class:`Worker` or the `name`
+            parameter that was used in the :class:`~QtCore.Signal` constructor.
+        slot
+            A callable function to use as the :class:`~QtCore.Slot`.
+        """
+        signal, slot = Thread._check_signal_slot(signal, slot)
+        if self.is_running():
+            getattr(self._worker, signal).connect(slot)
+        else:
+            self._signals_slots.append((signal, slot))
+
+    def worker_disconnect(self, signal, slot):
+        """Disconnect a :class:`~QtCore.Slot` from a :class:`~QtCore.Signal` of the :class:`Worker`.
+
+        This method is intended to be called *before* a worker thread is restarted.
+        Although, you can still call this method when a worker thread is running,
+        it is easier (fewer characters to type) to access the attributes of a
+        :class:`Worker` as though they are attributes of the :class:`Thread`.
+
+        Parameters
+        ----------
+        signal : :class:`~QtCore.Signal` or :class:`str`
+            The `signal` to disconnect the `slot` from. Must be the same
+            value that was used in :meth:`worker_connect`.
+        slot
+            Must be the same callable that was used in :meth:`worker_connect`.
+        """
+        signal, slot = Thread._check_signal_slot(signal, slot)
+        if self.is_running():
+            getattr(self._worker, signal).disconnect(slot)
+        else:
+            try:
+                self._signals_slots.remove((signal, slot))
+            except ValueError:
+                options = '\n'.join(f'{a!r} {b}' for a, b in self._signals_slots)
+                if not options:
+                    raise ValueError(
+                        'No Worker signals were connected to slots') from None
+                raise ValueError(
+                    f'The slot {slot} is not connected to the signal '
+                    f'{signal!r}.\nOptions\n{options}') from None
+
+    @staticmethod
+    def _check_signal_slot(signal, slot):
+        """Check the input types and returns the appropriate types."""
+        if not callable(slot):
+            raise TypeError('slot must be callable')
+
+        if isinstance(signal, str):
+            return signal, slot
+
+        if isinstance(signal, Signal):
+            return str(signal).split('(')[0], slot
+
+        raise TypeError('signal must be a QtCore.Signal or string')
+
     def _check(self, method, *args):
-        """Wrap all calls to the QThread in a try..except block to silently
+        """Wrap all calls to the QThread in a try-except block to silently
         ignore the following error:
 
         RuntimeError: Internal C++ object (*.QtCore.QThread) already deleted.

@@ -5,6 +5,8 @@ from msl.qt import (
     QtCore,
     Thread,
     Worker,
+    Signal,
+    Slot,
 )
 
 
@@ -139,4 +141,133 @@ def test_finished():
         app.processEvents()
 
     assert values == [16, 16]
-    t.quit()
+    t.stop()
+
+
+def test_connect_signal_slot():
+    class MyWorker(Worker):
+        empty = Signal()
+        renamed = Signal(name='new_name')
+        data = Signal(float)
+        state = Signal(bool, int)
+
+        def process(self):
+            for index in range(10):
+                if index == 2 or index == 4:
+                    self.empty.emit()
+                elif index == 3:
+                    self.renamed.emit()
+                elif index == 5:
+                    self.new_name.emit()
+                elif index == 7:
+                    self.state.emit(True, 1)
+                elif index == 8:
+                    self.data.emit(1.2)
+
+    @Slot()
+    def on_empty():
+        values.append('empty')
+
+    @Slot()
+    def on_renamed_1():
+        values.append('renamed-1')
+
+    @Slot()
+    def on_renamed_2():
+        values.append('renamed-2')
+
+    @Slot()
+    def on_renamed_3():
+        values.append('renamed-3')
+
+    @Slot(float)
+    def on_data(val):
+        values.append(val)
+
+    @Slot(float)
+    def on_data_plus_10(val):
+        values.append(val+10)
+
+    @Slot(bool, int)
+    def on_state(*args):
+        values.append(args)
+
+    @Slot()
+    def on_done():
+        values.append('done')
+
+    values = []
+
+    app = application()
+    t = Thread(MyWorker)
+
+    with pytest.raises(TypeError, match='QtCore.Signal or string'):
+        t.worker_connect(b'empty', on_empty)
+    with pytest.raises(TypeError, match='must be callable'):
+        t.worker_connect('empty', None)
+    with pytest.raises(ValueError, match='No Worker signals were connected to slots'):
+        t.worker_disconnect('empty', on_empty)
+    with pytest.raises(ValueError, match='No Worker signals were connected to slots'):
+        t.worker_disconnect('empty', lambda: on_empty())
+
+    t.worker_connect(MyWorker.empty, on_empty)
+    t.worker_connect('empty', on_empty)
+    t.worker_connect(MyWorker.renamed, on_renamed_1)
+    t.worker_connect('renamed', on_renamed_3)
+    t.worker_connect(MyWorker.renamed, lambda: values.append('renamed-4'))
+    t.worker_connect('new_name', on_renamed_2)
+    t.worker_connect(MyWorker.data, on_data)
+    t.worker_connect('data', on_data_plus_10)
+    t.worker_connect(MyWorker.state, on_state)
+    t.worker_connect('state', on_state)
+    t.finished.connect(on_done)
+    t.start()
+
+    # allow some time for the event loop to emit the finished() signal
+    for i in range(100):
+        QtCore.QThread.msleep(10)
+        app.processEvents()
+
+    assert values == [
+        'empty', 'empty',
+        'renamed-1', 'renamed-3', 'renamed-4', 'renamed-2',
+        'empty', 'empty',
+        'renamed-1', 'renamed-3', 'renamed-4', 'renamed-2',
+        (True, 1), (True, 1),
+        1.2, 11.2,
+        'done'
+    ]
+
+    t.stop()
+
+    with pytest.raises(ValueError, match="not connected to the signal 'invalid'"):
+        t.worker_disconnect('invalid', on_data)
+    with pytest.raises(ValueError, match="not connected to the signal 'empty'"):
+        t.worker_disconnect('empty', on_data)
+    with pytest.raises(ValueError, match="not connected to the signal 'empty'"):
+        t.worker_disconnect('empty', lambda: on_empty())
+
+    t.worker_disconnect('renamed', on_renamed_3)
+    t.worker_disconnect(MyWorker.renamed, on_renamed_2)
+    t.worker_disconnect('data', on_data)
+    t.worker_disconnect(MyWorker.empty, on_empty)
+
+    values.clear()
+    t.start()
+
+    # allow some time for the event loop to emit the finished() signal
+    for i in range(100):
+        QtCore.QThread.msleep(10)
+        app.processEvents()
+
+    assert values == [
+        'empty',
+        'renamed-1', 'renamed-4',
+        'empty',
+        'renamed-1', 'renamed-4',
+        (True, 1), (True, 1),
+        11.2,
+        'done'
+    ]
+
+    t.stop()
