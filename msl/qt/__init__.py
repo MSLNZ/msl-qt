@@ -67,6 +67,7 @@ from .threading import (
 )
 from .widgets import (
     Button,
+    CheckBox,
     ComboBox,
     LineEdit,
     Logger,

@@ -27,6 +27,7 @@ the following custom :class:`~QtWidgets.QWidget`\'s
 .. autosummary::
 
    ~msl.qt.widgets.button.Button
+   ~msl.qt.widgets.checkbox.CheckBox
    ~msl.qt.widgets.combobox.ComboBox
    ~msl.qt.widgets.led.LED
    ~msl.qt.widgets.line_edit.LineEdit
