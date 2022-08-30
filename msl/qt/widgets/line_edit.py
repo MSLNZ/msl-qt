@@ -16,7 +16,7 @@ class LineEdit(QtWidgets.QLineEdit):
 
         Parameters
         ----------
-        align : :attr:`~QtCore.Qt.AlignmentFlag`, optional
+        align : :attr:`Qt.AlignmentFlag`, optional
             How to align the text. Default is `Qt.AlignLeft`.
         read_only : :class:`bool`, optional
             Whether the displayed text is read only.
