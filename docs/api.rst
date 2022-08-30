@@ -29,6 +29,7 @@ the following custom :class:`~QtWidgets.QWidget`\'s
    ~msl.qt.widgets.button.Button
    ~msl.qt.widgets.combobox.ComboBox
    ~msl.qt.widgets.led.LED
+   ~msl.qt.widgets.line_edit.LineEdit
    ~msl.qt.widgets.logger.Logger
    ~msl.qt.widgets.toggle_switch.ToggleSwitch
    ~msl.qt.widgets.spinboxes.DoubleSpinBox

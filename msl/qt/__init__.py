@@ -68,6 +68,7 @@ from .threading import (
 from .widgets import (
     Button,
     ComboBox,
+    LineEdit,
     Logger,
     ToggleSwitch,
     DoubleSpinBox,

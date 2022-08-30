@@ -18,6 +18,7 @@ import msl.examples.qt as example
 print(f'Using {qt.binding}')
 
 examples = [
+    example.line_edit.show,
     example.combobox.show,
     example.comments.show,
     example.button.show,
