@@ -140,11 +140,11 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
                 maximum = si_prefix_limit
         else:
             self._validator = None
+        self.setDecimals(decimals)  # must come before setValue
+        self.setSingleStep(step)
         self.setMinimum(minimum)
         self.setMaximum(maximum)
         self.setValue(value)
-        self.setSingleStep(step)
-        self.setDecimals(decimals)
         self.setToolTip(tooltip)
         if isinstance(unit, Enum):
             self.setSuffix(unit.value)
