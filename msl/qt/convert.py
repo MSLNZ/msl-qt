@@ -13,6 +13,7 @@ from math import (
 )
 
 from .constants import SI_PREFIX_MAP
+from .characters import MICRO
 from . import (
     Qt,
     QtGui,
@@ -189,7 +190,7 @@ def to_qcolor(*args):
         return QtGui.QColor(*tuple(ensure_255(v) for v in args))
 
 
-def number_to_si(number):
+def number_to_si(number, unicode=True):
     """Convert a number to be represented with an SI prefix.
 
     The hecto (h), deka (da), deci (d) and centi (c) prefixes are not used.
@@ -198,6 +199,8 @@ def number_to_si(number):
     ----------
     number : :class:`int` or :class:`float`
         The number to convert.
+    unicode : :class:`bool`, optional
+        Whether to use the unicode \u00B5 symbol for micro.
 
     Returns
     -------
@@ -224,7 +227,11 @@ def number_to_si(number):
         return number, ''
     if n > 8 or n < -8:
         raise ValueError(f'The number {number} cannot be expressed with an SI prefix')
-    return number * 10 ** (-3 * n), SI_PREFIX_MAP[n]
+    if unicode and n == -2:
+        si = MICRO
+    else:
+        si = SI_PREFIX_MAP[n]
+    return number * 10 ** (-3 * n), si
 
 
 def si_to_number(string):
@@ -259,8 +266,8 @@ def si_to_number(string):
         return float(string_)
 
     prefix = string_[-1]
-    if prefix == 'u':
-        prefix = '\u00b5'
+    if prefix == MICRO:
+        prefix = 'u'
     for n, value in SI_PREFIX_MAP.items():
         if prefix == value:
             return float(string_[:-1]) * 10 ** (3 * n)
