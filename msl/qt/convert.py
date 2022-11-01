@@ -281,7 +281,7 @@ def si_to_number(string):
     return float(string_)
 
 
-def to_qicon(obj, *, size=None, aspect_mode=Qt.KeepAspectRatio):
+def to_qicon(obj, *, size=None, aspect_mode=Qt.AspectRatioMode.KeepAspectRatio):
     """Convert the input object to a :class:`QtGui.QIcon`.
 
     Parameters
@@ -526,7 +526,7 @@ def icon_to_base64(icon, *, fmt='png'):
     return array.toBase64()
 
 
-def rescale_icon(icon, size, *, aspect_mode=Qt.KeepAspectRatio):
+def rescale_icon(icon, size, *, aspect_mode=Qt.AspectRatioMode.KeepAspectRatio):
     """Rescale an icon.
 
     Parameters

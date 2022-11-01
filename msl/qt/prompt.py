@@ -316,7 +316,7 @@ def save(*, title='Save As', directory=None, filters=None, options=None):
     return name if name else None
 
 
-def text(message, *, title=None, font=None, value='', multi_line=False, echo=QtWidgets.QLineEdit.Normal):
+def text(message, *, title=None, font=None, value='', multi_line=False, echo=QtWidgets.QLineEdit.EchoMode.Normal):
     """Request text.
 
     Parameters
