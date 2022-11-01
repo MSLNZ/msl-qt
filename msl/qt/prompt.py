@@ -334,7 +334,7 @@ def text(message, *, title=None, font=None, value='', multi_line=False, echo=QtW
         The initial value.
     multi_line : :class:`bool`, optional
         Whether the entered text can span multiple lines.
-    echo : :class:`int` or `QLineEdit.EchoMode <https://doc.qt.io/qt-5/qlineedit.html#EchoMode-enum>`_, optional
+    echo : :class:`int` or `QLineEdit.EchoMode <https://doc.qt.io/qt-6/qlineedit.html#EchoMode-enum>`_, optional
         The echo mode for the text value. Useful if requesting a password.
 
     Returns

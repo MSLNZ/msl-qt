@@ -151,7 +151,7 @@ def to_qcolor(*args):
         * :class:`int` or :obj:`QtCore.Qt.GlobalColor` :math:`\\rightarrow` a pre-defined enum value
         * :class:`float` :math:`\\rightarrow` a greyscale value between 0.0-1.0
         * :class:`QtGui.QColor` :math:`\\rightarrow` returns a copy
-        * :class:`str` :math:`\\rightarrow` see `here <https://doc.qt.io/qt-5/qcolor.html#setNamedColor>`_ for examples
+        * :class:`str` :math:`\\rightarrow` see `here <https://doc.qt.io/qt-6/qcolor.html#fromString>`_ for examples
 
     Returns
     -------
