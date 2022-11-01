@@ -3,6 +3,7 @@ Functions to convert objects.
 """
 import os
 import sys
+import ctypes
 import textwrap
 from math import (
     isinf,
@@ -11,6 +12,11 @@ from math import (
     log10,
     fabs,
 )
+
+try:
+    import clr
+except ImportError:
+    clr = None
 
 from .constants import SI_PREFIX_MAP
 from .characters import MICRO
@@ -450,11 +456,8 @@ def icon_to_base64(icon, *, fmt='png'):
         # extract an icon from a Windows DLL/EXE file
         # uses ctypes and the .NET Framework to convert the icon to base64
         # import here in case pythonnet is not installed
-        try:
-            import clr
-        except ImportError:
-            raise ImportError('requires pythonnet, run: pip install pythonnet') from None
-        import ctypes
+        if clr is None:
+            raise ImportError('requires pythonnet, run: pip install pythonnet')
 
         clr.AddReference('System.Drawing')
         import System

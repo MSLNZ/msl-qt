@@ -10,11 +10,9 @@ from msl.qt import (
 )
 
 try:
-    # check if pythonnet is installed
-    import clr
-    has_clr = True
+    import clr  # check if pythonnet is installed
 except ImportError:
-    has_clr = False
+    clr = None
 
 
 class ShowStandardIcons(object):
@@ -79,7 +77,7 @@ class ShowStandardIcons(object):
 
         self.add_qt_tab('Qt Icons', qt_icons)
 
-        if has_clr:
+        if clr is not None:
             self.windows_index = 0
             self.timer = QtCore.QTimer()
             self.timer.timeout.connect(self.add_windows_tab)
