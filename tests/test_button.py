@@ -35,6 +35,12 @@ def test_icon():
     assert b.iconSize() == sizes[0]
     assert b.toolButtonStyle() == Qt.ToolButtonIconOnly
 
+    b = Button(icon=14)
+    assert b.text() == ''
+    assert not b.icon().isNull()
+    assert b.iconSize() == sizes[0]
+    assert b.toolButtonStyle() == Qt.ToolButtonIconOnly
+
     b = Button(icon=path)
     assert b.text() == ''
     assert not b.icon().isNull()
@@ -56,7 +62,7 @@ def test_icon_size():
         assert len(sizes) > 1
 
     #
-    # specify the size to the get_icon function
+    # specify the size to the to_qicon() function
     #
 
     b = Button(icon=convert.to_qicon(int_val))
@@ -85,6 +91,9 @@ def test_icon_size():
     b = Button(icon=convert.to_qicon(int_val), icon_size=1234)
     assert b.iconSize() == QtCore.QSize(1234, 1234)
 
+    b = Button(icon=15, icon_size=1234)
+    assert b.iconSize() == QtCore.QSize(1234, 1234)
+
     b = Button(icon=convert.to_qicon(int_val), icon_size=3.0)
     # specifying a scale factor will use the largest available size
     assert b.iconSize() == QtCore.QSize(3*sizes[-1].width(), 3*sizes[-1].height())
@@ -110,6 +119,11 @@ def test_text_and_icon():
     assert b.text() == 'world'
     assert not b.icon().isNull()
     assert b.toolButtonStyle() == Qt.ToolButtonTextBesideIcon
+
+    b = Button(text='world', icon=14, is_text_under_icon=True)
+    assert b.text() == 'world'
+    assert not b.icon().isNull()
+    assert b.toolButtonStyle() == Qt.ToolButtonTextUnderIcon
 
 
 def test_tooltip():

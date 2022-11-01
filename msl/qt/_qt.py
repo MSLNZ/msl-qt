@@ -91,8 +91,11 @@ if not hasattr(QtWidgets.QDialog, 'exec'):
     QtWidgets.QDialog.exec = QtWidgets.QDialog.exec_
 
 # PyQt6 uses scoped enums. Want to support unscoped enums to be
-# consistent with PySide6, PySide2 and PyQt5
-if qt_api == 'PyQt6':
+# consistent with PySide6 (<6.4), PySide2 and PyQt5.
+# Starting from PySide 6.4, enums also became scope. Although, the
+# Qt for Python developers introduced something called a "forgiveness mode",
+# this "mode" was found to not be 100% reliable
+if qt_api == 'PyQt6' or binding.version_info[:2] >= (6, 4):
     from enum import EnumMeta
     from inspect import getmembers, isclass
 
