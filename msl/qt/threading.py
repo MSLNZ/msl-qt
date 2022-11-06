@@ -1,5 +1,5 @@
 """
-Base classes for starting a process in a new :class:`QThread`.
+Base classes for starting a process in a new :class:`~QtCore.QThread`.
 """
 import sys
 import traceback as tb
@@ -20,15 +20,17 @@ class Worker(QtCore.QObject):
         """Process an expensive or blocking operation in a thread that is
         separate from the main thread.
 
-        You can access to the attributes of the :class:`Worker` as though
-        they are attributes of the :class:`Thread`.
+        You can access to the attributes of the :class:`~msl.qt.threading.Worker`
+        as though they are attributes of the :class:`~msl.qt.threading.Thread`.
 
-        The ``*args`` and ``**kwargs`` parameters are passed to the :class:`Worker`
-        when the :meth:`Thread.start` method is called.
+        The ``*args`` and ``**kwargs`` parameters are passed to the constructor
+        of the :class:`~msl.qt.threading.Worker` when the
+        :meth:`~msl.qt.threading.Thread.start` method is called.
 
         Example
         -------
-        See :class:`~msl.qt.sleep.SleepWorker` for an example of a :class:`Worker`.
+        See :class:`~msl.qt.sleep.SleepWorker` for an example of a
+        :class:`~msl.qt.threading.Worker`.
         """
         super(Worker, self).__init__()
 
@@ -53,19 +55,19 @@ class Thread(QtCore.QObject):
 
     finished = Signal()
     """A :class:`~QtCore.Signal` that is emitted when the thread is finished 
-    (i.e., when :meth:`Worker.process` finishes)."""
+    (i.e., when :meth:`~msl.qt.threading.Worker.process` finishes)."""
 
     def __init__(self, worker):
-        """Moves a :class:`Worker` to a new :class:`QtCore.QThread`.
+        """Moves a :class:`~msl.qt.threading.Worker` to a new :class:`~QtCore.QThread`.
 
         Parameters
         ----------
         worker
-            A :class:`Worker` subclass that has *not* been instantiated.
+            A :class:`~msl.qt.threading.Worker` subclass that has *not* been instantiated.
 
         Example
         -------
-        See :class:`~msl.qt.sleep.Sleep` for an example of a :class:`Thread`.
+        See :class:`~msl.qt.sleep.Sleep` for an example of a :class:`~msl.qt.threading.Thread`.
         """
         super(Thread, self).__init__()
         self._thread = None
@@ -81,14 +83,14 @@ class Thread(QtCore.QObject):
             self._worker_class = worker
 
     def __getattr__(self, item):
-        """All other attributes are assumed to be those of the :class:`Worker`."""
+        """All other attributes are assumed to be those of the :class:`~msl.qt.threading.Worker`."""
         if self._worker is not None:
             return getattr(self._worker, item)
         raise AttributeError('You must start the Thread before accessing an attribute of the Worker')
 
     def error_handler(self, exception, traceback):
-        """If an exception is raised by the :class:`Worker` then the default behaviour is to
-        show the error message in a :func:`~msl.qt.prompt.critical` dialog window.
+        """If an exception is raised by the :class:`~msl.qt.threading.Worker` then the default
+        behaviour is to show the error message in a :func:`~msl.qt.prompt.critical` dialog window.
 
         You can override this method to implement your own error handler.
 
@@ -131,10 +133,10 @@ class Thread(QtCore.QObject):
             self._check(self._thread.quit)
 
     def start(self, *args, **kwargs):
-        """Start processing the :class:`Worker` in a :class:`QtCore.QThread`.
+        """Start processing the :class:`~msl.qt.threading.Worker` in a :class:`~QtCore.QThread`.
 
         The ``*args`` and ``**kwargs`` are passed to the constructor of the
-        :class:`Worker` class.
+        :class:`~msl.qt.threading.Worker` class.
         """
         self._thread = QtCore.QThread()
         self._worker = self._worker_class(*args, **kwargs)
@@ -178,18 +180,20 @@ class Thread(QtCore.QObject):
         return self._check(self._thread.wait, int(milliseconds))
 
     def worker_connect(self, signal, slot):
-        """Connect a :class:`~QtCore.Signal` from the :class:`Worker` to a :class:`~QtCore.Slot`.
+        """Connect a :class:`~QtCore.Signal` from the :class:`~msl.qt.threading.Worker`
+        to a :class:`~QtCore.Slot`.
 
         This method is intended to be called *before* a worker thread starts.
         Although, you can still call this method when a worker thread is running,
         it is easier (fewer characters to type) to access the attributes of a
-        :class:`Worker` as though they are attributes of the :class:`Thread`.
+        :class:`~msl.qt.threading.Worker` as though they are attributes of the
+        :class:`~msl.qt.threading.Thread`.
 
         Parameters
         ----------
         signal : :class:`str`, :class:`~QtCore.Signal` or :class:`~PySide6.QtCore.SignalInstance`
             The `signal` to connect the `slot` to. If a :class:`str`, then either
-            the name of a class attribute of the :class:`Worker` or the `name`
+            the name of a class attribute of the :class:`~msl.qt.threading.Worker` or the `name`
             parameter that was used in the :class:`~QtCore.Signal` constructor.
         slot
             A callable function to use as the :class:`~QtCore.Slot`.
@@ -201,12 +205,14 @@ class Thread(QtCore.QObject):
             self._signals_slots.append((signal, slot))
 
     def worker_disconnect(self, signal, slot):
-        """Disconnect a :class:`~QtCore.Slot` from a :class:`~QtCore.Signal` of the :class:`Worker`.
+        """Disconnect a :class:`~QtCore.Slot` from a :class:`~QtCore.Signal` of the
+        :class:`~msl.qt.threading.Worker`.
 
         This method is intended to be called *before* a worker thread is restarted.
         Although, you can still call this method when a worker thread is running,
         it is easier (fewer characters to type) to access the attributes of a
-        :class:`Worker` as though they are attributes of the :class:`Thread`.
+        :class:`~msl.qt.threading.Worker` as though they are attributes of the
+        :class:`~msl.qt.threading.Thread`.
 
         Parameters
         ----------
@@ -264,6 +270,6 @@ class Thread(QtCore.QObject):
             self._thread = None
 
     def _worker_finished(self):
-        """Slot -> Called when the :class:`Worker` finished successfully."""
+        """Slot -> Called when the :class:`~msl.qt.threading.Worker` finished successfully."""
         self._thread.quit()
         self._finished = True
