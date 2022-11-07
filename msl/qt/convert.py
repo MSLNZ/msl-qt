@@ -14,8 +14,10 @@ from math import (
 )
 
 try:
-    import clr
-except ImportError:
+    import clr  # import pythonnet
+except (ImportError, RuntimeError):
+    # A RuntimeError will occur if pythonnet is installed,
+    # but there is no .NET runtime installed
     clr = None
 
 from .constants import SI_PREFIX_MAP
