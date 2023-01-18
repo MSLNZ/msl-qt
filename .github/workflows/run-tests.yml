@@ -20,12 +20,12 @@ jobs:
         qt-binding: [PySide6, PyQt6, PySide2, PyQt5]
         # https://bugreports.qt.io/browse/PYSIDE-1797
         exclude:
-          - qt-binding: PySide6
-            os: macos
-            python-version: "3.6"
-          - qt-binding: PySide6
-            os: macos
-            python-version: "3.7"
+#          - qt-binding: PySide6
+#            os: macos
+#            python-version: "3.6"
+#          - qt-binding: PySide6
+#            os: macos
+#            python-version: "3.7"
           - qt-binding: PyQt6
             python-version: "3.6"
 
