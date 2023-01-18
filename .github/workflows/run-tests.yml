@@ -28,6 +28,8 @@ jobs:
 #            python-version: "3.7"
           - qt-binding: PyQt6
             python-version: "3.6"
+          - qt-binding: PySide2
+            python-version: "3.11"
 
     steps:
       - name: Checkout repository
