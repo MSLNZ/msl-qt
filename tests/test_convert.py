@@ -382,17 +382,25 @@ def test_number_to_si():
             assert math.isinf(value)
             assert prefix == ''
         else:
-            assert number == pytest.approx(value, abs=1e-12)
+            assert number == pytest.approx(value, rel=1e-12)
             assert prefix == string
 
     check(convert.number_to_si(math.nan), math.nan, '')
     check(convert.number_to_si(math.inf), math.inf, '')
     check(convert.number_to_si(-math.inf), -math.inf, '')
 
-    with pytest.raises(ValueError, match=r'cannot be expressed'):
-        convert.number_to_si(0.0012e-24)
-
-    check(convert.number_to_si(-12.34e-25), -1.234, 'y')
+    check(convert.number_to_si(1e-34), 0.0001, 'q')
+    check(convert.number_to_si(2.202e-31), 0.2202, 'q')
+    check(convert.number_to_si(3.1e-30), 3.1, 'q')
+    check(convert.number_to_si(2.21e-29), 22.1, 'q')
+    check(convert.number_to_si(2.21e-28), 221.0, 'q')
+    check(convert.number_to_si(5.311e-27), 5.311, 'r')
+    check(convert.number_to_si(6.5e-26), 65.0, 'r')
+    check(convert.number_to_si(-1.234e-25), -123.4, 'r')
+    check(convert.number_to_si(-1.234e-24), -1.234, 'y')
+    check(convert.number_to_si(1.2e-23), 12.0, 'y')
+    check(convert.number_to_si(1.2e-22), 120.0, 'y')
+    check(convert.number_to_si(-4.2345e-21), -4.2345, 'z')
     check(convert.number_to_si(0.123e-20), 1.23, 'z')
     check(convert.number_to_si(-123456e-23), -1.23456, 'a')
     check(convert.number_to_si(1.23e-13), 123.0, 'f')
@@ -424,9 +432,14 @@ def test_number_to_si():
     check(convert.number_to_si(1.234e24), 1.234, 'Y')
     check(convert.number_to_si(12.678e24), 12.678, 'Y')
     check(convert.number_to_si(12345.678e22), 123.45678, 'Y')
-
-    with pytest.raises(ValueError, match=r'cannot be expressed'):
-        convert.number_to_si(12345.678e24)
+    check(convert.number_to_si(1.0001e27), 1.0001, 'R')
+    check(convert.number_to_si(6.221e28), 62.21, 'R')
+    check(convert.number_to_si(7.1341e29), 713.41, 'R')
+    check(convert.number_to_si(9.12e30), 9.12, 'Q')
+    check(convert.number_to_si(8.0614e31), 80.614, 'Q')
+    check(convert.number_to_si(1e32), 100.0, 'Q')
+    check(convert.number_to_si(1.03e33), 1030.0, 'Q')
+    check(convert.number_to_si(1.2345e35), 123450.0, 'Q')
 
     check(convert.number_to_si(-0), 0., '')
     check(convert.number_to_si(0), 0., '')
@@ -461,9 +474,13 @@ def test_number_to_si():
     check(convert.number_to_si(12345678901234567890123456), 12.345678901234567890123456, 'Y')
     check(convert.number_to_si(123456789012345678901234567), 123.456789012345678901234567, 'Y')
     check(convert.number_to_si(-123456789012345678901234567), -123.456789012345678901234567, 'Y')
-
-    with pytest.raises(ValueError, match=r'cannot be expressed'):
-        convert.number_to_si(1234567890123456789012345678)
+    check(convert.number_to_si(1234567890123456789012345678), 1.234567890123456789012345678, 'R')
+    check(convert.number_to_si(-12345678901234567890123456789), -12.345678901234567890123456789, 'R')
+    check(convert.number_to_si(123456789012345678901234567890), 123.456789012345678901234567890, 'R')
+    check(convert.number_to_si(1234567890123456789012345678901), 1.234567890123456789012345678901, 'Q')
+    check(convert.number_to_si(-12345678901234567890123456789012), -12.345678901234567890123456789012, 'Q')
+    check(convert.number_to_si(123456789012345678901234567890123), 123.456789012345678901234567890123, 'Q')
+    check(convert.number_to_si(1234567890123456789012345678901234), 1234.567890123456789012345678901234, 'Q')
 
 
 def test_si_to_number():
@@ -476,6 +493,17 @@ def test_si_to_number():
     check('71.2123P', 712.123e14)
     check('123f', 1.23e-13)
 
+    check('0.00321Q', 3.21e27)
+    check('0.12Q', 1.2e29)
+    check('1.2Q', 1.2e30)
+    check('33.3Q', 33.3e30)
+    check('-123.4Q', -1.234e32)
+    check('-1234567Q', -1.234567e36)
+    check('0.12R', 1.2e26)
+    check('1.2R', 1.2e27)
+    check('33.3R', 33.3e27)
+    check('-123.4R', -1.234e29)
+    check('-1234R', -1.234e30)
     check('0.12Y', 1.2e23)
     check('1.2Y', 1.2e24)
     check('-123.4Y', -1.234e26)
@@ -535,6 +563,17 @@ def test_si_to_number():
     check('0.12y', 1.2e-25)
     check('1.2y', 1.2e-24)
     check('-123.4y', -1.234e-22)
+    check('0.3134r', 3.134e-28)
+    check('1.02r', 1.02e-27)
+    check('42.463r', 4.2463e-26)
+    check('-123.4r', -1.234e-25)
+    check('4321r', 4.321e-24)
+    check('0.000001q', 1.0e-36)
+    check('0.3134q', 3.134e-31)
+    check('1.02q', 1.02e-30)
+    check('42.463q', 4.2463e-29)
+    check('-123.4q', -1.234e-28)
+    check('4321q', 4.321e-27)
 
     # spaces
     check('123.4 m', 1.234e-1)
@@ -553,11 +592,11 @@ def test_si_to_number():
     value = convert.si_to_number('-inf')
     assert math.isinf(value) and value < 0
 
-    for c in 'bcdeghijloqrstvwxABCDFHIJKLNOQRSUVWX':
+    for c in 'bcdeghijlostvwxABCDFHIJKLNOSUVWX':
         with pytest.raises(ValueError):
             convert.si_to_number('1.2' + c)
 
-        for prefix in 'yzafpnu\u00b5mkMGTPEZY':
+        for prefix in 'qryzafpnu\u00b5mkMGTPEZYRQ':
             with pytest.raises(ValueError):
                 convert.si_to_number('1.2' + c + prefix)
 

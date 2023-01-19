@@ -229,12 +229,19 @@ def number_to_si(number, unicode=True):
     n = int(floor(log10(fabs(number)) / 3))
     if n == 0:
         return number, ''
-    if n > 8 or n < -8:
-        raise ValueError(f'The number {number} cannot be expressed with an SI prefix')
     if unicode and n == -2:
         si = MICRO
     else:
-        si = SI_PREFIX_MAP[n]
+        try:
+            si = SI_PREFIX_MAP[n]
+        except KeyError:
+            if n < -10:
+                si, n = 'q', -10
+            elif n > 10:
+                si, n = 'Q', 10
+            else:
+                assert False, 'Should never get here'
+
     return number * 10 ** (-3 * n), si
 
 
