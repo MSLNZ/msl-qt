@@ -1,14 +1,12 @@
 """
 A toggle switch :class:`QtWidgets.QWidget`.
 """
-from .. import (
-    Qt,
-    QtGui,
-    QtCore,
-    QtWidgets,
-    convert,
-    utils,
-)
+from .. import Qt
+from .. import QtCore
+from .. import QtGui
+from .. import QtWidgets
+from .. import convert
+from .. import utils
 
 
 class ToggleSwitch(QtWidgets.QAbstractButton):

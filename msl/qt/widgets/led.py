@@ -3,15 +3,13 @@ An :class:`~msl.qt.widgets.led.LED` widget.
 """
 from enum import IntEnum
 
-from msl.qt import (
-    QtCore,
-    QtWidgets,
-    QtGui,
-    QtSvg,
-    Signal,
-    convert,
-    utils,
-)
+from .. import QtCore
+from .. import QtGui
+from .. import QtSvg
+from .. import QtWidgets
+from .. import Signal
+from .. import convert
+from .. import utils
 
 
 class Shapes(IntEnum):

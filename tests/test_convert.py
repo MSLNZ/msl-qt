@@ -1,19 +1,17 @@
+import math
 import os
 import sys
-import math
 from io import StringIO
 
 import pytest
 
-from msl.qt import (
-    QtWidgets,
-    QtCore,
-    QtGui,
-    Qt,
-    convert,
-    binding,
-    characters
-)
+from msl.qt import Qt
+from msl.qt import QtCore
+from msl.qt import QtGui
+from msl.qt import QtWidgets
+from msl.qt import binding
+from msl.qt import characters
+from msl.qt import convert
 
 
 def has_pythonnet():

@@ -6,12 +6,10 @@ event that happened or to request information from the user.
 """
 import traceback
 
-from . import (
-    QtWidgets,
-    Qt,
-    application,
-    binding,
-)
+from . import Qt
+from . import QtWidgets
+from . import application
+from . import binding
 from .convert import to_qfont
 
 

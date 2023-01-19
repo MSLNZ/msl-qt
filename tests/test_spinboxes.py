@@ -3,11 +3,9 @@ import string
 
 import pytest
 
-from msl.qt import (
-    binding,
-    QtGui,
-    GREEK,
-)
+from msl.qt import GREEK
+from msl.qt import QtGui
+from msl.qt import binding
 from msl.qt.widgets import spinboxes
 
 

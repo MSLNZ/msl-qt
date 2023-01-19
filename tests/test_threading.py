@@ -1,14 +1,12 @@
 import pytest
 
-from msl.qt import (
-    application,
-    QtCore,
-    Thread,
-    Worker,
-    Signal,
-    Slot,
-    binding,
-)
+from msl.qt import QtCore
+from msl.qt import Signal
+from msl.qt import Slot
+from msl.qt import Thread
+from msl.qt import Worker
+from msl.qt import application
+from msl.qt import binding
 
 
 def test_invalid_constructor():

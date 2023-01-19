@@ -1,16 +1,14 @@
 """
 A :class:`~QtWidgets.QWidget` to display :mod:`logging` messages.
 """
-import random
-import logging
 import datetime
+import logging
+import random
 
-from .. import (
-    QtWidgets,
-    QtGui,
-    prompt,
-    convert,
-)
+from .. import QtGui
+from .. import QtWidgets
+from .. import convert
+from .. import prompt
 
 
 class Logger(logging.Handler, QtWidgets.QWidget):

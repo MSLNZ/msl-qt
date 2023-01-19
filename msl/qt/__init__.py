@@ -55,28 +55,24 @@ def application(*args):
 
 
 from ._qt import *
-from .exceptions import excepthook
-from . import utils
-from .loop_until_abort import LoopUntilAbort
-from . import prompt
-from .sleep import Sleep
 from . import convert
-from .threading import (
-    Thread,
-    Worker,
-)
-from .widgets import (
-    Button,
-    CheckBox,
-    ComboBox,
-    LineEdit,
-    Logger,
-    ToggleSwitch,
-    DoubleSpinBox,
-    SpinBox,
-    LED,
-)
+from . import prompt
+from . import utils
 from .characters import *
+from .exceptions import excepthook
+from .loop_until_abort import LoopUntilAbort
+from .sleep import Sleep
+from .threading import Thread
+from .threading import Worker
+from .widgets import Button
+from .widgets import CheckBox
+from .widgets import ComboBox
+from .widgets import DoubleSpinBox
+from .widgets import LED
+from .widgets import LineEdit
+from .widgets import Logger
+from .widgets import SpinBox
+from .widgets import ToggleSwitch
 
 # the following object is imported from _qt.py
 binding = binding

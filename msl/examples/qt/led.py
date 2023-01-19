@@ -3,13 +3,11 @@ An :class:`~msl.qt.widget.led.LED` example.
 """
 import random
 
-from msl.qt import (
-    application,
-    Qt,
-    QtWidgets,
-    QtCore,
-    LED,
-)
+from msl.qt import LED
+from msl.qt import Qt
+from msl.qt import QtCore
+from msl.qt import QtWidgets
+from msl.qt import application
 
 
 class BlinkingLEDs(QtWidgets.QWidget):

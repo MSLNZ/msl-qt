@@ -2,12 +2,10 @@
 Display all the icons available in :obj:`QtWidgets.QStyle.StandardPixmap` and in
 the *standard* Windows DLL/EXE files.
 """
-from msl.qt import (
-    QtWidgets,
-    QtCore,
-    application,
-    convert
-)
+from msl.qt import QtCore
+from msl.qt import QtWidgets
+from msl.qt import application
+from msl.qt import convert
 
 try:
     import clr  # check if pythonnet is installed

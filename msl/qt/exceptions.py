@@ -3,16 +3,12 @@ Exception handling.
 """
 import traceback as tb
 
-from .utils import (
-    logger,
-    save_image,
-)
-from . import (
-    Qt,
-    QtWidgets,
-    application,
-    prompt,
-)
+from . import Qt
+from . import QtWidgets
+from . import application
+from . import prompt
+from .utils import logger
+from .utils import save_image
 
 
 def excepthook(exctype, value, traceback):

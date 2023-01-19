@@ -3,13 +3,11 @@ from tempfile import NamedTemporaryFile
 
 import pytest
 
-from msl.qt import (
-    Qt,
-    QtGui,
-    QtCore,
-    QtWidgets,
-    utils,
-)
+from msl.qt import Qt
+from msl.qt import QtCore
+from msl.qt import QtGui
+from msl.qt import QtWidgets
+from msl.qt import utils
 
 
 def test_screen_geometry():

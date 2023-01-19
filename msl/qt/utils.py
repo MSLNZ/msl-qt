@@ -4,10 +4,8 @@ General functions.
 import fnmatch
 import logging
 
-from . import (
-    QtGui,
-    application,
-)
+from . import QtGui
+from . import application
 
 __all__ = (
     'drag_drop_paths',

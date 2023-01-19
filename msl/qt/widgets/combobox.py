@@ -1,10 +1,8 @@
 """
 A :class:`~QtWidgets.QComboBox` with more options in the constructor.
 """
-from .. import (
-    QtWidgets,
-    QtGui,
-)
+from .. import QtGui
+from .. import QtWidgets
 
 
 class ComboBox(QtWidgets.QComboBox):

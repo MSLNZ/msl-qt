@@ -4,9 +4,9 @@ A :class:`~msl.qt.widget.line_edit.LineEdit` example.
 from random import randint
 
 from msl.qt import LineEdit
+from msl.qt import QtCore
 from msl.qt import QtWidgets
 from msl.qt import application
-from msl.qt import QtCore
 
 
 class Window(QtWidgets.QWidget):

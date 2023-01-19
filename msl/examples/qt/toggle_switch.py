@@ -1,11 +1,9 @@
 """
 Example showing the :class:`~msl.qt.widgets.toggle_switch.ToggleSwitch`.
 """
-from msl.qt import (
-    QtWidgets,
-    application,
-    ToggleSwitch
-)
+from msl.qt import QtWidgets
+from msl.qt import ToggleSwitch
+from msl.qt import application
 
 
 def print_state(checked):

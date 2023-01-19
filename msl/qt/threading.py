@@ -4,11 +4,9 @@ Base classes for starting a process in a new :class:`~QtCore.QThread`.
 import sys
 import traceback as tb
 
-from . import (
-    QtCore,
-    Signal,
-    prompt,
-)
+from . import QtCore
+from . import Signal
+from . import prompt
 
 
 class Worker(QtCore.QObject):

@@ -1,9 +1,20 @@
 """
 A wrapper for different Python bindings for Qt.
 """
-import os
 import importlib
+import os
 from collections import namedtuple
+
+__all__ = (
+    'Qt',
+    'QtCore',
+    'QtGui',
+    'QtSvg',
+    'QtWidgets',
+    'Signal',
+    'Slot',
+    'binding',
+)
 
 # the order in the tuple represents the search order when importing the package
 packages = ('PySide6', 'PyQt6', 'PySide2', 'PyQt5')
@@ -114,15 +125,3 @@ if qt_api in ('PySide2', 'PyQt5'):
     # QAction and QActionGroup were moved from QtWidgets (Qt5) to QtGui (Qt6)
     QtGui.QAction = QtWidgets.QAction
     QtGui.QActionGroup = QtWidgets.QActionGroup
-
-
-__all__ = (
-    'Qt',
-    'QtGui',
-    'QtWidgets',
-    'QtCore',
-    'QtSvg',
-    'Signal',
-    'Slot',
-    'binding',
-)

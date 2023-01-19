@@ -1,13 +1,11 @@
 """
 A :class:`~QtWidgets.QToolButton` to display text, an icon and a menu.
 """
-from .. import (
-    QtWidgets,
-    QtCore,
-    Qt,
-    QtGui,
-    convert,
-)
+from .. import Qt
+from .. import QtCore
+from .. import QtGui
+from .. import QtWidgets
+from .. import convert
 
 
 class Button(QtWidgets.QToolButton):

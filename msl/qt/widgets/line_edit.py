@@ -2,9 +2,9 @@
 A :class:`~QtWidgets.QLineEdit` that can rescale the font size based on the
 size of widget.
 """
-from msl.qt import Qt
-from msl.qt import QtGui
-from msl.qt import QtWidgets
+from .. import Qt
+from .. import QtGui
+from .. import QtWidgets
 
 
 class LineEdit(QtWidgets.QLineEdit):

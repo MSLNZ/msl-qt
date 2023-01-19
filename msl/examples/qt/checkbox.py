@@ -2,9 +2,9 @@
 A :class:`~msl.qt.widget.checkbox.CheckBox` example.
 """
 from msl.qt import CheckBox
+from msl.qt import Qt
 from msl.qt import QtWidgets
 from msl.qt import application
-from msl.qt import Qt
 
 
 def on_state_changed(state):

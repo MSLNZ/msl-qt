@@ -1,10 +1,10 @@
 """
 A :func:`~msl.qt.prompt.comments` example.
 """
-import os
-import json
-import random
 import datetime
+import json
+import os
+import random
 import tempfile
 
 from msl import qt

@@ -1,18 +1,16 @@
 """
 A :class:`QtWidgets.QDialog` to prompt the user to enter comments.
 """
-import os
 import json
+import os
 from datetime import datetime
 
-from .. import (
-    QtWidgets,
-    Qt,
-    prompt,
-    Button,
-    convert,
-    utils,
-)
+from .. import Button
+from .. import Qt
+from .. import QtWidgets
+from .. import convert
+from .. import prompt
+from .. import utils
 from ..constants import HOME_DIR
 
 

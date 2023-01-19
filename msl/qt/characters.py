@@ -3,10 +3,15 @@ Unicode characters.
 """
 from enum import Enum
 
-__all__ = [
-    'DEGREE', 'DEGREE_C', 'DEGREE_F', 'GREEK',
-    'INFINITY', 'MICRO', 'PLUS_MINUS',
-]
+__all__ = (
+    'DEGREE',
+    'DEGREE_C',
+    'DEGREE_F',
+    'GREEK',
+    'INFINITY',
+    'MICRO',
+    'PLUS_MINUS',
+)
 
 DEGREE = '\u00B0'
 """Degree character."""

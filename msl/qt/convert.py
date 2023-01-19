@@ -1,41 +1,37 @@
 """
 Functions to convert objects.
 """
+import ctypes
 import os
 import sys
-import ctypes
 import textwrap
-from math import (
-    isinf,
-    isnan,
-    floor,
-    log10,
-    fabs,
-)
+from math import fabs
+from math import floor
+from math import isinf
+from math import isnan
+from math import log10
 
 try:
-    import clr  # import pythonnet
+    import clr
 except (ImportError, RuntimeError):
     # A RuntimeError will occur if pythonnet is installed,
     # but there is no .NET runtime installed
     clr = None
 
-from .constants import SI_PREFIX_MAP
+from . import Qt
+from . import QtCore
+from . import QtGui
+from . import QtWidgets
+from . import application
+from . import binding
 from .characters import MICRO
-from . import (
-    Qt,
-    QtGui,
-    QtCore,
-    QtWidgets,
-    application,
-    binding,
-)
+from .constants import SI_PREFIX_MAP
 
 __all__ = (
     'icon_to_base64',
-    'rescale_icon',
     'number_to_si',
     'print_base64',
+    'rescale_icon',
     'si_to_number',
     'to_qcolor',
     'to_qfont',

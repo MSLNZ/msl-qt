@@ -3,10 +3,8 @@ Sleep without freezing the graphical user interface.
 """
 import time
 
-from .threading import (
-    Thread,
-    Worker
-)
+from .threading import Thread
+from .threading import Worker
 
 
 class SleepWorker(Worker):

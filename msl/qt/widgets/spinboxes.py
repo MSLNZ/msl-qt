@@ -24,15 +24,11 @@ following events occur:
 """
 from enum import Enum
 
-from ..convert import (
-    si_to_number,
-    number_to_si,
-)
-from .. import (
-    QtWidgets,
-    QtGui,
-    binding,
-)
+from .. import QtGui
+from .. import QtWidgets
+from .. import binding
+from ..convert import number_to_si
+from ..convert import si_to_number
 
 
 class SpinBox(QtWidgets.QSpinBox):

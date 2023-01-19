@@ -1,13 +1,11 @@
 """
 Example to show the :class:`~msl.qt.widgets.logger.Logger`.
 """
-import random
 import logging
+import random
 
-from msl.qt import (
-    application,
-    Logger
-)
+from msl.qt import Logger
+from msl.qt import application
 
 
 def show():
