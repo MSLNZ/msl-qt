@@ -19,6 +19,9 @@ jobs:
         os: [windows-latest, ubuntu-20.04, macos-latest]
         qt-binding: [PySide6, PyQt6, PySide2, PyQt5]
         exclude:
+          - qt-binding: PyQt6
+            python-version: "3.6"
+            os: windows-latest
           - qt-binding: PySide2
             python-version: "3.11"
 
