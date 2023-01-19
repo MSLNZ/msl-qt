@@ -9,7 +9,9 @@ from msl.qt import convert
 
 try:
     import clr  # check if pythonnet is installed
-except ImportError:
+except (ImportError, RuntimeError):
+    # A RuntimeError will occur if pythonnet is installed,
+    # but there is no .NET runtime installed
     clr = None
 
 
