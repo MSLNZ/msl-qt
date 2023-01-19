@@ -601,7 +601,7 @@ def print_base64(icon, *, size=None, name='', line_width=80, file=None):
     b'2jOdPdFSqkheRoFaGlL8hFCOHQFshMAzDLZCKA0s+uQD9qaA7iQPI8FAEBjZpsxgCgiOzNbAkjt' \\
     b'w6Sn6O5+rOt63xX4BLiZ2arvtdyEqaqW35T/RC/uTS/6P1rpJAAAAABJRU5ErkJggg=='
 
-    >>> print_base64(QtWidgets.QStyle.SP_MediaPlay, name='my_play_icon')
+    >>> print_base64(QtWidgets.QStyle.SP_MediaPlay, name='my_play_icon', size=32)
     my_play_icon = b'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAk6' \\
                    b'AAAJOgHwZJJKAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48' \\
                    b'GgAAAaVJREFUWIXtlLFuE0EURc8bO8gyiiMhUYC8M2vHldPhz+AD6LDSp0FU' \\
