@@ -105,8 +105,8 @@ if qt_api == 'PyQt6' or binding.version_info[:2] >= (6, 4):
     for qt in (QtCore, QtWidgets, QtGui, QtSvg):
         for _, cls in getmembers(qt, isclass):
             for _, enum in getmembers(cls, isenum):
-                for item in enum:
-                    setattr(cls, item.name, item)
+                for name, value in enum.__members__.items():
+                    setattr(cls, name, value)
 
 # make Qt5 to be compatible with Qt6
 if qt_api in ('PySide2', 'PyQt5'):
