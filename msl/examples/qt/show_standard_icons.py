@@ -2,6 +2,7 @@
 Display all the icons available in :obj:`QtWidgets.QStyle.StandardPixmap` and in
 the *standard* Windows DLL/EXE files.
 """
+from msl.qt import Qt
 from msl.qt import QtCore
 from msl.qt import QtWidgets
 from msl.qt import application
@@ -30,7 +31,7 @@ class ShowStandardIcons(object):
 
         # add a progress bar to the status bar
         self.progress_bar = QtWidgets.QProgressBar(self.main_window.statusBar())
-        self.progress_bar.setAlignment(QtCore.Qt.AlignCenter)
+        self.progress_bar.setAlignment(Qt.AlignCenter)
         self.main_window.statusBar().addPermanentWidget(self.progress_bar)
         self.main_window.showMaximized()
 
@@ -39,14 +40,14 @@ class ShowStandardIcons(object):
         self.zoom_widget = QtWidgets.QDialog()
         self.zoom_widget.setSizeGripEnabled(True)
         self.zoom_widget.resize(QtCore.QSize(256, 256))
-        self.zoom_widget.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+        self.zoom_widget.setWindowFlags(Qt.WindowCloseButtonHint)
         vbox = QtWidgets.QVBoxLayout()
         self.zoom_label = QtWidgets.QLabel()
         self.zoom_label.setScaledContents(True)
         vbox.addWidget(self.zoom_label)
         self.zoom_widget.setLayout(vbox)
 
-        qt_icons = [sp for sp in dir(QtWidgets.QStyle) if sp.startswith('SP_')]
+        qt_icons = [sp for sp in dir(QtWidgets.QStyle.StandardPixmap) if sp.startswith('SP_')]
 
         self.windows_files = [
             'accessibilitycpl',
@@ -157,7 +158,7 @@ class ShowStandardIcons(object):
     def zoom(self, ico, name):
         self.zoom_widget.setWindowTitle(name)
         self.zoom_label.setPixmap(ico.pixmap(self.zoom_widget.size()))
-        self.zoom_widget.setWindowState(QtCore.Qt.WindowActive)
+        self.zoom_widget.setWindowState(Qt.WindowActive)
         self.zoom_widget.activateWindow()
         self.zoom_widget.show()
 
