@@ -71,7 +71,7 @@ class LineEdit(QtWidgets.QLineEdit):
                                QtWidgets.QSizePolicy.Policy.Fixed)
             try:
                 self.textChanged.disconnect(self._rescale_font)
-            except RuntimeError:
+            except (RuntimeError, TypeError):
                 # the slot was not connected
                 pass
 
