@@ -34,7 +34,7 @@ class LineEdit(QtWidgets.QLineEdit):
             The parent widget.
         """
         super().__init__(parent=parent)
-        self.setAlignment(align or Qt.AlignLeft)
+        self.setAlignment(align or Qt.AlignmentFlag.AlignLeft)
         self.setReadOnly(read_only)
 
         self._min_height = self.sizeHint().height()
@@ -62,13 +62,13 @@ class LineEdit(QtWidgets.QLineEdit):
         self._rescalable = bool(enable)
         if enable:
             self.setMinimumHeight(self._min_height)
-            self.setSizePolicy(QtWidgets.QSizePolicy.Ignored,
-                               QtWidgets.QSizePolicy.Ignored)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored,
+                               QtWidgets.QSizePolicy.Policy.Ignored)
             self.textChanged.connect(self._rescale_font)
         else:
             self.setMinimumHeight(0)
-            self.setSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                               QtWidgets.QSizePolicy.Fixed)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
+                               QtWidgets.QSizePolicy.Policy.Fixed)
             try:
                 self.textChanged.disconnect(self._rescale_font)
             except RuntimeError:

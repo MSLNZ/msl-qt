@@ -21,7 +21,9 @@ class Comments(QtWidgets.QDialog):
 
         Do not instantiate directly. Use :func:`msl.qt.prompt.comments` instead.
         """
-        super(Comments, self).__init__(None, Qt.WindowCloseButtonHint | Qt.WindowMinMaxButtonsHint)
+        super(Comments, self).__init__(
+            None, Qt.WindowType.WindowCloseButtonHint | Qt.WindowType.WindowMinMaxButtonsHint)
+
         self.setWindowTitle(title)
 
         self.path = json_path if json_path else os.path.join(HOME_DIR, 'msl-qt-comments.json')
@@ -80,7 +82,7 @@ class Comments(QtWidgets.QDialog):
         )
         self.ok_button.add_menu_item(
             text='Clear history',
-            icon=QtWidgets.QStyle.SP_DialogResetButton,
+            icon=QtWidgets.QStyle.StandardPixmap.SP_DialogResetButton,
             triggered=self.clear_history,
             tooltip='Delete all comments that are in the history'
         )
@@ -93,12 +95,12 @@ class Comments(QtWidgets.QDialog):
         self.filter_edit.returnPressed.connect(self.apply_filter)
 
         filter_button = Button(
-            icon=QtWidgets.QStyle.SP_FileDialogContentsView,
+            icon=QtWidgets.QStyle.StandardPixmap.SP_FileDialogContentsView,
             tooltip='Apply filter',
             left_click=self.apply_filter
         )
         clear_button = Button(
-            icon=QtWidgets.QStyle.SP_LineEditClearButton,
+            icon=QtWidgets.QStyle.StandardPixmap.SP_LineEditClearButton,
             tooltip='Clear filter',
             left_click=self.clear_filter
         )
@@ -117,9 +119,9 @@ class Comments(QtWidgets.QDialog):
         self.table.setColumnCount(len(table_header))
         self.table.setHorizontalHeaderLabels(table_header)
         self.table.setSortingEnabled(True)
-        self.table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)  # disable editing the table
-        self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)  # highlight entire row when selected
-        self.table.horizontalHeader().setStretchLastSection(True)  # make the last column stretch to fill the table
+        self.table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table.horizontalHeader().setStretchLastSection(True)
         self.table.horizontalHeader().sectionClicked.connect(self.update_table_row_colors_and_resize)
         self.table.cellDoubleClicked.connect(self.table_double_click)
         self.table.keyPressEvent = self.table_key_press
@@ -174,11 +176,11 @@ class Comments(QtWidgets.QDialog):
 
     def table_key_press(self, event):
         # CTRL+A pressed
-        if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_A:
+        if event.modifiers() == Qt.KeyboardModifier.ControlModifier and event.key() == Qt.Key.Key_A:
             self.table.selectAll()
             return
 
-        if event.key() != Qt.Key_Delete:
+        if event.key() != Qt.Key.Key_Delete:
             return
 
         # sort the selected rows in reverse order for the self.table.removeRow method below
@@ -213,4 +215,4 @@ class Comments(QtWidgets.QDialog):
                 # sometimes the item in the row has a NoneTye
                 # possibly do to signaling issues?
                 pass
-        self.table.verticalHeader().resizeSections(QtWidgets.QHeaderView.ResizeToContents)
+        self.table.verticalHeader().resizeSections(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)

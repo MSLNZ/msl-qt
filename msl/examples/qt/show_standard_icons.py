@@ -31,7 +31,7 @@ class ShowStandardIcons(object):
 
         # add a progress bar to the status bar
         self.progress_bar = QtWidgets.QProgressBar(self.main_window.statusBar())
-        self.progress_bar.setAlignment(Qt.AlignCenter)
+        self.progress_bar.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.main_window.statusBar().addPermanentWidget(self.progress_bar)
         self.main_window.showMaximized()
 
@@ -40,7 +40,7 @@ class ShowStandardIcons(object):
         self.zoom_widget = QtWidgets.QDialog()
         self.zoom_widget.setSizeGripEnabled(True)
         self.zoom_widget.resize(QtCore.QSize(256, 256))
-        self.zoom_widget.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.zoom_widget.setWindowFlags(Qt.WindowType.WindowCloseButtonHint)
         vbox = QtWidgets.QVBoxLayout()
         self.zoom_label = QtWidgets.QLabel()
         self.zoom_label.setScaledContents(True)
@@ -158,7 +158,7 @@ class ShowStandardIcons(object):
     def zoom(self, ico, name):
         self.zoom_widget.setWindowTitle(name)
         self.zoom_label.setPixmap(ico.pixmap(self.zoom_widget.size()))
-        self.zoom_widget.setWindowState(Qt.WindowActive)
+        self.zoom_widget.setWindowState(Qt.WindowState.WindowActive)
         self.zoom_widget.activateWindow()
         self.zoom_widget.show()
 

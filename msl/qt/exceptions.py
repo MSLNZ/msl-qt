@@ -29,7 +29,7 @@ def excepthook(exctype, value, traceback):
     class ErrorDialog(QtWidgets.QDialog):
 
         def __init__(self):
-            super(ErrorDialog, self).__init__(None, Qt.WindowCloseButtonHint)
+            super(ErrorDialog, self).__init__(None, Qt.WindowType.WindowCloseButtonHint)
 
             # add a prefix to the title bar
             w = app.activeWindow()
@@ -66,11 +66,11 @@ def excepthook(exctype, value, traceback):
             self.detailed_textedit.setText(details)
             self.detailed_textedit.setReadOnly(True)
 
-            expanding = QtWidgets.QSizePolicy.Expanding
+            expanding = QtWidgets.QSizePolicy.Policy.Expanding
 
             label_layout = QtWidgets.QHBoxLayout()
             label_layout.addWidget(self.icon_label)
-            label_layout.addWidget(self.error_label, alignment=Qt.AlignLeft)
+            label_layout.addWidget(self.error_label, alignment=Qt.AlignmentFlag.AlignLeft)
             label_layout.addSpacerItem(QtWidgets.QSpacerItem(1, 1, expanding, expanding))
 
             button_layout = QtWidgets.QHBoxLayout()

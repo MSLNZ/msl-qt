@@ -31,7 +31,7 @@ def critical(message, *, title=None, font=None):
     if isinstance(message, Exception):
         message = traceback.format_exc()
     app, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Critical)
+    mb.setIcon(QtWidgets.QMessageBox.Icon.Critical)
     mb.exec()
 
 
@@ -66,7 +66,7 @@ def double(message, *, title=None, font=None, value=0, minimum=-2147483647, maxi
         The value or :data:`None` if the user cancelled the request.
     """
     app, dialog = _input_dialog(title=title, message=message, font=font)
-    dialog.setInputMode(QtWidgets.QInputDialog.DoubleInput)
+    dialog.setInputMode(QtWidgets.QInputDialog.InputMode.DoubleInput)
     dialog.setDoubleRange(minimum, maximum)
     dialog.setDoubleStep(step)
     dialog.setDoubleDecimals(decimals)
@@ -151,7 +151,7 @@ def information(message, *, title=None, font=None):
     if isinstance(message, Exception):
         message = traceback.format_exc()
     app, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Information)
+    mb.setIcon(QtWidgets.QMessageBox.Icon.Information)
     mb.exec()
 
 
@@ -184,7 +184,7 @@ def integer(message, *, title=None, font=None, value=0, minimum=-2147483647, max
         The value or :data:`None` if the user cancelled the request.
     """
     app, dialog = _input_dialog(title=title, message=message, font=font)
-    dialog.setInputMode(QtWidgets.QInputDialog.IntInput)
+    dialog.setInputMode(QtWidgets.QInputDialog.InputMode.IntInput)
     dialog.setIntRange(minimum, maximum)
     dialog.setIntStep(step)
     dialog.setIntValue(value)
@@ -226,7 +226,7 @@ def item(message, items, *, title=None, font=None, index=0):
     dialog.setComboBoxItems(items_)
     dialog.setTextValue(items_[index])
     dialog.setComboBoxEditable(False)
-    dialog.setInputMethodHints(Qt.ImhNone)
+    dialog.setInputMethodHints(Qt.InputMethodHint.ImhNone)
     ok = dialog.exec()
     return items[items_.index(dialog.textValue())] if ok else None
 
@@ -342,9 +342,9 @@ def text(message, *, title=None, font=None, value='', multi_line=False, echo=QtW
     """
     app, dialog = _input_dialog(title=title, message=message, font=font)
     dialog.setTextValue(value)
-    dialog.setInputMethodHints(Qt.ImhNone)
+    dialog.setInputMethodHints(Qt.InputMethodHint.ImhNone)
     if multi_line:
-        dialog.setOption(QtWidgets.QInputDialog.UsePlainTextEditForTextInput)
+        dialog.setOption(QtWidgets.QInputDialog.InputDialogOption.UsePlainTextEditForTextInput)
     else:
         dialog.setTextEchoMode(QtWidgets.QLineEdit.EchoMode(echo))
     ok = dialog.exec()
@@ -371,7 +371,7 @@ def password(message, *, title=None, font=None):
     :class:`str` or :data:`None`
         The password or :data:`None` if the user cancelled the request.
     """
-    return text(message, title=title, font=font, echo=QtWidgets.QLineEdit.Password)
+    return text(message, title=title, font=font, echo=QtWidgets.QLineEdit.EchoMode.Password)
 
 
 def warning(message, *, title=None, font=None):
@@ -392,7 +392,7 @@ def warning(message, *, title=None, font=None):
     if isinstance(message, Exception):
         message = traceback.format_exc()
     app, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Warning)
+    mb.setIcon(QtWidgets.QMessageBox.Icon.Warning)
     mb.exec()
 
 
@@ -418,12 +418,14 @@ def ok_cancel(message, *, title=None, font=None, default=True):
     :class:`bool` or :data:`None`
         :data:`True` if the user answered ``Ok``, :data:`None` if the user answered ``Cancel``.
     """
+    ok = QtWidgets.QMessageBox.StandardButton.Ok
+    cancel = QtWidgets.QMessageBox.StandardButton.Cancel
     app, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Question)
-    mb.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
-    mb.setDefaultButton(QtWidgets.QMessageBox.Ok if default else QtWidgets.QMessageBox.Cancel)
+    mb.setIcon(QtWidgets.QMessageBox.Icon.Question)
+    mb.setStandardButtons(ok | cancel)
+    mb.setDefaultButton(ok if default else cancel)
     response = mb.exec()
-    if _equal(response, QtWidgets.QMessageBox.Ok):
+    if _equal(response, ok):
         return True
     return None
 
@@ -450,12 +452,14 @@ def yes_no(message, *, title=None, font=None, default=True):
     :class:`bool`
         :data:`True` if the user answered ``Yes``, :data:`False` if the user answered ``No``.
     """
+    yes = QtWidgets.QMessageBox.StandardButton.Yes
+    no = QtWidgets.QMessageBox.StandardButton.No
     app, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Question)
-    mb.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-    mb.setDefaultButton(QtWidgets.QMessageBox.Yes if default else QtWidgets.QMessageBox.No)
+    mb.setIcon(QtWidgets.QMessageBox.Icon.Question)
+    mb.setStandardButtons(yes | no)
+    mb.setDefaultButton(yes if default else no)
     response = mb.exec()
-    return _equal(response, QtWidgets.QMessageBox.Yes)
+    return _equal(response, yes)
 
 
 def yes_no_cancel(message, *, title=None, font=None, default=True):
@@ -482,19 +486,22 @@ def yes_no_cancel(message, *, title=None, font=None, default=True):
         :data:`True` if the user answered ``Yes``, :data:`False` if the user answered ``No``,
         or :data:`None` if the user answered ``Cancel``.
     """
+    yes = QtWidgets.QMessageBox.StandardButton.Yes
+    no = QtWidgets.QMessageBox.StandardButton.No
+    cancel = QtWidgets.QMessageBox.StandardButton.Cancel
     app, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Question)
-    mb.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel)
+    mb.setIcon(QtWidgets.QMessageBox.Icon.Question)
+    mb.setStandardButtons(yes | no | cancel)
     if default is None:
-        mb.setDefaultButton(QtWidgets.QMessageBox.Cancel)
+        mb.setDefaultButton(cancel)
     elif default:
-        mb.setDefaultButton(QtWidgets.QMessageBox.Yes)
+        mb.setDefaultButton(yes)
     else:
-        mb.setDefaultButton(QtWidgets.QMessageBox.No)
+        mb.setDefaultButton(no)
     response = mb.exec()
-    if _equal(response, QtWidgets.QMessageBox.Yes):
+    if _equal(response, yes):
         return True
-    elif _equal(response, QtWidgets.QMessageBox.No):
+    elif _equal(response, no):
         return False
     return None
 
@@ -510,7 +517,7 @@ def _get_app_and_title(title):
 
 def _input_dialog(*, title=None, message=None, font=None):
     app, title = _get_app_and_title(title)
-    dialog = QtWidgets.QInputDialog(app.activeWindow(), flags=Qt.WindowCloseButtonHint)
+    dialog = QtWidgets.QInputDialog(app.activeWindow(), flags=Qt.WindowType.WindowCloseButtonHint)
     dialog.setWindowTitle(title)
     dialog.setLabelText(message)
     if font:

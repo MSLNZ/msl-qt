@@ -124,7 +124,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
     def enterEvent(self, event):
         """Overrides :meth:`QtWidgets.QWidget.enterEvent`."""
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
 
     def paintEvent(self, event):
         """Overrides :meth:`QtWidgets.QWidget.paintEvent`."""
@@ -141,8 +141,8 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             opacity = 0.5
 
         p = QtGui.QPainter(self)
-        p.setPen(Qt.NoPen)
-        p.setRenderHint(QtGui.QPainter.Antialiasing, True)
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing, True)
         ellipse = QtCore.QRect(x, self._pad, diameter, diameter)
         w = max(diameter, self.width() - 2 * self._pad)
         rect = QtCore.QRect(self._pad, self._pad, w, diameter)
@@ -153,7 +153,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             p.setOpacity(1.0)
             p.drawEllipse(ellipse)
         else:
-            p.setBrush(Qt.black)
+            p.setBrush(Qt.GlobalColor.black)
             p.setOpacity(0.12)
             p.drawRoundedRect(rect, radius, radius)
             p.setOpacity(1.0)

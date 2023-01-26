@@ -111,12 +111,12 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._update_label()
 
         self._save_button = QtWidgets.QPushButton()
-        self._save_button.setIcon(convert.to_qicon(QtWidgets.QStyle.SP_DialogSaveButton))
+        self._save_button.setIcon(convert.to_qicon(QtWidgets.QStyle.StandardPixmap.SP_DialogSaveButton))
         self._save_button.clicked.connect(self._save_records)
         self._save_button.setToolTip('Save the log records')
 
         self._text_browser = QtWidgets.QTextBrowser(self)
-        self._text_browser.setLineWrapMode(QtWidgets.QTextBrowser.NoWrap)
+        self._text_browser.setLineWrapMode(QtWidgets.QTextBrowser.LineWrapMode.NoWrap)
         self._vsb = self._text_browser.verticalScrollBar()
 
         #
@@ -206,8 +206,8 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         self._text_browser.append(msg)
         self._num_displayed += 1
         if self._vsb.maximum() - self._vsb.value() <= self._vsb.singleStep():
-            self._text_browser.moveCursor(QtGui.QTextCursor.End)
-            self._text_browser.moveCursor(QtGui.QTextCursor.StartOfLine)
+            self._text_browser.moveCursor(QtGui.QTextCursor.MoveOperation.End)
+            self._text_browser.moveCursor(QtGui.QTextCursor.MoveOperation.StartOfLine)
 
     def _level_checkbox_changed(self, state):
         self._update_records(self._level_combobox.currentText())
@@ -217,7 +217,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
         if len(self._records) == 0:
             prompt.information('There are no log records to save.')
             return
-        option = QtWidgets.QFileDialog.DontConfirmOverwrite
+        option = QtWidgets.QFileDialog.Option.DontConfirmOverwrite
         title = 'Save the Log Records (appends to an existing file)'
         path = prompt.save(filters={'Log Files': '*.log'}, title=title, options=option)
         if path is None:

@@ -4,6 +4,7 @@ Repeatedly perform a task until aborted by the user.
 import datetime
 import traceback
 
+from . import Qt
 from . import QtCore
 from . import QtGui
 from . import QtWidgets
@@ -102,7 +103,8 @@ class LoopUntilAbort(object):
         if title is None:
             title = self.__class__.__name__
         self._main_window.setWindowTitle(title)
-        self._main_window.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
+        self._main_window.setWindowFlags(
+            Qt.WindowType.WindowCloseButtonHint | Qt.WindowType.WindowMinimizeButtonHint)
 
         font = QtGui.QFont(font_family, pointSize=font_size)
         text_hex_color = QtGui.QColor(text_color).name()

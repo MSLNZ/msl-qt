@@ -20,7 +20,7 @@ class BlinkingLEDs(QtWidgets.QWidget):
         # The shape can be an enum value or member name (case in-sensitive)
         # The color can be anything that msl.qt.utils.to_qcolor() accepts
         params = [
-            {'shape': LED.Circle, 'on_color': Qt.darkGreen, 'clickable': True},
+            {'shape': LED.Circle, 'on_color': Qt.GlobalColor.darkGreen, 'clickable': True},
             {'shape': 'rouNDed', 'on_color': (78, 82, 107)},
             {'shape': 2, 'on_color': 'cyan', 'clickable': True},
             {'shape': 'Triangle', 'on_color': '#6b3064'},

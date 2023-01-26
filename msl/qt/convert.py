@@ -69,14 +69,14 @@ def to_qfont(*args):
     >>> font = to_qfont(23.4)
     >>> font = to_qfont('Ariel')
     >>> font = to_qfont('Ariel', 16)
-    >>> font = to_qfont('Ariel', 16, QtGui.QFont.Bold)
+    >>> font = to_qfont('Ariel', 16, QtGui.QFont.Weight.Bold)
     >>> font = to_qfont('Ariel', 16, 50, True)
 
     If you are using Qt 6.1+ then you can specify multiple family names
     >>> font = to_qfont('Ariel', 'Papyrus')
     >>> font = to_qfont('Ariel', 'Papyrus', 'Helvetica [Cronyx]', 16)
-    >>> font = to_qfont('Ariel', 'Helvetica', 16, QtGui.QFont.Bold)
-    >>> font = to_qfont('Ariel', 'Papyrus', 'Times', 16, QtGui.QFont.Bold, True)
+    >>> font = to_qfont('Ariel', 'Helvetica', 16, QtGui.QFont.Weight.Bold)
+    >>> font = to_qfont('Ariel', 'Papyrus', 'Times', 16, QtGui.QFont.Weight.Bold, True)
 
     """
     if not args:
@@ -163,8 +163,8 @@ def to_qcolor(*args):
     >>> color = to_qcolor(0.5)  # greyscale -> (127, 127, 127, 255)
     >>> color = to_qcolor(0.2, 0.45, 0.3, 0.5)
     >>> color = to_qcolor('red')
-    >>> color = to_qcolor(Qt.darkBlue)
-    >>> color = to_qcolor(15)  # 15 == Qt.darkBlue
+    >>> color = to_qcolor(Qt.GlobalColor.darkBlue)
+    >>> color = to_qcolor(15)  # 15 == Qt.GlobalColor.darkBlue
     """
     if not args:
         return QtGui.QColor()
@@ -525,7 +525,7 @@ def icon_to_base64(icon, *, fmt='png'):
     pixmap = icon.pixmap(size)
     array = QtCore.QByteArray()
     buffer = QtCore.QBuffer(array)
-    buffer.open(QtCore.QIODevice.WriteOnly)
+    buffer.open(QtCore.QIODevice.OpenModeFlag.WriteOnly)
     pixmap.save(buffer, fmt)
     buffer.close()
     return array.toBase64()
@@ -601,14 +601,14 @@ def print_base64(icon, *, size=None, name='', line_width=80, file=None):
 
     Examples
     --------
-    >>> print_base64(QtWidgets.QStyle.SP_MediaPlay, size=16)
+    >>> print_base64(QtWidgets.QStyle.StandardPixmap.SP_MediaPlay, size=16)
     b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAk6AAAJOgHwZJJKAAA' \\
     b'AGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJ9JREFUOI3djzEKwlAQRGcXO1' \\
     b'ERrIQw/i7gCTyOvZfyTtaBjaCVEH9n8V3bID/GpBKnnJ157AA/p6Io1kPy8m6QjCLyVFVWVXXvA' \\
     b'2jOdPdFSqkheRoFaGlL8hFCOHQFshMAzDLZCKA0s+uQD9qaA7iQPI8FAEBjZpsxgCgiOzNbAkjt' \\
     b'w6Sn6O5+rOt63xX4BLiZ2arvtdyEqaqW35T/RC/uTS/6P1rpJAAAAABJRU5ErkJggg=='
 
-    >>> print_base64(QtWidgets.QStyle.SP_MediaPlay, name='my_play_icon', size=32)
+    >>> print_base64(QtWidgets.QStyle.StandardPixmap.SP_MediaPlay, name='my_play_icon', size=32)
     my_play_icon = b'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAk6' \\
                    b'AAAJOgHwZJJKAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48' \\
                    b'GgAAAaVJREFUWIXtlLFuE0EURc8bO8gyiiMhUYC8M2vHldPhz+AD6LDSp0FU' \\

@@ -44,16 +44,16 @@ class Button(QtWidgets.QToolButton):
 
         if text and icon:
             if is_text_under_icon:
-                self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+                self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
             else:
-                self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+                self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
             self.setText(text)
             self._set_icon(icon, icon_size)
         elif text and not icon:
-            self.setToolButtonStyle(Qt.ToolButtonTextOnly)
+            self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
             self.setText(text)
         elif not text and icon:
-            self.setToolButtonStyle(Qt.ToolButtonIconOnly)
+            self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
             self._set_icon(icon, icon_size)
 
         # the left-click event handler
@@ -61,7 +61,7 @@ class Button(QtWidgets.QToolButton):
             self.set_left_click(left_click)
 
         # setContextMenuPolicy allows for right-click events
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
         if right_click is not None:
             self.set_right_click(right_click)
@@ -69,7 +69,8 @@ class Button(QtWidgets.QToolButton):
         if tooltip is not None:
             self.setToolTip(tooltip)
 
-        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred,
+                           QtWidgets.QSizePolicy.Policy.Fixed)
 
     def add_menu_item(self, *, text=None, triggered=None, icon=None, shortcut=None, tooltip=None):
         """Add a new item to the action menu.
@@ -136,7 +137,7 @@ class Button(QtWidgets.QToolButton):
         self._menu = ButtonMenu(self)
         self._menu.setToolTipsVisible(True)
         self.setMenu(self._menu)
-        self.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+        self.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.MenuButtonPopup)
 
     def _set_icon(self, icon, icon_size):
         icon = convert.to_qicon(icon)  # make sure that it's a QIcon
@@ -146,7 +147,7 @@ class Button(QtWidgets.QToolButton):
             icon = convert.to_qicon(pixmap)
         elif icon.availableSizes():
             style = self.style()
-            metric = style.pixelMetric(style.PM_ButtonIconSize)
+            metric = style.pixelMetric(style.PixelMetric.PM_ButtonIconSize)
             s = icon.availableSizes()[0]
             size = QtCore.QSize(max(s.width(), metric), max(s.height(), metric))
             if self.iconSize().width() < size.width() or \

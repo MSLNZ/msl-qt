@@ -226,7 +226,7 @@ class LED(QtWidgets.QWidget):
             bounds = QtCore.QRectF(x, y, size, size)
 
         painter = QtGui.QPainter(self)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing, True)
 
         if self.isEnabled():
             color = self._on_color if self._is_on else self._off_color
