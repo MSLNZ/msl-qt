@@ -187,7 +187,7 @@ class LoopUntilAbort(object):
     def cleanup(self):
         """This method gets called when the :class:`QtWidgets.QMainWindow` is closing.
 
-        You can override this method to properly cleanup any tasks.
+        You can override this method to properly clean up any tasks.
         For example, to close a file that is open.
         """
         pass
@@ -279,7 +279,7 @@ class LoopUntilAbort(object):
                 self._update_iteration_label()
 
     def _cleanup(self):
-        """Wraps the cleanup method in a try..except block."""
+        """Wraps the cleanup method in a try-except block."""
         try:
             self.cleanup()
         except:

@@ -240,10 +240,10 @@ def comments(*, path=None, title=None, even_row_color='#FFFFFF', odd_row_color='
     selecting the desired row(s) and pressing the ``Delete`` key or the comment in
     a row can be selected by double-clicking on a row.
 
-    This function is useful when acquiring data and you want to include comments
+    This function is useful when acquiring data, and you want to include comments
     about how the data was acquired. Using a prompt to enter comments forces you
     to enter a new comment (or use a previous comment) every time you acquire data
-    rather than having the comments in a, for example :class:`QtWidgets.QPlainTextEdit`,
+    rather than having the comments in a for example, :class:`QtWidgets.QPlainTextEdit`,
     which you might forget to update before acquiring the next data set.
 
     .. _JSON: https://www.json.org/

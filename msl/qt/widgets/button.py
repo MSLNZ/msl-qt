@@ -81,7 +81,7 @@ class Button(QtWidgets.QToolButton):
             The text to display for this item.
         triggered : :obj:`callable`, optional
             The function to be called when this item is selected.
-            If :data:`None` then the item is displayed but it is disabled.
+            If :data:`None` then the item is displayed, but it is disabled.
         icon : :class:`object`, optional
             Any icon object that is supported by :func:`~.convert.to_qicon`.
         shortcut : :class:`str`, optional
