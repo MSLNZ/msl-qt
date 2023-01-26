@@ -33,43 +33,7 @@ class Comments(QtWidgets.QDialog):
         self.odd_row_color = convert.to_qcolor(odd_row_color)
 
         self.load_json()
-        self.create_widgets()
 
-        geo = utils.screen_geometry(widget=self)
-        self.resize(int(geo.width()*0.4), int(geo.height()*0.6))
-
-    def append_to_history_table(self, timestamp, comment):
-        index = self.table.rowCount()
-        self.table.insertRow(index)
-        self.table.setItem(index, 0, QtWidgets.QTableWidgetItem(timestamp))
-        self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(comment))
-
-    def apply_filter(self):
-        filter_text = self.filter_edit.text().lower()
-        if not filter_text and self.table.rowCount() == len(self.comments):
-            # all rows are already visible
-            return
-
-        self.table.setRowCount(0)
-        for item in self.comments:
-            if not filter_text or filter_text in item['timestamp'] or filter_text in item['comment'].lower():
-                self.append_to_history_table(item['timestamp'], item['comment'])
-        self.update_table_row_colors_and_resize()
-
-    def clear_filter(self):
-        # clear the filter text, only if there is text written in the filter
-        if self.filter_edit.text():
-            self.filter_edit.setText('')
-            self.apply_filter()
-
-    def clear_history(self):
-        if not self.comments or not prompt.yes_no('Clear the entire history?', default=False):
-            return
-        self.table.setRowCount(0)
-        self.comments = []
-        self.save_json()
-
-    def create_widgets(self):
         self.comment_textedit = QtWidgets.QPlainTextEdit(self)
         height = self.comment_textedit.fontMetrics().lineSpacing()
         self.comment_textedit.setFixedHeight(5 * height)  # display 5 lines
@@ -139,6 +103,40 @@ class Comments(QtWidgets.QDialog):
         layout.addLayout(filter_layout)
         layout.addWidget(self.table)
         self.setLayout(layout)
+
+        geo = utils.screen_geometry(widget=self)
+        self.resize(int(geo.width()*0.4), int(geo.height()*0.6))
+
+    def append_to_history_table(self, timestamp, comment):
+        index = self.table.rowCount()
+        self.table.insertRow(index)
+        self.table.setItem(index, 0, QtWidgets.QTableWidgetItem(timestamp))
+        self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(comment))
+
+    def apply_filter(self):
+        filter_text = self.filter_edit.text().lower()
+        if not filter_text and self.table.rowCount() == len(self.comments):
+            # all rows are already visible
+            return
+
+        self.table.setRowCount(0)
+        for item in self.comments:
+            if not filter_text or filter_text in item['timestamp'] or filter_text in item['comment'].lower():
+                self.append_to_history_table(item['timestamp'], item['comment'])
+        self.update_table_row_colors_and_resize()
+
+    def clear_filter(self):
+        # clear the filter text, only if there is text written in the filter
+        if self.filter_edit.text():
+            self.filter_edit.setText('')
+            self.apply_filter()
+
+    def clear_history(self):
+        if not self.comments or not prompt.yes_no('Clear the entire history?', default=False):
+            return
+        self.table.setRowCount(0)
+        self.comments = []
+        self.save_json()
 
     def load_json(self):
         if not os.path.isfile(self.path):
