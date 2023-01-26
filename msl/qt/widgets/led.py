@@ -195,9 +195,11 @@ class LED(QtWidgets.QWidget):
     def sizeHint(self):
         """Overrides :meth:`QtWidgets.QWidget.sizeHint`."""
         if self._shape == Shapes.Triangle:
-            return QtCore.QSize(self._triangle_factor*self._height_hint, self._height_hint)
+            w = round(self._triangle_factor * self._height_hint)
+            return QtCore.QSize(w, self._height_hint)
         elif self._shape == Shapes.Rounded:
-            return QtCore.QSize(self._rounded_factor*self._height_hint, self._height_hint)
+            w = round(self._rounded_factor * self._height_hint)
+            return QtCore.QSize(w, self._height_hint)
         return QtCore.QSize(self._height_hint, self._height_hint)
 
     def paintEvent(self, event):
