@@ -93,7 +93,7 @@ class Button(QtWidgets.QToolButton):
             self._create_menu()
         action = QtGui.QAction(self)
         if triggered is not None:
-            action.triggered.connect(triggered)
+            action.triggered.connect(triggered)  # noqa: QAction.triggered
         else:
             action.setDisabled(True)
         if text is not None:
@@ -121,7 +121,7 @@ class Button(QtWidgets.QToolButton):
         fcn : :obj:`callable`
             The function to be called for a mouse left-click event.
         """
-        self.clicked.connect(fcn)
+        self.clicked.connect(fcn)  # noqa: QToolButton.clicked
 
     def set_right_click(self, fcn):
         """The function to be called for a mouse right-click event.
@@ -131,7 +131,7 @@ class Button(QtWidgets.QToolButton):
         fcn : :obj:`callable`
             The function to be called for a mouse right-click event.
         """
-        self.customContextMenuRequested.connect(fcn)
+        self.customContextMenuRequested.connect(fcn)  # noqa: QToolButton.customContextMenuRequested
 
     def _create_menu(self):
         self._menu = ButtonMenu(self)

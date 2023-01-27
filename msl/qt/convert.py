@@ -12,7 +12,7 @@ from math import isnan
 from math import log10
 
 try:
-    import clr
+    import clr  # noqa: clr not listed in project requirements
 except (ImportError, RuntimeError):
     # A RuntimeError will occur if pythonnet is installed,
     # but there is no .NET runtime installed
@@ -373,7 +373,7 @@ def to_qicon(obj, *, size=None, aspect_mode=Qt.AspectRatioMode.KeepAspectRatio):
     >>> from msl.examples.qt import ShowStandardIcons  # doctest: +SKIP
     >>> ShowStandardIcons()  # doctest: +SKIP
     """
-    app = application()  # make sure that a QApplication exists
+    app = application()  # noqa: local varibale app is not used
     _icon = None
     if isinstance(obj, QtGui.QIcon):
         _icon = obj
@@ -464,9 +464,9 @@ def icon_to_base64(icon, *, fmt='png'):
         if clr is None:
             raise ImportError('requires pythonnet, run: pip install pythonnet')
 
-        clr.AddReference('System.Drawing')
-        import System
-        from System.Drawing.Imaging import ImageFormat
+        clr.AddReference('System.Drawing')  # noqa:  clr.AddReference
+        import System  # noqa
+        from System.Drawing.Imaging import ImageFormat  # noqa
 
         shell32 = ctypes.windll.shell32
 

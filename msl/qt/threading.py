@@ -43,7 +43,7 @@ class Worker(QtCore.QObject):
     def _process(self):
         try:
             self.process()
-        except:
+        except:  # noqa: using bare 'except'
             self.error.emit(*sys.exc_info()[1:])
         else:
             self.finished.emit()
@@ -145,9 +145,9 @@ class Thread(QtCore.QObject):
         self._worker.error.connect(self.error_handler)
         self._worker.finished.connect(self._worker_finished)
         self._worker.finished.connect(self._worker.deleteLater)
-        self._thread.started.connect(self._worker._process)
-        self._thread.finished.connect(self._thread.deleteLater)
-        self._thread.finished.connect(self.finished)
+        self._thread.started.connect(self._worker._process)  # noqa
+        self._thread.finished.connect(self._thread.deleteLater)  # noqa: finished.connect
+        self._thread.finished.connect(self.finished)  # noqa: finished.connect
         self._thread.start()
 
     def stop(self, milliseconds=None):

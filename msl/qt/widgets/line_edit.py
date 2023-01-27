@@ -45,7 +45,7 @@ class LineEdit(QtWidgets.QLineEdit):
             self.setText(text)
 
         if text_changed:
-            self.textChanged.connect(text_changed)
+            self.textChanged.connect(text_changed)  # noqa: QLineEdit.textChanged
 
         if tooltip:
             self.setToolTip(tooltip)
@@ -64,13 +64,13 @@ class LineEdit(QtWidgets.QLineEdit):
             self.setMinimumHeight(self._min_height)
             self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored,
                                QtWidgets.QSizePolicy.Policy.Ignored)
-            self.textChanged.connect(self._rescale_font)
+            self.textChanged.connect(self._rescale_font)  # noqa: QLineEdit.textChanged
         else:
             self.setMinimumHeight(0)
             self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
                                QtWidgets.QSizePolicy.Policy.Fixed)
             try:
-                self.textChanged.disconnect(self._rescale_font)
+                self.textChanged.disconnect(self._rescale_font)  # noqa: QLineEdit.textChanged
             except (RuntimeError, TypeError):
                 # the slot was not connected
                 pass

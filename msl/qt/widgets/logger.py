@@ -99,12 +99,12 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             if self._level_names[key] == self._current_level:
                 self._level_combobox.setCurrentText(key)
                 break
-        self._level_combobox.currentTextChanged.connect(self._update_records)
+        self._level_combobox.currentTextChanged.connect(self._update_records)  # noqa: currentTextChanged.connect
         self._level_combobox.setToolTip('Select the logging level')
 
         self._level_checkbox = QtWidgets.QCheckBox()
         self._level_checkbox.setChecked(False)
-        self._level_checkbox.stateChanged.connect(self._level_checkbox_changed)
+        self._level_checkbox.stateChanged.connect(self._level_checkbox_changed)  # noqa: stateChanged.connect
         self._update_level_checkbox_tooltip()
 
         self._label = QtWidgets.QLabel()
@@ -112,7 +112,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
 
         self._save_button = QtWidgets.QPushButton()
         self._save_button.setIcon(convert.to_qicon(QtWidgets.QStyle.StandardPixmap.SP_DialogSaveButton))
-        self._save_button.clicked.connect(self._save_records)
+        self._save_button.clicked.connect(self._save_records)  # noqa: clicked.connect
         self._save_button.setToolTip('Save the log records')
 
         self._text_browser = QtWidgets.QTextBrowser(self)
@@ -209,10 +209,10 @@ class Logger(logging.Handler, QtWidgets.QWidget):
             self._text_browser.moveCursor(QtGui.QTextCursor.MoveOperation.End)
             self._text_browser.moveCursor(QtGui.QTextCursor.MoveOperation.StartOfLine)
 
-    def _level_checkbox_changed(self, state):
+    def _level_checkbox_changed(self, state):  # noqa: parameter 'state' is not used
         self._update_records(self._level_combobox.currentText())
 
-    def _save_records(self, checked):
+    def _save_records(self, checked):  # noqa: parameter 'checked' is not used
         """Save the LogRecords that are currently displayed in the QTextBrowser to a file."""
         if len(self._records) == 0:
             prompt.information('There are no log records to save.')

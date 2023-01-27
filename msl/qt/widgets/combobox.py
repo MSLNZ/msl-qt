@@ -67,10 +67,10 @@ class ComboBox(QtWidgets.QComboBox):
                 self.setCurrentText(initial)
 
         if index_changed:
-            self.currentIndexChanged.connect(index_changed)
+            self.currentIndexChanged.connect(index_changed)  # noqa: QComboBox.currentIndexChanged
 
         if text_changed:
-            self.currentTextChanged.connect(text_changed)
+            self.currentTextChanged.connect(text_changed)  # noqa: QComboBox.currentTextChanged
 
         if tooltip:
             self.setToolTip(tooltip)

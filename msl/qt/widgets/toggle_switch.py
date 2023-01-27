@@ -61,7 +61,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         if tooltip:
             self.setToolTip(tooltip)
         if toggled:
-            self.toggled.connect(toggled)
+            self.toggled.connect(toggled)  # noqa: QAbstractButton.toggled
 
     @property
     def is_on(self):

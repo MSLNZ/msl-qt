@@ -128,10 +128,10 @@ class LoopUntilAbort(object):
         self._central_widget.setLayout(vbox)
 
         self._elapsed_time_timer = QtCore.QTimer()
-        self._elapsed_time_timer.timeout.connect(self._update_elapsed_time_label)
+        self._elapsed_time_timer.timeout.connect(self._update_elapsed_time_label)  # noqa: timeout.connect
 
         self._loop_timer = QtCore.QTimer()
-        self._loop_timer.timeout.connect(self._call_loop)
+        self._loop_timer.timeout.connect(self._call_loop)  # noqa: timeout.connect
 
     @property
     def current_time(self):
@@ -268,7 +268,7 @@ class LoopUntilAbort(object):
             self._iteration += 1
             try:
                 self.loop()
-            except:
+            except:  # noqa: using bare 'except'
                 msg = 'The following exception occurred in the loop() method:\n\n'
                 prompt.critical(msg + traceback.format_exc())
                 self._loop_error = True
@@ -282,7 +282,7 @@ class LoopUntilAbort(object):
         """Wraps the cleanup method in a try-except block."""
         try:
             self.cleanup()
-        except:
+        except:  # noqa: using bare 'except'
             msg = 'The following exception occurred in the cleanup() method:\n\n'
             prompt.critical(msg + traceback.format_exc())
             self._stop_timers()

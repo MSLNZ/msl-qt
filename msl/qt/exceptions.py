@@ -7,7 +7,7 @@ from . import Qt
 from . import QtWidgets
 from . import application
 from . import prompt
-from .utils import logger
+from .utils import logger  # noqa: logger not defined in __all__
 from .utils import save_image
 
 
@@ -47,19 +47,19 @@ def excepthook(exctype, value, traceback):
             self.error_label.setWordWrap(True)
 
             self.ok_button = QtWidgets.QPushButton('Close')
-            self.ok_button.clicked.connect(self.close)
+            self.ok_button.clicked.connect(self.close)  # noqa: clicked.connect
             self.ok_button.setToolTip('Close')
 
             self.screenshot_button = QtWidgets.QPushButton('Screenshot')
-            self.screenshot_button.clicked.connect(self.save_screenshot)
+            self.screenshot_button.clicked.connect(self.save_screenshot)  # noqa: clicked.connect
             self.screenshot_button.setToolTip('Save a screenshot of this window')
 
             self.copy_button = QtWidgets.QPushButton('Copy')
-            self.copy_button.clicked.connect(self.copy_to_clipboard)
+            self.copy_button.clicked.connect(self.copy_to_clipboard)  # noqa: clicked.connect
             self.copy_button.setToolTip('Copy the error message to the system clipboard')
 
             self.show_details_button = QtWidgets.QPushButton('Hide details...')
-            self.show_details_button.clicked.connect(self.show_hide_details)
+            self.show_details_button.clicked.connect(self.show_hide_details)  # noqa: clicked.connect
             self.show_details_button.setToolTip('Show less information')
 
             self.detailed_textedit = QtWidgets.QTextEdit()

@@ -73,9 +73,9 @@ class SpinBox(QtWidgets.QSpinBox):
         else:
             self.setSuffix(unit)
         if value_changed:
-            self.valueChanged.connect(value_changed)
+            self.valueChanged.connect(value_changed)  # noqa: QSpinBox.valueChanged
         if editing_finished:
-            self.editingFinished.connect(editing_finished)
+            self.editingFinished.connect(editing_finished)  # noqa: QSpinBox.editingFinished
 
     def stepBy(self, steps):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.stepBy`.
@@ -85,7 +85,7 @@ class SpinBox(QtWidgets.QSpinBox):
          :meth:`~QtWidgets.QAbstractSpinBox.editingFinished` signal.
         """
         super(SpinBox, self).stepBy(steps)
-        self.editingFinished.emit()
+        self.editingFinished.emit()  # noqa: QSpinBox.editingFinished
 
 
 class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
@@ -147,9 +147,9 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         else:
             self.setSuffix(unit)
         if value_changed:
-            self.valueChanged.connect(value_changed)
+            self.valueChanged.connect(value_changed)  # noqa: QDoubleSpinBox.valueChanged
         if editing_finished:
-            self.editingFinished.connect(editing_finished)
+            self.editingFinished.connect(editing_finished)  # noqa: QDoubleSpinBox.editingFinished
 
     def validate(self, text, position):
         """Overrides :meth:`QtWidgets.QAbstractSpinBox.validate`."""
@@ -214,7 +214,7 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             _, si_prefix = number_to_si(coerced)
             value = number + si_to_number(str(steps * self.singleStep()) + si_prefix)
             self.setValue(value)
-        self.editingFinished.emit()
+        self.editingFinished.emit()  # noqa: QDoubleSpinBox.editingFinished
 
 
 class _SIPrefixValidator(QtGui.QValidator):

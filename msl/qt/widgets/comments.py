@@ -56,7 +56,7 @@ class Comments(QtWidgets.QDialog):
         #
         self.filter_edit = QtWidgets.QLineEdit()
         self.filter_edit.setToolTip('Search filter for the history')
-        self.filter_edit.returnPressed.connect(self.apply_filter)
+        self.filter_edit.returnPressed.connect(self.apply_filter)  # noqa: returnPressed.connect
 
         filter_button = Button(
             icon=QtWidgets.QStyle.StandardPixmap.SP_FileDialogContentsView,
@@ -86,8 +86,8 @@ class Comments(QtWidgets.QDialog):
         self.table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.horizontalHeader().sectionClicked.connect(self.update_table_row_colors_and_resize)
-        self.table.cellDoubleClicked.connect(self.table_double_click)
+        self.table.horizontalHeader().sectionClicked.connect(self.update_table_row_colors_and_resize)  # noqa: sectionClicked.connect
+        self.table.cellDoubleClicked.connect(self.table_double_click)  # noqa: cellDoubleClicked.connect
         self.table.keyPressEvent = self.table_key_press
         for item in self.comments:
             self.append_to_history_table(item['timestamp'], item['comment'])
@@ -169,7 +169,7 @@ class Comments(QtWidgets.QDialog):
         with open(self.path, mode='wt') as fp:
             json.dump(self.comments, fp, indent=2, ensure_ascii=False)
 
-    def table_double_click(self, row, col):
+    def table_double_click(self, row, column):  # noqa: parameter 'column' is not used
         self.comment_textedit.setPlainText(self.table.item(row, 1).text())
 
     def table_key_press(self, event):

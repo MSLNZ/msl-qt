@@ -569,7 +569,7 @@ def _get_file_filters(filters):
     if isinstance(filters, (list, tuple)):
         return ';;'.join(f if f is not None else all_files for f in filters)
 
-    if filters.endswith(';;'):
+    if filters.endswith(';;'):  # noqa: filters.endswith exists since it must be a string
         return filters[:-2]
 
     return filters

@@ -35,7 +35,7 @@ class CheckBox(QtWidgets.QCheckBox):
         self.setCheckable(checkable)
 
         if state_changed:
-            self.stateChanged.connect(state_changed)
+            self.stateChanged.connect(state_changed)  # noqa: QCheckBox.stateChanged
 
         if tooltip:
             self.setToolTip(tooltip)
