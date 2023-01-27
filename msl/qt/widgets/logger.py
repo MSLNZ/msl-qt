@@ -256,6 +256,7 @@ class Logger(logging.Handler, QtWidgets.QWidget):
                 self._append_record(record)
         self._update_label()
 
-    def _write_header(self, fp):
+    @staticmethod
+    def _write_header(fp):
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         fp.write(f'# Saved {now}\n')
