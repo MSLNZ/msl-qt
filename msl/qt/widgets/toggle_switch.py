@@ -53,6 +53,9 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         else:
             self._height = int(height)
 
+        self._off_brush = None
+        self._on_brush = None
+
         self._pad = 4
         self.setCheckable(True)
         self.setChecked(initial)

@@ -75,6 +75,11 @@ class LED(QtWidgets.QWidget):
         self._rounded_factor = 2.0
         self._triangle_factor = 4.0 / 3.0
 
+        self._is_clickable = None
+        self._off_color = None
+        self._on_color = None
+        self._shape = None
+
         self.set_on_color(on_color)
         self.set_off_color(off_color)
         self.set_clickable(clickable)
