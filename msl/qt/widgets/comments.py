@@ -32,7 +32,7 @@ class Comments(QtWidgets.QDialog):
         self.even_row_color = convert.to_qcolor(even_row_color)
         self.odd_row_color = convert.to_qcolor(odd_row_color)
 
-        self.load_json()
+        self._load_json()
 
         self.comment_textedit = QtWidgets.QPlainTextEdit(self)
         height = self.comment_textedit.fontMetrics().lineSpacing()
@@ -40,14 +40,14 @@ class Comments(QtWidgets.QDialog):
 
         self.ok_button = Button(
             text='OK',
-            left_click=self.prepend_and_close,
+            left_click=self._prepend_and_close,
             tooltip='Select the comment and exit',
             parent=self,
         )
         self.ok_button.add_menu_item(
             text='Clear history',
             icon=QtWidgets.QStyle.StandardPixmap.SP_DialogResetButton,
-            triggered=self.clear_history,
+            triggered=self._clear_history,
             tooltip='Delete all comments that are in the history'
         )
 
@@ -56,17 +56,17 @@ class Comments(QtWidgets.QDialog):
         #
         self.filter_edit = QtWidgets.QLineEdit()
         self.filter_edit.setToolTip('Search filter for the history')
-        self.filter_edit.returnPressed.connect(self.apply_filter)  # noqa: returnPressed.connect
+        self.filter_edit.returnPressed.connect(self._apply_filter)  # noqa: returnPressed.connect
 
         filter_button = Button(
             icon=QtWidgets.QStyle.StandardPixmap.SP_FileDialogContentsView,
             tooltip='Apply filter',
-            left_click=self.apply_filter
+            left_click=self._apply_filter
         )
         clear_button = Button(
             icon=QtWidgets.QStyle.StandardPixmap.SP_LineEditClearButton,
             tooltip='Clear filter',
-            left_click=self.clear_filter
+            left_click=self._clear_filter
         )
 
         filter_layout = QtWidgets.QHBoxLayout()
@@ -86,12 +86,12 @@ class Comments(QtWidgets.QDialog):
         self.table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.horizontalHeader().sectionClicked.connect(self.update_table_row_colors_and_resize)  # noqa: sectionClicked.connect
-        self.table.cellDoubleClicked.connect(self.table_double_click)  # noqa: cellDoubleClicked.connect
-        self.table.keyPressEvent = self.table_key_press
+        self.table.horizontalHeader().sectionClicked.connect(self._update_table_row_colors_and_resize)  # noqa: sectionClicked.connect
+        self.table.cellDoubleClicked.connect(self._table_double_click)  # noqa: cellDoubleClicked.connect
+        self.table.keyPressEvent = self._table_key_press
         for item in self.comments:
-            self.append_to_history_table(item['timestamp'], item['comment'])
-        self.update_table_row_colors_and_resize()
+            self._append_to_history_table(item['timestamp'], item['comment'])
+        self._update_table_row_colors_and_resize()
 
         #
         # main layout
@@ -107,13 +107,13 @@ class Comments(QtWidgets.QDialog):
         geo = utils.screen_geometry(widget=self)
         self.resize(int(geo.width()*0.4), int(geo.height()*0.6))
 
-    def append_to_history_table(self, timestamp, comment):
+    def _append_to_history_table(self, timestamp, comment):
         index = self.table.rowCount()
         self.table.insertRow(index)
         self.table.setItem(index, 0, QtWidgets.QTableWidgetItem(timestamp))
         self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(comment))
 
-    def apply_filter(self):
+    def _apply_filter(self):
         filter_text = self.filter_edit.text().lower()
         if not filter_text and self.table.rowCount() == len(self.comments):
             # all rows are already visible
@@ -122,23 +122,23 @@ class Comments(QtWidgets.QDialog):
         self.table.setRowCount(0)
         for item in self.comments:
             if not filter_text or filter_text in item['timestamp'] or filter_text in item['comment'].lower():
-                self.append_to_history_table(item['timestamp'], item['comment'])
-        self.update_table_row_colors_and_resize()
+                self._append_to_history_table(item['timestamp'], item['comment'])
+        self._update_table_row_colors_and_resize()
 
-    def clear_filter(self):
+    def _clear_filter(self):
         # clear the filter text, only if there is text written in the filter
         if self.filter_edit.text():
             self.filter_edit.setText('')
-            self.apply_filter()
+            self._apply_filter()
 
-    def clear_history(self):
+    def _clear_history(self):
         if not self.comments or not prompt.yes_no('Clear the entire history?', default=False):
             return
         self.table.setRowCount(0)
         self.comments = []
-        self.save_json()
+        self._save_json()
 
-    def load_json(self):
+    def _load_json(self):
         if not os.path.isfile(self.path):
             # assume that this is a new file that will be created
             return
@@ -149,7 +149,7 @@ class Comments(QtWidgets.QDialog):
             except Exception as e:
                 prompt.warning(f'Error loading JSON file:\n{self.path}\n\n{e}')
 
-    def prepend_and_close(self):
+    def _prepend_and_close(self):
         self.close()
 
         if not self.text():
@@ -158,9 +158,9 @@ class Comments(QtWidgets.QDialog):
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.comments.insert(0, {'timestamp': timestamp, 'comment': self.text()})
-        self.save_json()
+        self._save_json()
 
-    def save_json(self):
+    def _save_json(self):
         # ensure that the intermediate directories exist
         root = os.path.dirname(self.path)
         if root and not os.path.isdir(root):
@@ -169,10 +169,10 @@ class Comments(QtWidgets.QDialog):
         with open(self.path, mode='wt') as fp:
             json.dump(self.comments, fp, indent=2, ensure_ascii=False)
 
-    def table_double_click(self, row, column):  # noqa: parameter 'column' is not used
+    def _table_double_click(self, row, column):  # noqa: parameter 'column' is not used
         self.comment_textedit.setPlainText(self.table.item(row, 1).text())
 
-    def table_key_press(self, event):
+    def _table_key_press(self, event):
         # CTRL+A pressed
         if event.modifiers() == Qt.KeyboardModifier.ControlModifier and event.key() == Qt.Key.Key_A:
             self.table.selectAll()
@@ -185,7 +185,7 @@ class Comments(QtWidgets.QDialog):
         selected = sorted([s.row() for s in self.table.selectionModel().selectedRows()], reverse=True)
 
         if len(selected) == self.table.rowCount():
-            self.clear_history()
+            self._clear_history()
             return
 
         msg = 'this item' if len(selected) == 1 else f'these {len(selected)} items'
@@ -196,13 +196,9 @@ class Comments(QtWidgets.QDialog):
             self.table.removeRow(index)
             del self.comments[index]
 
-        self.save_json()
+        self._save_json()
 
-    def text(self):
-        """str: The text in the comment editor"""
-        return self.comment_textedit.toPlainText().strip()
-
-    def update_table_row_colors_and_resize(self):
+    def _update_table_row_colors_and_resize(self):
         for row in range(self.table.rowCount()):
             color = self.even_row_color if row % 2 else self.odd_row_color
             try:
@@ -214,3 +210,7 @@ class Comments(QtWidgets.QDialog):
                 # possibly do to signaling issues?
                 pass
         self.table.verticalHeader().resizeSections(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+
+    def text(self):
+        """str: The text in the comment editor."""
+        return self.comment_textedit.toPlainText().strip()
