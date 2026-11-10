@@ -285,7 +285,7 @@ def to_qicon(  # noqa: C901, PLR0912
     return QtGui.QIcon(rescale_icon(_icon, size, aspect_mode=aspect_mode))
 
 
-def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = "png") -> QtCore.QByteArray:  # noqa: C901, PLR0912
+def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = "png") -> QtCore.QByteArray:  # noqa: C901, PLR0912, PLR0915
     """Convert an icon to a [QByteArray][QtCore.QByteArray] encoded as base64.
 
     Args:
@@ -296,6 +296,10 @@ def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = 
         The base64 representation of the icon.
     """
     if isinstance(icon, str) and "|" in icon:
+        if sys.platform != "win32":
+            msg = "Loading an icon from a DLL/EXE is only supported on Windows"  # pyright: ignore[reportUnreachable]
+            raise OSError(msg)
+
         # extract an icon from a Windows DLL/EXE file
         shell32 = ctypes.windll.shell32
         s = icon.split("|")
@@ -330,7 +334,8 @@ def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = 
         ctypes.windll.user32.DestroyIcon(h_icon)
         if image.isNull():
             msg = "Qt failed to convert the HICON handle to a QImage"
-            raise RuntimeError(msg)
+            raise OSError(msg)
+
         pixmap = QtGui.QPixmap.fromImage(image)
     else:
         icon = to_qicon(icon)
@@ -351,7 +356,7 @@ def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = 
         msg = f"Cannot save the QPixmap to the QBuffer for format {fmt!r}"
         raise ValueError(msg)
     buffer.close()
-    return array.toBase64()
+    return array.toBase64(QtCore.QByteArray.Base64Option.Base64Encoding)
 
 
 def rescale_icon(
