@@ -346,7 +346,6 @@ def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = 
             raise ValueError(msg) from None
         else:
             pixmap = icon.pixmap(size)
-            print(pixmap.devicePixelRatioF())
 
     array = QtCore.QByteArray()
     buffer = QtCore.QBuffer(array)
