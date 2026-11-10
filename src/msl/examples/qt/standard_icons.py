@@ -13,7 +13,10 @@ if TYPE_CHECKING:
     from msl.qt import QtGui
 
 
-class ShowStandardIcons(QtWidgets.QMainWindow):
+IS_WINDOWS = sys.platform == "win32"
+
+
+class StandardIcons(QtWidgets.QMainWindow):
     """Main window to show the icons."""
 
     def __init__(self) -> None:
@@ -70,7 +73,7 @@ class ShowStandardIcons(QtWidgets.QMainWindow):
 
         self.add_qt_tab("Qt Icons", qt_icons)
 
-        if sys.platform == "win32":
+        if IS_WINDOWS:
             num_files = 1 + len(self.windows_files)
             self.progress_bar.setRange(0, num_files)
 
@@ -167,7 +170,7 @@ def show() -> None:
     """Create the QApplication and show the main window."""
     sys.excepthook = excepthook
     app = application()
-    main = ShowStandardIcons()
+    main = StandardIcons()
     main.showMaximized()
     _ = app.exec()
 

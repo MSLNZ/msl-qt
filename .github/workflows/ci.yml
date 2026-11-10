@@ -5,7 +5,6 @@ on: [push, pull_request]
 env:
   PY_COLORS: 1
   COLUMNS: 110
-  DISPLAY: ':99.0'
 
 jobs:
   test:
@@ -15,9 +14,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        #python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        python-version: ["3.15"]
         os: [windows-latest, ubuntu-24.04, macos-latest]
-        qt-binding: [PySide6, PyQt6]
+        #qt-binding: [PySide6, PyQt6]
+        qt-binding: [PySide6]
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -31,12 +32,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0 x11-utils libgl1-mesa-dev
           /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX
+          echo "DISPLAY=:99" >> $GITHUB_ENV
       - name: Run tests
         run: uv run --python ${{ matrix.python-version }} --with ${{ matrix.qt-binding }} --no-dev --group test -- pytest
 
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

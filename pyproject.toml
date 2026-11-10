@@ -144,6 +144,7 @@ warn_no_return = true
 warn_unreachable = true
 always_false = ["PYQT6"]
 always_true = ["PYSIDE6"]
+platform = "win32"
 
 [tool.basedpyright]
 failOnWarnings = true
@@ -157,6 +158,7 @@ exclude = [
 reportAny = false
 reportExplicitAny = false
 defineConstant = { PYQT6 = false, PYSIDE6 = true }
+pythonPlatform = "Windows"
 
 [tool.ruff]
 cache-dir = ".cache/ruff"
