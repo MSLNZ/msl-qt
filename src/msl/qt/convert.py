@@ -285,12 +285,15 @@ def to_qicon(  # noqa: C901, PLR0912
     return QtGui.QIcon(rescale_icon(_icon, size, aspect_mode=aspect_mode))
 
 
-def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = "png") -> QtCore.QByteArray:  # noqa: C901, PLR0912, PLR0915
+def icon_to_base64(  # noqa: C901, PLR0912, PLR0915
+    icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = "png", dpm: int = 3780
+) -> QtCore.QByteArray:
     """Convert an icon to a [QByteArray][QtCore.QByteArray] encoded as base64.
 
     Args:
         icon: Any object that is supported by [to_qicon][..to_qicon].
         fmt: The icon format to use when converting.
+        dpm: The number of pixels that fit in a physical meter (dots-per-meter).
 
     Returns:
         The base64 representation of the icon.
@@ -336,7 +339,6 @@ def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = 
             msg = "Qt failed to convert the HICON handle to a QImage"
             raise OSError(msg)
 
-        pixmap = QtGui.QPixmap.fromImage(image)
     else:
         icon = to_qicon(icon)
         try:
@@ -345,15 +347,18 @@ def icon_to_base64(icon: object, *, fmt: Literal["bmp", "jpg", "jpeg", "png"] = 
             msg = "Cannot determine a size of the QIcon"
             raise ValueError(msg) from None
         else:
-            pixmap = icon.pixmap(size)
+            image = icon.pixmap(size).toImage()
+
+    image.setDotsPerMeterX(dpm)
+    image.setDotsPerMeterY(dpm)
 
     array = QtCore.QByteArray()
     buffer = QtCore.QBuffer(array)
     if not buffer.open(QtCore.QIODevice.OpenModeFlag.WriteOnly):
         msg = "Cannot open the QBuffer"
         raise ValueError(msg)
-    if not pixmap.save(buffer, fmt):
-        msg = f"Cannot save the QPixmap to the QBuffer for format {fmt!r}"
+    if not image.save(buffer, fmt):  # type: ignore[call-overload] # pyright: ignore[reportCallIssue, reportArgumentType]
+        msg = f"Cannot save the QImage to the QBuffer for format {fmt!r}"
         raise ValueError(msg)
     buffer.close()
     return array.toBase64(QtCore.QByteArray.Base64Option.Base64Encoding)
@@ -415,19 +420,21 @@ def rescale_icon(
 def print_base64(
     icon: object,
     *,
+    dpm: int = 3780,
+    file: SupportsWrite[str] | None = None,
+    line_width: int = 80,
     name: str = "icon",
     size: Size | None = None,
-    line_width: int = 80,
-    file: SupportsWrite[str] | None = None,
 ) -> None:
     """Print the base64 representation of an icon.
 
     Args:
         icon: Passed to [to_qicon][..to_qicon].
-        size: Passed to [to_qicon][..to_qicon].
-        name: The variable name to assign to the icon.
-        line_width: The maximum number of characters in a line.
+        dpm: The number of pixels that fit in a physical meter (dots-per-meter).
         file: Where to print the output. Default is [sys.stdout][].
+        line_width: The maximum number of characters in a line.
+        name: The variable name to assign to the icon.
+        size: Passed to [to_qicon][..to_qicon].
 
     ```pycon
     >>> from msl.qt import print_base64
@@ -450,7 +457,7 @@ def print_base64(
     ```
     """
     _ = application()
-    b64 = bytes(icon_to_base64(to_qicon(icon, size=size)).data())
+    b64 = bytes(icon_to_base64(to_qicon(icon, size=size), dpm=dpm).data())
 
     # 7 comes from the additional characters that are printed: <space><space><space><space>b""
     lines = textwrap.wrap(b64.decode(), width=line_width - 7)

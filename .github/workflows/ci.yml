@@ -5,7 +5,6 @@ on: [push, pull_request]
 env:
   PY_COLORS: 1
   COLUMNS: 110
-  QT_FONT_DPI: 96
 
 jobs:
   test:
