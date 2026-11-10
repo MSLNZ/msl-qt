@@ -1,13 +1,15 @@
+# cSpell: ignore Tickmark Tickmarks RSIP Unshade Tearoff Reentering
+# mypy: disable-error-code="attr-defined"
+# pyright: reportUnknownMemberType=false, reportAttributeAccessIssue=false
+from __future__ import annotations
+
 import pytest
 
-from msl.qt import Qt
-from msl.qt import QtGui
-from msl.qt import QtWidgets
-from msl.qt import binding
+from msl.qt import Qt, QtGui, QtWidgets, binding
 
 
-@pytest.mark.parametrize('style', (QtWidgets.QStyle, QtWidgets.QCommonStyle))
-def test_qstyle(style):
+@pytest.mark.parametrize("style", [QtWidgets.QStyle, QtWidgets.QCommonStyle])
+def test_q_style(style: QtWidgets.QStyle) -> None:  # noqa: PLR0915
     assert style.StateFlag.State_None == style.State_None
     assert style.StateFlag.State_Active == style.State_Active
     assert style.StateFlag.State_AutoRaise == style.State_AutoRaise
@@ -15,7 +17,6 @@ def test_qstyle(style):
     assert style.StateFlag.State_DownArrow == style.State_DownArrow
     assert style.StateFlag.State_Editing == style.State_Editing
     assert style.StateFlag.State_Enabled == style.State_Enabled
-    #  assert style.StateFlag.State_HasEditFocus == style.State_HasEditFocus
     assert style.StateFlag.State_HasFocus == style.State_HasFocus
     assert style.StateFlag.State_Horizontal == style.State_Horizontal
     assert style.StateFlag.State_KeyboardFocusChange == style.State_KeyboardFocusChange
@@ -369,7 +370,9 @@ def test_qstyle(style):
     assert style.ContentsType.CT_CustomBase == style.CT_CustomBase
     assert style.ContentsType.CT_MdiControls == style.CT_MdiControls
 
-    assert style.RequestSoftwareInputPanel.RSIP_OnMouseClickAndAlreadyFocused == style.RSIP_OnMouseClickAndAlreadyFocused
+    assert (
+        style.RequestSoftwareInputPanel.RSIP_OnMouseClickAndAlreadyFocused == style.RSIP_OnMouseClickAndAlreadyFocused
+    )
     assert style.RequestSoftwareInputPanel.RSIP_OnMouseClick == style.RSIP_OnMouseClick
 
     assert style.StyleHint.SH_EtchDisabledText == style.SH_EtchDisabledText
@@ -377,7 +380,9 @@ def test_qstyle(style):
     assert style.StyleHint.SH_ScrollBar_ContextMenu == style.SH_ScrollBar_ContextMenu
     assert style.StyleHint.SH_ScrollBar_MiddleClickAbsolutePosition == style.SH_ScrollBar_MiddleClickAbsolutePosition
     assert style.StyleHint.SH_ScrollBar_LeftClickAbsolutePosition == style.SH_ScrollBar_LeftClickAbsolutePosition
-    assert style.StyleHint.SH_ScrollBar_ScrollWhenPointerLeavesControl == style.SH_ScrollBar_ScrollWhenPointerLeavesControl
+    assert (
+        style.StyleHint.SH_ScrollBar_ScrollWhenPointerLeavesControl == style.SH_ScrollBar_ScrollWhenPointerLeavesControl
+    )
     assert style.StyleHint.SH_ScrollBar_RollBetweenButtons == style.SH_ScrollBar_RollBetweenButtons
     assert style.StyleHint.SH_TabBar_Alignment == style.SH_TabBar_Alignment
     assert style.StyleHint.SH_Header_ArrowAlignment == style.SH_Header_ArrowAlignment
@@ -463,15 +468,23 @@ def test_qstyle(style):
     assert style.StyleHint.SH_ItemView_ArrowKeysNavigateIntoChildren == style.SH_ItemView_ArrowKeysNavigateIntoChildren
     assert style.StyleHint.SH_ComboBox_PopupFrameStyle == style.SH_ComboBox_PopupFrameStyle
     assert style.StyleHint.SH_DialogButtonBox_ButtonsHaveIcons == style.SH_DialogButtonBox_ButtonsHaveIcons
-    assert style.StyleHint.SH_ItemView_MovementWithoutUpdatingSelection == style.SH_ItemView_MovementWithoutUpdatingSelection
+    assert (
+        style.StyleHint.SH_ItemView_MovementWithoutUpdatingSelection
+        == style.SH_ItemView_MovementWithoutUpdatingSelection
+    )
     assert style.StyleHint.SH_ToolTip_Mask == style.SH_ToolTip_Mask
     assert style.StyleHint.SH_FocusFrame_AboveWidget == style.SH_FocusFrame_AboveWidget
-    assert style.StyleHint.SH_TextControl_FocusIndicatorTextCharFormat == style.SH_TextControl_FocusIndicatorTextCharFormat
+    assert (
+        style.StyleHint.SH_TextControl_FocusIndicatorTextCharFormat == style.SH_TextControl_FocusIndicatorTextCharFormat
+    )
     assert style.StyleHint.SH_Menu_FlashTriggeredItem == style.SH_Menu_FlashTriggeredItem
     assert style.StyleHint.SH_Menu_FadeOutOnHide == style.SH_Menu_FadeOutOnHide
     assert style.StyleHint.SH_TabWidget_DefaultTabPosition == style.SH_TabWidget_DefaultTabPosition
     assert style.StyleHint.SH_ToolBar_Movable == style.SH_ToolBar_Movable
-    assert style.StyleHint.SH_ItemView_PaintAlternatingRowColorsForEmptyArea == style.SH_ItemView_PaintAlternatingRowColorsForEmptyArea
+    assert (
+        style.StyleHint.SH_ItemView_PaintAlternatingRowColorsForEmptyArea
+        == style.SH_ItemView_PaintAlternatingRowColorsForEmptyArea
+    )
     assert style.StyleHint.SH_Menu_Mask == style.SH_Menu_Mask
     assert style.StyleHint.SH_ItemView_DrawDelegateFrame == style.SH_ItemView_DrawDelegateFrame
     assert style.StyleHint.SH_TabBar_CloseButtonPosition == style.SH_TabBar_CloseButtonPosition
@@ -579,7 +592,7 @@ def test_qstyle(style):
     assert style.StandardPixmap.SP_CustomBase == style.SP_CustomBase
 
 
-def test_qtextframeformat():
+def test_q_text_frame_format() -> None:
     assert QtGui.QTextFrameFormat.BorderStyle.BorderStyle_None == QtGui.QTextFrameFormat.BorderStyle_None
     assert QtGui.QTextFrameFormat.BorderStyle.BorderStyle_Dotted == QtGui.QTextFrameFormat.BorderStyle_Dotted
     assert QtGui.QTextFrameFormat.BorderStyle.BorderStyle_Dashed == QtGui.QTextFrameFormat.BorderStyle_Dashed
@@ -601,9 +614,15 @@ def test_qtextframeformat():
     assert QtGui.QTextFrameFormat.Position.FloatRight == QtGui.QTextFrameFormat.FloatRight
 
 
-def test_qtextimageformat():
-    assert QtGui.QTextImageFormat.FontPropertiesInheritanceBehavior.FontPropertiesSpecifiedOnly == QtGui.QTextImageFormat.FontPropertiesSpecifiedOnly
-    assert QtGui.QTextImageFormat.FontPropertiesInheritanceBehavior.FontPropertiesAll == QtGui.QTextImageFormat.FontPropertiesAll
+def test_q_text_image_format() -> None:
+    assert (
+        QtGui.QTextImageFormat.FontPropertiesInheritanceBehavior.FontPropertiesSpecifiedOnly
+        == QtGui.QTextImageFormat.FontPropertiesSpecifiedOnly
+    )
+    assert (
+        QtGui.QTextImageFormat.FontPropertiesInheritanceBehavior.FontPropertiesAll
+        == QtGui.QTextImageFormat.FontPropertiesAll
+    )
 
     assert QtGui.QTextImageFormat.PageBreakFlag.PageBreak_Auto == QtGui.QTextImageFormat.PageBreak_Auto
     assert QtGui.QTextImageFormat.PageBreakFlag.PageBreak_AlwaysBefore == QtGui.QTextImageFormat.PageBreak_AlwaysBefore
@@ -627,7 +646,7 @@ def test_qtextimageformat():
     assert QtGui.QTextImageFormat.VerticalAlignment.AlignBaseline == QtGui.QTextImageFormat.AlignBaseline
 
 
-def test_qt():
+def test_qt() -> None:  # noqa: PLR0915
     assert Qt.AlignmentFlag.AlignLeft == Qt.AlignLeft
     assert Qt.AlignmentFlag.AlignRight == Qt.AlignRight
     assert Qt.AlignmentFlag.AlignHCenter == Qt.AlignHCenter
@@ -689,14 +708,11 @@ def test_qt():
     assert Qt.KeyboardModifier.GroupSwitchModifier == Qt.GroupSwitchModifier
 
 
-def test_qpainter():
+def test_q_painter() -> None:
     assert QtGui.QPainter.RenderHint.Antialiasing == QtGui.QPainter.Antialiasing
     assert QtGui.QPainter.RenderHint.TextAntialiasing == QtGui.QPainter.TextAntialiasing
     assert QtGui.QPainter.RenderHint.SmoothPixmapTransform == QtGui.QPainter.SmoothPixmapTransform
-    if binding.qt_version_info[:2] >= (6, 1):
-        assert QtGui.QPainter.RenderHint.VerticalSubpixelPositioning == QtGui.QPainter.VerticalSubpixelPositioning
+    assert QtGui.QPainter.RenderHint.VerticalSubpixelPositioning == QtGui.QPainter.VerticalSubpixelPositioning
     assert QtGui.QPainter.RenderHint.LosslessImageRendering == QtGui.QPainter.LosslessImageRendering
-    if binding.qt_version_info[:2] >= (6, 4):
-        assert QtGui.QPainter.RenderHint.NonCosmeticBrushPatterns == QtGui.QPainter.NonCosmeticBrushPatterns
-
+    assert QtGui.QPainter.RenderHint.NonCosmeticBrushPatterns == QtGui.QPainter.NonCosmeticBrushPatterns
     assert QtGui.QPainter.PixmapFragmentHint.OpaqueHint == QtGui.QPainter.OpaqueHint

@@ -1,0 +1,217 @@
+[project]
+name = "msl-qt"
+dynamic = ["version"]
+dependencies = []
+description = "Custom Qt components for the graphical user interface"
+license = {file = "LICENSE.txt"}
+authors =[
+    {name = "Measurement Standards Laboratory of New Zealand", email = "info@measurement.govt.nz"},
+]
+maintainers = [
+    {name = "Joseph Borbely", email = "joseph.borbely@measurement.govt.nz"},
+]
+requires-python = ">=3.8"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development",
+]
+
+[project.urls]
+Changes = "https://mslnz.github.io/msl-qt/latest/release-notes/"
+Documentation = "https://mslnz.github.io/msl-qt/latest/"
+Homepage = "https://mslnz.github.io/msl-qt/latest/"
+Source = "https://github.com/MSLNZ/msl-qt"
+Tracker = "https://github.com/MSLNZ/msl-qt/issues"
+
+[project.optional-dependencies]
+pyside6 = ["PySide6"]
+pyqt6 = ["PyQt6"]
+
+[dependency-groups]
+doc = [
+    "black>=24.8.0",
+    "mike>=2.1.3",
+    "mkdocs>=1.6.1,<2.0.0",
+    "mkdocs-material>=9.6.11",
+    "mkdocstrings-python>=1.11.1",
+]
+lint = [
+    "ruff>=0.11.0",
+]
+test = [
+    "pytest>=8.3.5",
+    "pytest-cov>=5.0.0",
+]
+type = [
+    "basedpyright>=1.28.1",
+    "mypy>=1.14.1",
+]
+dev = [
+    {include-group = "doc"},
+    {include-group = "lint"},
+    {include-group = "test"},
+    {include-group = "type"},
+    "pyqt6>=6.7.1",
+    "pyside6>=6.6.3.1",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/msl/qt/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/msl"]
+
+[tool.pytest.ini_options]
+addopts = [
+    "--cov=src",
+    "--cov-report=html",
+    "--cov-config=pyproject.toml",
+    "--doctest-modules",
+    "--doctest-glob=*.md",
+    "--import-mode=importlib",
+    "--ignore=src/msl/examples",
+    "--ignore=src/msl/qt/typing.py",
+]
+cache_dir = ".cache/pytest"
+consider_namespace_packages = true
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+
+[tool.coverage.run]
+branch = true
+data_file = ".cache/coverage/.coverage"
+omit = [
+    "src/msl/examples/*",
+    "src/msl/qt/typing.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "pragma: no branch",
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+]
+include_namespace_packages = true
+
+[tool.coverage.html]
+directory = ".cache/coverage"
+title = "MSL-Qt coverage report"
+
+[tool.mypy]
+cache_dir = ".cache/mypy"
+strict = true
+strict_bytes = true
+mypy_path = "src"
+namespace_packages = true
+explicit_package_bases = true
+allow_redefinition = false
+allow_untyped_globals = false
+disallow_any_decorated = true
+disallow_any_explicit = false # true
+disallow_any_expr = false # true
+disallow_any_unimported = true
+ignore_missing_imports = false
+implicit_optional = false
+local_partial_types = true
+scripts_are_modules = true
+warn_no_return = true
+warn_unreachable = true
+always_false = ["PYQT6"]
+always_true = ["PYSIDE6"]
+
+[tool.basedpyright]
+failOnWarnings = true
+typeCheckingMode = "recommended"
+useLibraryCodeForTypes = false
+exclude = [
+    "**/.*",
+    "**/__pycache__",
+    "**/_version.py",
+]
+reportAny = false
+reportExplicitAny = false
+defineConstant = { PYQT6 = false, PYSIDE6 = true }
+
+[tool.ruff]
+cache-dir = ".cache/ruff"
+line-length = 120
+exclude = [
+    ".cache",
+    ".git",
+    ".github",
+    ".venv",
+    "build",
+    "dist",
+    "venv",
+    "src/msl/qt/_version.py"
+]
+namespace-packages = ["src/msl"]
+target-version = "py38"
+
+[tool.ruff.lint.isort]
+known-first-party = ["msl.qt"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203", # one-blank-line-before-class
+    "D213", # multi-line-summary-second-line
+    "COM812", # missing-trailing-comma
+    "ISC001", # single-line-implicit-string-concatenation
+    "CPY001", # missing-copyright-notice
+    "S311", # suspicious-non-cryptographic-random-usage
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in `__init__`
+    "S101", # Use of `assert` detected
+    "PLR2004", # Magic value used in comparison
+    "INP001", # implicit-namespace-package
+]
+"src/msl/examples/qt/*.py" = [
+    "DTZ005", # datetime without tz
+    "FBT001",  # Boolean-typed positional argument in function definition
+    "N802",  # Allow method names to be camel Case
+    "PLR2004", # Allow Magic value used in comparison
+    "PTH123", # Don't use Path.open()
+    "SIM115",  # Don't use open() as a context manager
+    "T201", # allow print statement
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 8

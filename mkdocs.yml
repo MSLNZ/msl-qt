@@ -1,0 +1,120 @@
+site_name: MSL-Qt
+site_description: Custom Qt components for the graphical user interface
+copyright: Copyright &copy; 2017 - 2026 Measurement Standards Laboratory of New Zealand
+repo_url: https://github.com/MSLNZ/msl-qt/
+site_url: https://github.com/MSLNZ/msl-qt/
+
+theme:
+  name: material
+  language: en
+  favicon: assets/images/favicon.ico
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link  # select same tab across the site when a user clicks a tab with the same label
+    - navigation.footer
+    - navigation.indexes
+    - navigation.top
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - search.highlight
+    - search.suggest
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to system preference
+
+watch: [src, CHANGELOG.md]
+
+nav:
+  - Overview:
+    - index.md
+    - release-notes.md
+    - license.md
+  - API:
+    - api.md
+
+markdown_extensions:
+  - admonition  # enables: !!! tip
+  - attr_list  # enables: [link](url){:target="_blank"} and {: #rename-permalink }
+  - pymdownx.details  # enables collapsable admonition
+  - pymdownx.snippets  # enables: --8<--
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true  # tabs look better on narrower screen sizes (like mobile)
+  - toc:
+      permalink: "¤"
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          inventories:
+            - url: https://docs.python.org/3/objects.inv
+              domains: [std, py]
+            - url: https://doc.qt.io/qtforpython-6/objects.inv
+              domains: [py]
+          options:
+            # General
+            show_source: true
+
+            # Headings
+            show_root_full_path: false
+            show_root_heading: true
+            show_root_toc_entry: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+
+            # Members
+            filters: ["!^_"]
+            inherited_members: false
+
+            # Docstrings
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
+            line_length: 85
+            relative_crossrefs: true
+            scoped_crossrefs: true
+
+            # Signatures
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+
+extra:
+  version:
+    provider: mike
+  social:
+  - icon: fontawesome/brands/github
+    link: https://github.com/MSLNZ/msl-qt/
+  - icon: fontawesome/brands/python
+    link: https://pypi.org/project/msl-qt/
+
+hooks:
+  - docs/hooks.py

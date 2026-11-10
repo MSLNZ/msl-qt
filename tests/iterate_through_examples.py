@@ -1,47 +1,33 @@
-"""
-Run each example script one at a time.
-"""
-import os
-import sys
+"""Sequentially run each example and prompt function."""
+
+from __future__ import annotations
+
 from functools import partial
-from inspect import getmembers
-from inspect import isfunction
+from inspect import getmembers, isfunction
 
-if 'QT_API' not in os.environ:
-    os.environ['QT_API'] = 'PySide6' if sys.version_info.minor > 5 else 'PySide2'
+from msl.examples.qt import mapping
+from msl.qt import binding, prompt
 
-from msl import qt
-import msl.examples.qt as example
 
-print(f'Using {qt.binding}')
+def run() -> None:
+    for name, item in getmembers(prompt, isfunction):
+        if name.startswith("_") or name in {"application", "screen_geometry", "to_qcolor", "to_qfont"}:
+            continue
 
-examples = [
-    example.checkbox.show,
-    example.line_edit.show,
-    example.combobox.show,
-    example.comments.show,
-    example.button.show,
-    example.logger.show,
-    example.toggle_switch.show,
-    example.loop_until_abort.main,
-    example.loop_until_abort_sleep.main,
-    example.ShowStandardIcons,
-    example.led.show,
-]
+        if name in ["comment", "file", "files", "folder", "save"]:
+            mapping[name] = item
+        elif name == "item":
+            mapping[name] = partial(item, name, items=[1, 2, 3])
+        else:
+            mapping[name] = partial(item, name)
 
-for name, item in getmembers(qt.prompt, isfunction):
-    if name.startswith('_') or name in ['application', 'to_qfont']:
-        continue
+    print(f"Using {binding}")  # noqa: T201
+    n = len(mapping)
+    for i, example in enumerate(mapping.values(), start=1):
+        example()
+        if not prompt.yes_no(f"{n - i} examples remain.\nContinue?"):
+            break
 
-    if name in ['comments', 'filename', 'folder', 'save']:
-        examples.append(item)
-    elif name == 'item':
-        examples.append(partial(item, name, items=[1, 2, 3]))
-    else:
-        examples.append(partial(item, name))
 
-n = len(examples)
-for i, example in enumerate(examples, start=1):
-    example()
-    if i < n and not qt.prompt.yes_no(f'{n-i} examples remain.\nContinue?'):
-        break
+if __name__ == "__main__":
+    run()

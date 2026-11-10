@@ -1,45 +1,19 @@
-# Byte-compiled / optimized / DLL files
+# Global directories
 __pycache__/
-*.py[cod]
-*$py.class
 
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
+# Global files
+*.py[codz]
 
-# Sphinx documentation
-docs/_build/
-docs/_autosummary/
-docs/.doctrees/
-docs/pyqt*-original-objects.*
-docs/pyqt*-modified-objects.txt
+# Root directories
+/.cache/
+/.idea/
+/.venv/
+/dist/
+/site/
+/venv/
 
-# Project settings
-.ropeproject/
-.project/
-.pydevproject/
-.settings/
-.idea/
+# Root files
+/uv.lock
 
-# pytest and coverage
-.cache/
-htmlcov/
-.coverage
-junit.xml
-coverage.xml
-condatests.ini
-.pytest_cache/
+# Auto-generated during build
+/src/msl/qt/_version.py
