@@ -47,7 +47,7 @@ jobs:
             libxcb-shape0
       - name: Run tests
         if: ${{ matrix.os != 'ubuntu-24.04' }}
-        run: uv run --python ${{ matrix.python-version }} --with ${{ matrix.qt-binding }} --no-dev --group test -- pytest
+        run: uv run --python ${{ matrix.python-version }} --with ${{ matrix.qt-binding }} --no-dev --group test -- pytest -vs
       - name: Run tests (ubuntu)
         if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: xvfb-run uv run --python ${{ matrix.python-version }} --with ${{ matrix.qt-binding }} --no-dev --group test -- pytest
