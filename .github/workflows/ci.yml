@@ -30,7 +30,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb libxkbcommon-x11-0 libxcb-cursor0 libgl1-mesa-glx
+          sudo apt-get install -y xvfb libxkbcommon-x11-0 libxcb-cursor0 libgl1 libglx-mesa0
       - name: Run tests
         if: ${{ matrix.os != 'ubuntu-24.04' }}
         run: uv run --python ${{ matrix.python-version }} --with ${{ matrix.qt-binding }} --no-dev --group test -- pytest
@@ -40,7 +40,7 @@ jobs:
 
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

@@ -1,4 +1,4 @@
-# cSpell: ignore IAAAAAADY bcdeghijlostvwxABCDFHIJKLNOSUVWX qryzafpnu MGTPEZYRQ Jggg AAAABJRU
+# cSpell: ignore IAAAAAADY bcdeghijlostvwxABCDFHIJKLNOSUVWX qryzafpnu MGTPEZYRQ
 from __future__ import annotations
 
 import math
