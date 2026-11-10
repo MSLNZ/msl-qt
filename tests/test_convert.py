@@ -19,18 +19,22 @@ def test_to_qicon() -> None:
     assert isinstance(convert.to_qicon(14), QtGui.QIcon)
 
     base64 = (
-        "iVBORw0KGgoAAAANSUhEUgAAACgAAABCCAYAAAAlkZRRAAAACXBIWXMAAAsTAAALEwEAmpwYAAABpElEQVR"
-        "oge2ZT07CQBSHf29kLXKOsnApBEx7DAl3sT2BZzAx6C1ahYBLFzRxyQ1Q12SeiwoSQonjzMiLmW9Fh+nMlz"
-        "ft/HkFhEOuGnofRLz+3RyVztpVrhryhXjBhu8OlsN2DADQ/NYalS+m93sXVJpzACBGASAxvt+1kGuCoC3On"
-        "kGXc9824iMYBG0JgrZ4X0lMWe+KtKKkdTcvQgT3sRy2Y6URr6+bo3laV/cogpUcX28VpbV1vdtY4iyCYcsv"
-        "lSBoi7j94G474iMoXjDMg7YEQVvEC4rPDxq/xctBdH7CuAGA0/vSOBlkivk0o+iMNcfuVWq6+6uOfot4wdo"
-        "h/riKcqbqYOMrMfQTxEdQvKC4/eAu4iMYBG0RL9gAthd6yg4lco6B+AiKFzSfB1erBVQj8+CyF2PB1sPrAg"
-        "fyea4RP8TiBb+GmDIA0ArF5h/CLUCPx5AKuISAsJJYIV4w8O8hAOj2O9VbTJRNn6YpAHT6nZxQnYun49nmQ"
-        "NTrXcSaKN8t37RRU85AMRvPEgDoXnZT8Pe3un31FXMymTzL/xwrXlA8n2MHdwPYAbB5AAAAAElFTkSuQmCC"
+        b"iVBORw0KGgoAAAANSUhEUgAAACgAAABCCAYAAAAlkZRRAAAACXBIWXMAAAsTAAALEwEAmpwYAAABpElEQVR"
+        b"oge2ZT07CQBSHf29kLXKOsnApBEx7DAl3sT2BZzAx6C1ahYBLFzRxyQ1Q12SeiwoSQonjzMiLmW9Fh+nMlz"
+        b"ft/HkFhEOuGnofRLz+3RyVztpVrhryhXjBhu8OlsN2DADQ/NYalS+m93sXVJpzACBGASAxvt+1kGuCoC3On"
+        b"kGXc9824iMYBG0JgrZ4X0lMWe+KtKKkdTcvQgT3sRy2Y6URr6+bo3laV/cogpUcX28VpbV1vdtY4iyCYcsv"
+        b"lSBoi7j94G474iMoXjDMg7YEQVvEC4rPDxq/xctBdH7CuAGA0/vSOBlkivk0o+iMNcfuVWq6+6uOfot4wdo"
+        b"h/riKcqbqYOMrMfQTxEdQvKC4/eAu4iMYBG0RL9gAthd6yg4lco6B+AiKFzSfB1erBVQj8+CyF2PB1sPrAg"
+        b"fyea4RP8TiBb+GmDIA0ArF5h/CLUCPx5AKuISAsJJYIV4w8O8hAOj2O9VbTJRNn6YpAHT6nZxQnYun49nmQ"
+        b"NTrXcSaKN8t37RRU85AMRvPEgDoXnZT8Pe3un31FXMymTzL/xwrXlA8n2MHdwPYAbB5AAAAAElFTkSuQmCC"
     )
 
-    assert isinstance(convert.to_qicon(QtCore.QByteArray(base64.encode())), QtGui.QIcon)
-    assert isinstance(convert.to_qicon(bytearray(base64.encode())), QtGui.QIcon)
+    assert isinstance(convert.to_qicon(base64), QtGui.QIcon)
+    assert isinstance(convert.to_qicon(QtCore.QByteArray(base64)), QtGui.QIcon)
+    assert isinstance(convert.to_qicon(bytearray(base64)), QtGui.QIcon)
+
+    with pytest.raises(ValueError, match=r"Cannot load image data from base64 bytes"):
+        _ = convert.to_qicon(b"abc123")
 
     default_size = convert.to_qicon(QtWidgets.QStyle.StandardPixmap.SP_TitleBarMenuButton).availableSizes()[-1]
     assert isinstance(default_size, QtCore.QSize)
@@ -524,7 +528,7 @@ def test_si_to_number() -> None:  # noqa: PLR0915
 
 
 def test_print_base64() -> None:
-    icon = QtWidgets.QStyle.StandardPixmap.SP_MediaPlay
+    icon = "docs/assets/images/favicon.ico"
 
     with StringIO() as s:
         convert.print_base64(icon, size=16, file=s)
@@ -532,23 +536,42 @@ def test_print_base64() -> None:
         actual = [line.rstrip() for line in s.readlines()]
         expected = r"""icon = (
     b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bA"
-    b"AAAXklEQVQ4jWNgGPKAEZnDy8v7H8b+/PkzI6ZyEgwg1iAmQjbw8vL+5+HhuUC2Cwi5hiQDsB"
-    b"lE0AuEAEkG/P///yK6N1iI1YwrNggaQCgacRpAbELCADw8PFpkaRwwAADjLiG1efoADgAAAAB"
-    b"JRU5ErkJggg=="
+    b"AAAEnRFWHRfcV9pY29PcmlnRGVwdGgAMzLV4rjsAAACDUlEQVQ4jaWTz0tUURTHP+e+OzPPnB"
+    b"ktdQQdTakWkbsmKNtEEARtIqKgoH+gdkGrti2C+g8kgtqEK7f9Adm2RVAgyZiIY4ZNzsx78+5"
+    b"797RwTCkKrC8cOPecc79wfnzl7GxtAxgBtjkYCkBggVIvUPpL8R9h/uXTbwTas1386mf7Yvtz"
+    b"ACYAVp1hPTUUBJzCUmKIFVpeWE4MjVRYc0KqsOIMHS9Y6RF898KjSszNsuNDYlBgbizmZMFTN"
+    b"MrLasTidJu58ZiigSejMafCjK/ZDoOJFS4POB5XI7ZS4WIx42q1w1CgPKh0uVR2zDfzbKZCOV"
+    b"BujXSZyHlauwQGWI0DEHg+EXFjMIHIknih4QwE8K5ruL1yiEYqkBpSFYzo3hAPW2V+M8+1Qce"
+    b"6Myy3Ao4XPPfWQl58KfBsus3CVHunaQ9dhUjBA1aBUassO8OFpX4EeD3VoWyUfqPc+dxHPREe"
+    b"Hu0w37IgUBDIeuswCoSiVKznbTtgIxWK1rPihLtHHDrT5P5wl/ff8rxpWRYjy9OxiPqJFjMFj"
+    b"5w+V4tqfVnYSIVPSUBolDNhxsfEUDJwpeTYyoRXzTyNTJi0nusDjj5RFrZzyPnZWlR3JiwHyn"
+    b"CgOIW6M4wECgJrTjBAxSpDgbKZQSM1CDCe89gMqOY8AEmvr8neG+BYfu/2YoWigWL+Zz75by1"
+    b"YdmQccnA5F4HWD9Mi1v4ahSN+AAAAAElFTkSuQmCC"
 )
 """.splitlines()
         assert actual == expected
 
     with StringIO() as s:
-        convert.print_base64(icon, size=16, name="my_icon", file=s, line_width=60)
+        convert.print_base64(icon, size=16, name="my_favicon", file=s, line_width=60)
         _ = s.seek(0)
         actual = [line.rstrip() for line in s.readlines()]
-        expected = r"""my_icon = (
+        expected = r"""my_favicon = (
     b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIW"
-    b"XMAAA7EAAAOxAGVKw4bAAAAXklEQVQ4jWNgGPKAEZnDy8v7H8b+/P"
-    b"kzI6ZyEgwg1iAmQjbw8vL+5+HhuUC2Cwi5hiQDsBlE0AuEAEkG/P/"
-    b"//yK6N1iI1YwrNggaQCgacRpAbELCADw8PFpkaRwwAADjLiG1efoA"
-    b"DgAAAABJRU5ErkJggg=="
+    b"XMAAA7EAAAOxAGVKw4bAAAAEnRFWHRfcV9pY29PcmlnRGVwdGgAMz"
+    b"LV4rjsAAACDUlEQVQ4jaWTz0tUURTHP+e+OzPPnBktdQQdTakWkbs"
+    b"mKNtEEARtIqKgoH+gdkGrti2C+g8kgtqEK7f9Adm2RVAgyZiIY4ZN"
+    b"zsx78+5797RwTCkKrC8cOPecc79wfnzl7GxtAxgBtjkYCkBggVIvU"
+    b"PpL8R9h/uXTbwTas1386mf7YvtzACYAVp1hPTUUBJzCUmKIFVpeWE"
+    b"4MjVRYc0KqsOIMHS9Y6RF898KjSszNsuNDYlBgbizmZMFTNMrLasT"
+    b"idJu58ZiigSejMafCjK/ZDoOJFS4POB5XI7ZS4WIx42q1w1CgPKh0"
+    b"uVR2zDfzbKZCOVBujXSZyHlauwQGWI0DEHg+EXFjMIHIknih4QwE8"
+    b"K5ruL1yiEYqkBpSFYzo3hAPW2V+M8+1Qce6Myy3Ao4XPPfWQl58Kf"
+    b"Bsus3CVHunaQ9dhUjBA1aBUassO8OFpX4EeD3VoWyUfqPc+dxHPRE"
+    b"eHu0w37IgUBDIeuswCoSiVKznbTtgIxWK1rPihLtHHDrT5P5wl/ff"
+    b"8rxpWRYjy9OxiPqJFjMFj5w+V4tqfVnYSIVPSUBolDNhxsfEUDJwp"
+    b"eTYyoRXzTyNTJi0nusDjj5RFrZzyPnZWlR3JiwHynCgOIW6M4wECg"
+    b"JrTjBAxSpDgbKZQSM1CDCe89gMqOY8AEmvr8neG+BYfu/2YoWigWL"
+    b"+Zz75by1YdmQccnA5F4HWD9Mi1v4ahSN+AAAAAElFTkSuQmCC"
 )
 """.splitlines()
         assert actual == expected

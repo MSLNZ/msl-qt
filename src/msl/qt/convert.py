@@ -270,7 +270,9 @@ def to_qicon(  # noqa: C901, PLR0912
         _icon = QtGui.QIcon(QtGui.QPixmap.fromImage(obj))
     elif isinstance(obj, (bytes, bytearray, QtCore.QByteArray)):
         img = QtGui.QImage()
-        _ = img.loadFromData(QtCore.QByteArray.fromBase64(obj))
+        if not img.loadFromData(QtCore.QByteArray.fromBase64(obj)):
+            msg = "Cannot load image data from base64 bytes"
+            raise ValueError(msg)
         _icon = QtGui.QIcon(QtGui.QPixmap.fromImage(img))
 
     if _icon is None:
@@ -424,14 +426,20 @@ def print_base64(
 
     ```pycon
     >>> from msl.qt import print_base64
-    >>> print_base64(QtWidgets.QStyle.StandardPixmap.SP_MediaPlay, name="my_play_icon", size=32)
-    my_play_icon = (
-        b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bA"
-        b"AAA00lEQVRYhe2Wyw7CIBBFLz42yiS60g/T39Tf0p3JEFc144aFsdgWGKQLzq4EMqdcmBZoNO"
-        b"YMEQkRCYBdqRpmTODzmZkH5xcXKCGySFnko7lVE/AciEistaccgaQIQqTGoiaQKpITQRB/Prp"
-        b"qAp6lF7mMTVSPIAQz7wE8qgkAgIg8nXPb7/FSEfQwxmxC4/8SeP26HavSlceuZTGBqf1APQIR"
-        b"Occ0I80duDPzMXaRikDO5zlLQOO/IElgqLPFEnsIr/6tVYoDE3dARDrn3FqraKMxK97DQVA//"
-        b"03OywAAAABJRU5ErkJggg=="
+    >>> print_base64("docs/assets/images/favicon.ico", name="my_favicon", size=16)
+    my_favicon = (
+        b"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bA"
+        b"AAAEnRFWHRfcV9pY29PcmlnRGVwdGgAMzLV4rjsAAACDUlEQVQ4jaWTz0tUURTHP+e+OzPPnB"
+        b"ktdQQdTakWkbsmKNtEEARtIqKgoH+gdkGrti2C+g8kgtqEK7f9Adm2RVAgyZiIY4ZNzsx78+5"
+        b"797RwTCkKrC8cOPecc79wfnzl7GxtAxgBtjkYCkBggVIvUPpL8R9h/uXTbwTas1386mf7Yvtz"
+        b"ACYAVp1hPTUUBJzCUmKIFVpeWE4MjVRYc0KqsOIMHS9Y6RF898KjSszNsuNDYlBgbizmZMFTN"
+        b"MrLasTidJu58ZiigSejMafCjK/ZDoOJFS4POB5XI7ZS4WIx42q1w1CgPKh0uVR2zDfzbKZCOV"
+        b"BujXSZyHlauwQGWI0DEHg+EXFjMIHIknih4QwE8K5ruL1yiEYqkBpSFYzo3hAPW2V+M8+1Qce"
+        b"6Myy3Ao4XPPfWQl58KfBsus3CVHunaQ9dhUjBA1aBUassO8OFpX4EeD3VoWyUfqPc+dxHPREe"
+        b"Hu0w37IgUBDIeuswCoSiVKznbTtgIxWK1rPihLtHHDrT5P5wl/ff8rxpWRYjy9OxiPqJFjMFj"
+        b"5w+V4tqfVnYSIVPSUBolDNhxsfEUDJwpeTYyoRXzTyNTJi0nusDjj5RFrZzyPnZWlR3JiwHyn"
+        b"CgOIW6M4wECgJrTjBAxSpDgbKZQSM1CDCe89gMqOY8AEmvr8neG+BYfu/2YoWigWL+Zz75by1"
+        b"YdmQccnA5F4HWD9Mi1v4ahSN+AAAAAElFTkSuQmCC"
     )
 
     ```
