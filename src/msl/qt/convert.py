@@ -10,7 +10,7 @@ from math import fabs, floor, isfinite, log10
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ._qt import Qt, QtCore, QtGui, QtWidgets, application
+from ._qt import QtCore, QtGui, QtWidgets, application
 from .characters import MICRO
 from .constants import SI_PREFIX_MAP
 
@@ -188,7 +188,7 @@ def to_qicon(  # noqa: C901, PLR0912
     obj: object,
     *,
     size: int | float | QtCore.QSize | tuple[int, int] | None = None,  # noqa: PYI041
-    aspect_mode: Qt.AspectRatioMode = Qt.AspectRatioMode.KeepAspectRatio,
+    aspect_mode: QtCore.Qt.AspectRatioMode = QtCore.Qt.AspectRatioMode.KeepAspectRatio,
 ) -> QtGui.QIcon:
     """Convert the input object to a [QIcon][QtGui.QIcon].
 
@@ -333,7 +333,9 @@ def icon_to_base64(  # noqa: C901, PLR0912, PLR0915
             msg = f"Requested icon {icon_index}, the maximum icon index allowed is {max_index}"
             raise OSError(msg)
 
-        image = QtGui.QImage.fromHICON(h_icon.value)
+        # The `QImage.fromHICON` function is not included in the stubs on unix.
+        # Using getattr keeps mypy and pyright happy, but upsets ruff which is okay.
+        image: QtGui.QImage = getattr(QtGui.QImage, "fromHICON")(h_icon.value)  # noqa: B009
         ctypes.windll.user32.DestroyIcon(h_icon)
         if image.isNull():
             msg = "Qt failed to convert the HICON handle to a QImage"
@@ -368,7 +370,7 @@ def rescale_icon(
     icon: object,
     size: Size | None,
     *,
-    aspect_mode: Qt.AspectRatioMode = Qt.AspectRatioMode.KeepAspectRatio,
+    aspect_mode: QtCore.Qt.AspectRatioMode = QtCore.Qt.AspectRatioMode.KeepAspectRatio,
 ) -> QtGui.QPixmap:
     """Rescale an icon.
 
