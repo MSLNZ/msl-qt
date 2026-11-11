@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from msl.qt import Qt, QtCore, QtGui, QtWidgets, utils
+from msl.qt import Qt, QtCore, QtGui, QtWidgets, binding, utils
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -20,8 +20,10 @@ def test_screen_geometry() -> None:
 def test_drag_enter_paths() -> None:
     mime = QtCore.QMimeData()
 
+    point = QtCore.QPoint(0, 0) if binding.qt_version_info[:2] < (6, 11) else QtCore.QPointF(0, 0)
+
     event = QtGui.QDragEnterEvent(
-        QtCore.QPointF(0, 0), Qt.DropAction.CopyAction, mime, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier
+        point, Qt.DropAction.CopyAction, mime, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier
     )
     paths = utils.drag_drop_paths(event)
     assert len(paths) == 0
@@ -42,7 +44,7 @@ def test_drag_enter_paths() -> None:
 
     mime.setUrls([url1, url2, url3, url4, url5])
     event = QtGui.QDragEnterEvent(
-        QtCore.QPointF(0, 0), Qt.DropAction.CopyAction, mime, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier
+        point, Qt.DropAction.CopyAction, mime, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier
     )
 
     paths = utils.drag_drop_paths(event)

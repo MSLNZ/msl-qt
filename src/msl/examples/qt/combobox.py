@@ -47,8 +47,8 @@ class Window(QtWidgets.QWidget):
         data = sender.itemData(index)
         print(f"index={index}, data={data}")
 
-    @Slot(str)
     @staticmethod
+    @Slot(str)
     def on_text_changed(text: str) -> None:
         """Slot called when the text changes."""
         print(f"text: {text}")
