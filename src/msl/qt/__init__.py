@@ -14,15 +14,6 @@ from ._qt import (
     application,
     binding,
 )
-from .characters import (
-    DEGREE,
-    DEGREE_C,
-    DEGREE_F,
-    GREEK,
-    INFINITY,
-    MICRO,
-    PLUS_MINUS,
-)
 from .convert import (
     icon_to_base64,
     number_to_si,
@@ -37,6 +28,15 @@ from .exceptions import excepthook
 from .loop_until_abort import LoopUntilAbort
 from .sleep import Sleep
 from .threading import Thread, Worker
+from .unicode import (
+    DEGREE,
+    DEGREE_C,
+    DEGREE_F,
+    GREEK,
+    INFINITY,
+    MICRO,
+    PLUS_MINUS,
+)
 from .widgets import LED, Button, CheckBox, ComboBox, DoubleSpinBox, LineEdit, Logger, SpinBox, ToggleSwitch
 
 __all__: list[str] = [

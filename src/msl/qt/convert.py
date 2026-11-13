@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ._qt import QtCore, QtGui, QtWidgets, application
-from .characters import MICRO
 from .constants import SI_PREFIX_MAP
+from .unicode import MICRO
 
 if TYPE_CHECKING:
     from typing import Literal

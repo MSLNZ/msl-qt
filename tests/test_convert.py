@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from msl.qt import Qt, QtCore, QtGui, QtWidgets, characters, convert
+from msl.qt import Qt, QtCore, QtGui, QtWidgets, convert, unicode
 
 
 def test_to_qicon() -> None:
@@ -333,7 +333,7 @@ def test_number_to_si() -> None:  # noqa: PLR0915
     check(convert.number_to_si(-12.3e-10), -1.23, "n")
     check(convert.number_to_si(1.23e-8), 12.3, "n")
     check(convert.number_to_si(-0.123e-7), -12.3, "n")
-    check(convert.number_to_si(0.123e-5), 1.23, characters.MICRO)
+    check(convert.number_to_si(0.123e-5), 1.23, unicode.MICRO)
     check(convert.number_to_si(0.123e-5, unicode=False), 1.23, "u")
     check(convert.number_to_si(-0.0123), -12.3, "m")
     check(convert.number_to_si(123.4), 123.4, "")

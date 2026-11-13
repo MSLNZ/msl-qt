@@ -26,13 +26,13 @@ if TYPE_CHECKING:
 
 
 def critical(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
-    """Display a `critical` message in a dialog window.
+    """Display a message in a dialog window using a *critical* alert icon.
 
     Args:
-        message: The message to display. The message can use HTML/CSS markup, for example,
-            `'<html>A <p style="color:red;font-size:18px"><i>critical</i></p> error occurred!</html>'`
+        message: The message to display. The message can use HTML/CSS markup, e.g.,
+            `#!py '<html>A <p style="color:red"><i>critical</i></p> error occurred!</html>'`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
     """
     if isinstance(message, Exception):
@@ -57,14 +57,15 @@ def double(
 
     Args:
         message: The message that is shown to the user to describe what the value represents.
-            The message can use HTML/CSS markup, e.g., `"<html>Enter a mass, in &mu;g</html>"`
+            The message can use HTML/CSS markup, e.g., `#!py "<html>Enter a mass, in &mu;g</html>"`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
         value: The initial value.
         minimum: The minimum value that the user can enter.
         maximum: The maximum value that the user can enter.
-        step: The step size by which the value can be increased and decreased.
+        step: The step size by which the value can be increased and decreased
+            (by pressing the arrow keys or clicking the arrow buttons).
         decimals: The number of digits that are displayed after the decimal point.
 
     Returns:
@@ -94,7 +95,7 @@ def file(
     Args:
         title: The text to display in the title bar of the dialog window.
         directory: The initial directory to start in.
-        filters: Only filenames that match the specified `filters` are shown.
+        filters: Only files that match the specified `filters` are shown.
 
     Returns:
         The path of the file that was selected. Returns an empty string if the dialog was cancelled.
@@ -117,7 +118,7 @@ def files(
     Args:
         title: The text to display in the title bar of the dialog window.
         directory: The initial directory to start in.
-        filters: Only filenames that match the specified `filters` are shown.
+        filters: Only files that match the specified `filters` are shown.
 
     Returns:
         The paths of the files that were selected. Returns an empty list if the dialog was cancelled.
@@ -137,7 +138,7 @@ def folder(*, title: str = "Select Folder", directory: str | Path | None = None)
         directory: The initial directory to start in.
 
     Returns:
-        The path of the selected folder.
+        The path of the selected folder. Returns an empty string if the dialog was cancelled.
     """
     d = "" if directory is None else str(directory)
     app, title = _get_app_and_title(title)
@@ -145,13 +146,13 @@ def folder(*, title: str = "Select Folder", directory: str | Path | None = None)
 
 
 def information(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
-    """Display an `information` message in a dialog window.
+    """Display a message in a dialog window using an *information* alert icon.
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `"<html>The temperature is 21.3 &deg;C</html>"`
+            `#!py "<html>Laser at 26.3 &deg;C</html>"`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
     """
     if isinstance(message, Exception):
@@ -175,14 +176,15 @@ def integer(
 
     Args:
         message: The message that is shown to the user to describe what the value represents.
-            The message can use HTML/CSS markup, e.g., `"<html>Enter a mass, in &mu;g</html>"`
+            The message can use HTML/CSS markup, e.g., `#!py "<html>Enter a mass, in &mu;g</html>"`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
         value: The initial value.
         minimum: The minimum value that the user can enter.
         maximum: The maximum value that the user can enter.
-        step: The step size by which the value can be increased and decreased.
+        step: The step size by which the value can be increased and decreased
+            (by pressing the arrow keys or clicking the arrow buttons).
 
     Returns:
         The value or `None` if the dialog was cancelled.
@@ -206,22 +208,24 @@ def item(
     font: Font | None = None,
     index: int = 0,
 ) -> Any:  # noqa: ANN401
-    """Request an item from a sequence of items.
+    """Prompt for an item from a sequence of items.
 
     Args:
-        message: The message that is shown to the user to describe what the sequence of items represent.
-            The message can use HTML/CSS markup.
-        items: The items to choose from. The items can be of any data type.
+        message: The message that is shown to the user to describe what the
+            sequence of items represent. The message can use HTML/CSS markup, e.g.,
+            `#!py "<html>Choose a <i>temperature</i> in &deg;C</html>"`
+        items: The items to choose from. The items can be of any data type,
+            the string representation of each item is displayed in the dialog window.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
         index: The index of the initial item that is selected.
 
     Returns:
         The selected item or `None` if the user cancelled the request.
             The data type of the selected item is preserved. For example, if
-            `items=[True, 1, 2.2, "hello"]` and the user selects the `2.2` item
-            then `2.2` as a [float][] data type is returned.
+            `#!py items=[True, 1, 2.2, "hello"]` and the user selects `#!py 2.2`,
+            then `#!py 2.2` as a [float][] data type is returned.
     """
     strings = [str(i) for i in items]
     _, dialog = _input_dialog(title=title, message=message, font=font)
@@ -243,28 +247,28 @@ def comment(
 ) -> str:
     """Prompt the user for a comment.
 
-    Opens a [QDialog][QtWidgets.QDialog] to allow for a user to enter comments about
+    Opens a [QDialog][QtWidgets.QDialog] to allow a user to enter a comment about
     a task that they are performing. The dialog provides a table of all the previous
-    comments that have been used. Comments that are in the table can be deleted by
-    selecting the desired row(s) and pressing the `Delete` key or the comment in
-    a row can be selected by double-clicking on a row.
+    comments that have been used. A comment that is in the table can be selected by
+    double clicking a row. You can delete comments from the table by selecting the
+    desired row(s) and then pressing the `Delete` key.
 
-    This function is useful when acquiring data and you want to get a comment
-    about how the data was/will be acquired. Using a prompt to enter comments forces
-    you to use a new comment (or select a previous comment) every time you acquire
-    data rather than having the comment as a constant in your program, which you
-    might forget to update before acquiring the next data set.
+    This function is useful when acquiring data and you want to get a comment about
+    how the data was/will be acquired. Using a prompt to get a comment forces you to
+    enter a comment, or select and modify a previous comment, every time you acquire
+    data rather than having the comment as a constant in your program, which you might
+    forget to update before acquiring the next data run.
 
     Args:
         path: The path to a [JSON](https://www.json.org/) file that contains the history
-            of the comments that have been entered. If `None` then the default file is used.
-            The file will automatically be created if it does not exist.
+            of the comments that have been entered. If `None`, the default path is used.
+            The file is created if it does not exist.
         title: The text to display in the title bar of the dialog window.
         even_row_color: The background color of the even-numbered rows in the history table.
             The default color is chosen based on the color scheme of the operating system.
         odd_row_color: The background color of the odd-numbered rows in the history table.
             The default color is chosen based on the color scheme of the operating system.
-        text_color: The font color of a comment in the history table.
+        text_color: The text color of a comment in the history table.
             The default color is chosen based on the color scheme of the operating system.
 
     Returns:
@@ -306,7 +310,7 @@ def save(
         options: Additional options on how to run the dialog.
 
     Returns:
-        The file path. Can be an empty string if the dialog was cancelled.
+        The file path. Returns an empty string if the dialog was cancelled.
     """
     d = "" if directory is None else str(directory)
     app, title = _get_app_and_title(title)
@@ -330,9 +334,10 @@ def text(
     """Prompt for text (a string).
 
     Args:
-        message: The message that is shown to the user. The message can use HTML/CSS markup.
+        message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,
+            `#!py "<html>Enter a <i>hostname</i> or <i>IP address</i></html>"`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
         value: The initial value.
         multi_line: Whether the entered text can span multiple lines.
@@ -354,10 +359,13 @@ def text(
 def password(message: str, *, title: str | None = None, font: Font | None = None) -> str:
     """Prompt for a password.
 
+    Replaces entered characters with a platform-specific mask symbol.
+
     Args:
-        message: The message that is shown to the user. The message can use HTML/CSS markup.
+        message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,
+            `#!py "<html>Enter a <i>secure password</i></html>"`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
 
     Returns:
@@ -367,13 +375,13 @@ def password(message: str, *, title: str | None = None, font: Font | None = None
 
 
 def warning(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
-    """Display a `warning` message in a dialog window.
+    """Display a message in a dialog window using a *warning* alert icon.
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `'<html>A <p style="color:yellow">warning</p>...</html>'`
+            `#!py '<html>A <p style="color:yellow">warning</p> message</html>'`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
     """
     if isinstance(message, Exception):
@@ -387,9 +395,10 @@ def ok_cancel(message: str, *, title: str | None = None, font: Font | None = Non
     """Prompt for a response to a message where the logical options are `Ok` or `Cancel`.
 
     Args:
-        message: The message to display. The message can use HTML/CSS markup.
+        message: The message to display. The message can use HTML/CSS markup, e.g.,
+            `#!py '<html>Change the laser diode current to <p style="color:green">60 mA</p>?</html>'`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
         default: The button to initially select. If `True` then `Ok` is selected,
             otherwise `Cancel` is selected.
@@ -410,9 +419,10 @@ def yes_no(message: str, *, title: str | None = None, font: Font | None = None, 
     """Prompt for a response to a message where the logical options are `Yes` or `No`.
 
     Args:
-        message: The message to display. The message can use HTML/CSS markup.
+        message: The message to display. The message can use HTML/CSS markup, e.g.,
+            `#!py '<html>Change the laser diode current to <p style="color:green">60 mA</p>?</html>'`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
         default: The button to initially select. If `True` then `Yes` is selected,
             otherwise `No` is selected.
@@ -435,9 +445,10 @@ def yes_no_cancel(
     """Prompt for a response to a message where the logical options are `Yes`, `No` or `Cancel`.
 
     Args:
-        message: The message to display. The message can use HTML/CSS markup.
+        message: The message to display. The message can use HTML/CSS markup, e.g.,
+            `#!py '<html>Change the laser diode current to <p style="color:green">60 mA</p>?</html>'`.
         title: The text to display in the title bar of the dialog window.
-            If `None` then the text in the title bar of the active window is used.
+            If `None`, the text in the title bar of the active window is used.
         font: The font to use.
         default: The button to initially select. If `True` then `Yes` is selected,
             if `False` then `No` is selected, if `None` then `Cancel` is selected.

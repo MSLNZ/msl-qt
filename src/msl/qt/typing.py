@@ -10,7 +10,7 @@ from ._qt import QtCore, QtGui
 Family = str | Sequence[str]
 """[QFont][QtGui.QFont] family name(s).
 
-The family name may also include a foundry name, e.g., `"Helvetica [Cronyx]"`.
+The family name may also include a foundry name, e.g., `#!py "Helvetica [Cronyx]"`.
 """
 
 PointSize = int | float
@@ -34,7 +34,7 @@ Font = (
 
 * If an [int][], then the point size.
 * If a [str][], then the font family name.
-* If a [QtGui.QFont][], then the instance is used.
+* If a [QtGui.QFont][], then a copy is returned.
 * If a [tuple][], then one of:
     - (family-name, point-size)
     - (family-name, point-size, weight)
@@ -46,21 +46,33 @@ Filter = str | Sequence[str] | Mapping[str, str] | Mapping[str, Sequence[str]] |
 
 Examples,
 
-```python
-"Images (*.png *.xpm *.jpg)"
-"Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)"
-["Images (*.png *.xpm *.jpg)", "Text files (*.txt)", "XML files (*.xml)"]
-{"Images": ("*.png", "*.xpm", "*.jpg"), "Text files": "*.txt"}
-```
+* [str][] &mdash; `#!py "Images (*.bmp *.jpg *.png)"`
+* [str][] &mdash; `#!py "Images (*.bmp *.jpg *.png);;Text files (*.txt)"`
+* [list][] &mdash; `#!py ["Images (*.bmp *.jpg *.png)", "Text files (*.txt)"]`
+* [dict][] &mdash; `#!py {"Images": ("*.bmp", "*.jpg", "*.png"), "Text files": "*.txt"}`
 """
 
 Color = (
     str | int | tuple[int, int, int] | tuple[int, int, int, int] | QtCore.Qt.GlobalColor | QtGui.QRgba64 | QtGui.QColor
 )
-"""Values that can be converted to a [QColor][QtGui.QColor]."""
+"""Values that can be converted to a [QColor][QtGui.QColor].
+
+See [here][PySide6.QtGui.QColor.fromString] for supported [str][] values.
+
+If a single [int][], then the 0xRRGGBB hex value, e.g, `#!py 0xFF8800` &rarr; Red:255, Green:136, Blue:0
+
+If a [tuple][], then either (Red, Green, Blue) or (Red, Green, Blue, Alpha) values in the range [0, 255].
+"""
 
 Size = int | float | tuple[int, int] | QtCore.QSize
-"""The size of a [QIcon][QtGui.QIcon]."""
+"""The size of a [QIcon][QtGui.QIcon].
+
+If an [int][], then the width and the height are set to this value.
+
+If a [float][], then a scaling factor to apply to the default icon size.
+
+If a [tuple][], then the `(width, height)`.
+"""
 
 _T_contra = TypeVar("_T_contra", contravariant=True)
 

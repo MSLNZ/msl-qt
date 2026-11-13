@@ -5,11 +5,15 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/msl-qt?logo=pypi&logoColor=gold&label=PyPI&color=blue)](https://pypi.org/project/msl-qt/)
 [![PyPI - Python Versions](https://img.shields.io/pypi/pyversions/msl-qt.svg?logo=python&label=Python&logoColor=gold)](https://pypi.org/project/msl-qt/)
 
-This package provides custom [Qt] components for the graphical user interface.
+Custom [Qt] components for the graphical user interface.
 
 ## Install
 
-This package will eventually be published to PyPI. For now, you can [install from source].
+`msl-qt` is available at the [Python Package Index]
+
+```console
+pip install msl-qt
+```
 
 ### Dependencies
 
@@ -18,9 +22,10 @@ This package will eventually be published to PyPI. For now, you can [install fro
 
 ## Documentation
 
-The documentation for `msl-qt` can be found [here](https://mslnz.github.io/msl-qt/latest/).
+The documentation for `msl-qt` can be found [here].
 
 [Qt]: https://www.qt.io/
-[install from source]: https://mslnz.github.io/msl-qt/dev/#install
+[Python Package Index]: https://pypi.org/project/msl-qt/
 [PySide6]: https://pypi.org/project/PySide6/
 [PyQt6]: https://pypi.org/project/PyQt6/
+[here]: https://mslnz.github.io/msl-qt/latest/

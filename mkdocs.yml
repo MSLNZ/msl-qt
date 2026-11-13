@@ -54,12 +54,15 @@ nav:
     - release-notes.md
     - license.md
   - API:
-    - api.md
+    - api/prompt.md
+    - api/typing.md
+    - api/unicode.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip
   - attr_list  # enables: [link](url){:target="_blank"} and {: #rename-permalink }
   - pymdownx.details  # enables collapsable admonition
+  - pymdownx.inlinehilite  # enables `#!py ...` for inline code highlighting
   - pymdownx.snippets  # enables: --8<--
   - pymdownx.superfences
   - pymdownx.tabbed:
