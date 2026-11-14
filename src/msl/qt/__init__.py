@@ -26,8 +26,7 @@ from .convert import (
 )
 from .exceptions import excepthook
 from .loop_until_abort import LoopUntilAbort
-from .sleep import Sleep
-from .threading import Thread, Worker
+from .threading import Sleep, Thread, Worker
 from .unicode import (
     DEGREE,
     DEGREE_C,

@@ -1,11 +1,38 @@
-"""Base classes for starting a process in a new [QThread][QtCore.QThread]."""
+"""Base classes for running a process in a background [QThread][QtCore.QThread].
+
+When you run a process in the main event loop of the application, the graphical
+user interface (GUI) will be frozen until the process completes. For long-running
+processes, this will make your GUI annoyingly unresponsive. The [Worker][] and
+[Thread][] classes provide a way to run a process in a background thread so that
+the main application window remains responsive.
+
+The [Worker][] and [Thread][] classes are sub-classed in your application. The
+process to run is implemented in the overridden [Worker.process()][Worker.process]
+method.
+
+As an example, [SleepWorker][] is a class that implements [Worker][] and [Sleep][]
+implements [Thread][].
+
+!!! example "Run the example"
+    ```console
+    python -c "from msl.examples.qt import show; show('LoopSleep')"
+    ```
+
+    ??? abstract "Click to view the example source code"
+        <!-- fmt: off -->
+        ```python
+        --8<-- "src/msl/examples/qt/loop_until_abort_sleep.py"
+        ```
+        <!-- fmt: on -->
+"""
 
 from __future__ import annotations
 
 import sys
+import time
 import traceback as tb
 from types import TracebackType
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from ._qt import QtCore, Signal, Slot
 from .prompt import critical
@@ -17,23 +44,24 @@ if TYPE_CHECKING:
 
 
 class Worker(QtCore.QObject):
-    """Process an expensive or blocking operation in a thread that is separate from the main thread.
-
-    You can access to the attributes of the [Worker][..Worker]
-    as though they are attributes of the [Thread][...Thread].
+    """Process a long-running or blocking operation in a background thread.
 
     The `*args` and `**kwargs` parameters are passed to the constructor of the
     [Worker][..Worker] when the [start][..Thread.start] method is called.
 
+    !!! tip
+        You can access the attributes of the [Worker][..Worker] as though
+        they are attributes of the [Thread][..Thread] instance.
+
     !!! example
-        See [SleepWorker][msl.qt.sleep.SleepWorker] for an example.
+        See [SleepWorker][..SleepWorker] for an example.
     """
 
     finished: Signal = Signal()
     error: Signal = Signal(BaseException, TracebackType)
 
     def process(self) -> None:
-        """The expensive or blocking operation to process.
+        """The long-running or blocking process to run.
 
         !!! warning
             You must override this method.
@@ -67,7 +95,7 @@ class Thread(QtCore.QObject):
             worker: A [Worker][...Worker] subclass that has *not* been instantiated.
 
         !!! example
-            See [Sleep][msl.qt.sleep.Sleep] for an example.
+            See [Sleep][...Sleep] for an example.
         """
         super().__init__()
 
@@ -97,9 +125,8 @@ class Thread(QtCore.QObject):
     def error_handler(self, exception: BaseException, traceback: TracebackType) -> None:
         """Handle an exception.
 
-        If an exception is raised by the [Worker][...Worker] then the default
+        If an exception is raised while the [Worker][...Worker] is running the process, the default
         behaviour is to show the error message in a [critical][msl.qt.prompt.critical] dialog window.
-
         You can override this method to implement your own error handler.
 
         Args:
@@ -136,7 +163,7 @@ class Thread(QtCore.QObject):
     def start(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Start processing the [Worker][...Worker] in a [QThread][QtCore.QThread].
 
-        The `*args` and `**kwargs` are passed to the constructor of the [Worker][...Worker] class.
+        The `*args` and `**kwargs` are passed to the constructor of the [Worker][...Worker] subclass.
         """
         self._thread = QtCore.QThread()
         self._worker = self._worker_class(*args, **kwargs)
@@ -164,8 +191,7 @@ class Thread(QtCore.QObject):
 
         Args:
             milliseconds: The number of milliseconds to wait before a timeout occurs.
-                If `None` then this method will not time out and the thread must
-                return from its `run` method.
+                If `None`, then wait until the thread finishes.
 
         Returns:
             `True` if the thread finished, `False` if the thread timed out
@@ -181,13 +207,11 @@ class Thread(QtCore.QObject):
             out = self._check(self._thread.wait, int(milliseconds))
         return out
 
-    def worker_connect(self, signal: str | Signal | SignalInstance, slot: Callable[..., object]) -> None:
+    def worker_connect(self, signal: str | Signal | SignalInstance, slot: Callable[..., None]) -> None:
         """Connect a [Signal][QtCore.Signal] from the [Worker][...Worker] to a [Slot][QtCore.Slot].
 
         This method is intended to be called *before* a [Worker][...Worker] starts.
-        Although, you can still call this method when a [Worker][...Worker] is running,
-        it is easier (fewer characters to type) to access the attributes of a
-        [Worker][...Worker] as though they are attributes of the [Thread][...Thread].
+        Although, you can still call this method while a [Worker][...Worker] is running.
 
         Args:
             signal: The `signal` to connect the `slot` to. If a [str][], then the value is either
@@ -201,13 +225,11 @@ class Thread(QtCore.QObject):
         else:
             self._signals_slots.append((signal, slot))
 
-    def worker_disconnect(self, signal: str | Signal | SignalInstance, slot: Callable[..., object]) -> None:
+    def worker_disconnect(self, signal: str | Signal | SignalInstance, slot: Callable[..., None]) -> None:
         """Disconnect a [Slot][QtCore.Slot] from a [Signal][QtCore.Signal] for the [Worker][...Worker].
 
-        This method is intended to be called *before* a [Worker][...Worker] is restarted.
-        Although, you can still call this method when a [Worker][...Worker] is running,
-        it is easier (fewer characters to type) to access the attributes of a
-        [Worker][...Worker] as though they are attributes of the [Thread][...Thread].
+        This method is intended to be called *before* a [Worker][...Worker] starts.
+        Although, you can still call this method while a [Worker][...Worker] is running.
 
         Args:
             signal: The `signal` to disconnect the `slot` from. Must be the same
@@ -245,16 +267,46 @@ class Thread(QtCore.QObject):
 
     @Slot()
     def _worker_finished(self) -> None:
-        """Called when the [Worker][msl.qt.threading.Worker] finished successfully."""
+        """Called when the [Worker][...Worker] finished successfully."""
         if self._thread is not None:
             self._thread.quit()
         self._finished = True
 
 
-def _check_signal_slot(signal: str | Signal | SignalInstance, slot: object) -> tuple[str, Callable[..., object]]:
+class SleepWorker(Worker):
+    """The [Worker][..Worker] class for [Sleep][..Sleep]."""
+
+    def __init__(self, seconds: float) -> None:
+        """The [Worker][..Worker] class for [Sleep][..Sleep].
+
+        Delays execution for a certain number of seconds without
+        freezing the graphical user interface.
+
+        Args:
+            seconds: The number of seconds to sleep for.
+        """
+        super().__init__()
+        self.seconds: float = seconds
+
+    def process(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Overrides [process][...Worker.process] to call the blocking [time.sleep][] function."""
+        time.sleep(self.seconds)
+
+
+class Sleep(Thread):
+    """Sleep without freezing the graphical user interface."""
+
+    def __init__(self) -> None:
+        """Sleep without freezing the graphical user interface."""
+        super().__init__(SleepWorker)
+
+
+def _check_signal_slot(
+    signal: str | Signal | SignalInstance, slot: Callable[..., None]
+) -> tuple[str, Callable[..., None]]:
     """Check the input types and returns the appropriate types."""
     if not callable(slot):
-        msg = "`slot` must be callable"
+        msg = "`slot` must be callable"  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
         raise TypeError(msg)
 
     if isinstance(signal, str):

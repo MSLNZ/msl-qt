@@ -12,13 +12,13 @@ if TYPE_CHECKING:
     from io import TextIOWrapper
 
 
-class LoopExample(LoopUntilAbort):
-    """Initialize the LoopUntilAbort class and create a file to write data to."""
+class Loop(LoopUntilAbort):
+    """Repeatedly write data to a file until aborted by the user."""
 
     def __init__(self) -> None:
-        """Initialize the LoopUntilAbort class and create a file to write data to.
+        """Initialize the `LoopUntilAbort` class and create a file to write data to.
 
-        Use a 250 ms delay between successive calls to the `loop` method.
+        Use a 250-ms delay between successive calls to the `loop` method.
         """
         super().__init__(loop_delay=250)
 
@@ -48,7 +48,7 @@ class LoopExample(LoopUntilAbort):
 
 def show() -> None:
     """Show the widget and start the loop."""
-    loop = LoopExample()
+    loop = Loop()
     loop.start()
 
 

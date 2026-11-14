@@ -1,4 +1,12 @@
-"""Unicode characters."""
+"""Unicode characters.
+
+```pycon
+>>> from msl.qt import DEGREE_C, PLUS_MINUS
+>>> f"The temperature is 21.4 {PLUS_MINUS} 0.5 {DEGREE_C}"
+'The temperature is 21.4 ± 0.5 ℃'
+
+```
+"""
 
 from __future__ import annotations
 

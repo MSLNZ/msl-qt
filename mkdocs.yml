@@ -55,6 +55,7 @@ nav:
     - license.md
   - API:
     - api/prompt.md
+    - api/threading.md
     - api/typing.md
     - api/unicode.md
 
