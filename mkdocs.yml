@@ -58,6 +58,7 @@ nav:
     - api/threading.md
     - api/typing.md
     - api/unicode.md
+    - api/utils.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip

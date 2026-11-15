@@ -8,7 +8,12 @@ the main application window remains responsive.
 
 The [Worker][] and [Thread][] classes are sub-classed in your application. The
 process to run is implemented in the overridden [Worker.process()][Worker.process]
-method.
+method. These classes are importable at the top level, i.e.,
+
+```pycon
+>>> from msl.qt import Thread, Worker
+
+```
 
 As an example, [SleepWorker][] is a class that implements [Worker][] and [Sleep][]
 implements [Thread][].

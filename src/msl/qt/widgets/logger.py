@@ -8,8 +8,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from msl.qt._qt import QtGui, QtWidgets
-from msl.qt.convert import to_qicon
 from msl.qt.prompt import information, save
+from msl.qt.utils import to_qicon
 
 if TYPE_CHECKING:
     from logging import LogRecord

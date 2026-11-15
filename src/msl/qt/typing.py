@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Protocol, TypeVar
+from typing import Literal, Protocol, TypeVar
 
 from ._qt import QtCore, QtGui
 
@@ -83,3 +83,25 @@ class SupportsWrite(Protocol[_T_contra]):
     def write(self, s: _T_contra, /) -> int:
         """Write to the stream."""
         ...
+
+
+ImageFormat = Literal[
+    "bmp",
+    "cur",
+    "icns",
+    "ico",
+    "jfif",
+    "jpeg",
+    "jpg",
+    "pbm",
+    "pgm",
+    "png",
+    "ppm",
+    "tif",
+    "tiff",
+    "wbmp",
+    "webp",
+    "xbm",
+    "xpm",
+]
+"""Image formats supported by [QImageWriter][QtGui.QImageWriter]."""

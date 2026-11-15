@@ -8,8 +8,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from ._qt import Qt, QtCore, QtGui, QtWidgets, application
-from .convert import to_qcolor, to_qfont
 from .prompt import critical, information, yes_no
+from .utils import to_qcolor, to_qfont
 
 if TYPE_CHECKING:
     from datetime import timedelta

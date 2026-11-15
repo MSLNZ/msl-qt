@@ -7,7 +7,7 @@ import sys
 from functools import partial
 from typing import TYPE_CHECKING
 
-from msl.qt import Qt, QtCore, QtWidgets, application, convert, excepthook
+from msl.qt import Qt, QtCore, QtWidgets, application, excepthook, to_qicon
 
 if TYPE_CHECKING:
     from msl.qt import QtGui
@@ -97,7 +97,7 @@ class StandardIcons(QtWidgets.QMainWindow):
         num_cols = 4
         for i, name in enumerate(icons):
             button = QtWidgets.QPushButton(name)
-            icon = convert.to_qicon(getattr(QtWidgets.QStyle, name))
+            icon = to_qicon(getattr(QtWidgets.QStyle, name))
             button.setIcon(icon)
             _ = button.clicked.connect(partial(self.zoom, icon, name))
             layout.addWidget(button, i // num_cols, i % num_cols)
@@ -124,7 +124,7 @@ class StandardIcons(QtWidgets.QMainWindow):
             button = QtWidgets.QPushButton(str(index))
             name = f"{filename}|{index}"
             try:
-                icon = convert.to_qicon(name)
+                icon = to_qicon(name)
             except OSError:
                 break
 

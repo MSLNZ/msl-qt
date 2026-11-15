@@ -5,8 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from msl.qt._qt import QtCore, QtGui, QtWidgets
-from msl.qt.convert import to_qcolor
-from msl.qt.utils import screen_geometry
+from msl.qt.utils import screen_geometry, to_qcolor
 
 if TYPE_CHECKING:
     from typing import Callable

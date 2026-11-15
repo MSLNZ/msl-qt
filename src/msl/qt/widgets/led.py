@@ -6,8 +6,7 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 from msl.qt._qt import QtCore, QtGui, QtSvg, QtWidgets, Signal
-from msl.qt.convert import to_qcolor
-from msl.qt.utils import screen_geometry
+from msl.qt.utils import screen_geometry, to_qcolor
 
 if TYPE_CHECKING:
     from msl.qt.typing import Color

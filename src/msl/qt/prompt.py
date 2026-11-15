@@ -2,6 +2,20 @@
 
 The following functions create a dialog window to either notify the user of an
 event that happened or to request information from the user.
+
+The functions in this module are importable at the top level, i.e.,
+
+```pycon
+>>> from msl.qt import file, information
+
+```
+
+or you can import the module.
+
+```pycon
+>>> from msl.qt import prompt
+
+```
 """
 
 from __future__ import annotations
@@ -14,15 +28,32 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ._qt import Qt, QtGui, QtWidgets, application
-from .constants import HOME_DIR
-from .convert import to_qcolor, to_qfont
-from .utils import screen_geometry
+from .utils import screen_geometry, to_qcolor, to_qfont
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
     from typing import Any
 
     from .typing import Color, Filter, Font
+
+__all__: list[str] = [
+    "comment",
+    "critical",
+    "double",
+    "file",
+    "files",
+    "folder",
+    "information",
+    "integer",
+    "item",
+    "ok_cancel",
+    "password",
+    "save",
+    "text",
+    "warning",
+    "yes_no",
+    "yes_no_cancel",
+]
 
 
 def critical(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
@@ -287,7 +318,7 @@ def comment(
         even_row_color = to_qcolor(even_row_color)
         odd_row_color = even_row_color.lighter(150) if scheme == Qt.ColorScheme.Dark else even_row_color.darker(110)
 
-    p = Path(path) if path else (HOME_DIR / "msl-qt-comments.json")
+    p = Path(path) if path else (Path("~/.msl").expanduser() / "msl-qt-comments.json")
     c = _Comment(p, even_row_color, odd_row_color, text_color)
     c.setWindowTitle(title)
     _ = c.exec()

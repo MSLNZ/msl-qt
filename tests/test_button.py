@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from msl.qt import Button, Qt, QtCore, QtWidgets, convert
+from msl.qt import Button, Qt, QtCore, QtWidgets, icon_to_base64, to_qicon
 
 
 def test_text() -> None:
@@ -21,7 +21,7 @@ def test_icon() -> None:
 
     standard_pixmap = QtWidgets.QStyle.StandardPixmap.SP_DriveNetIcon
 
-    icon = convert.to_qicon(standard_pixmap)
+    icon = to_qicon(standard_pixmap)
     sizes = icon.availableSizes()
     if sys.platform == "win32":
         assert len(sizes) > 1
@@ -44,7 +44,7 @@ def test_icon() -> None:
     assert b.iconSize() == gamma_size
     assert b.toolButtonStyle() == Qt.ToolButtonStyle.ToolButtonIconOnly
 
-    b = Button(icon=convert.icon_to_base64(convert.to_qicon(path)))
+    b = Button(icon=icon_to_base64(to_qicon(path)))
     assert b.text() == ""
     assert not b.icon().isNull()
     assert b.iconSize() == gamma_size
@@ -54,7 +54,7 @@ def test_icon() -> None:
 def test_icon_size() -> None:
     standard_pixmap = QtWidgets.QStyle.StandardPixmap.SP_DriveNetIcon
 
-    icon = convert.to_qicon(standard_pixmap)
+    icon = to_qicon(standard_pixmap)
     sizes = icon.availableSizes()
     if sys.platform == "win32":
         assert len(sizes) > 1
@@ -63,48 +63,48 @@ def test_icon_size() -> None:
     # specify the size to the to_qicon() function
     #
 
-    b = Button(icon=convert.to_qicon(standard_pixmap))
+    b = Button(icon=to_qicon(standard_pixmap))
     assert b.text() == ""
     assert b.toolButtonStyle() == Qt.ToolButtonStyle.ToolButtonIconOnly
     assert b.iconSize() == sizes[0]
 
-    b = Button(icon=convert.to_qicon(standard_pixmap, size=789))
+    b = Button(icon=to_qicon(standard_pixmap, size=789))
     assert b.iconSize() == QtCore.QSize(789, 789)
 
-    b = Button(icon=convert.to_qicon(standard_pixmap, size=3.0))
+    b = Button(icon=to_qicon(standard_pixmap, size=3.0))
     # specifying a scale factor will use the largest available size
     assert b.iconSize() == QtCore.QSize(3 * sizes[-1].width(), 3 * sizes[-1].height())
 
-    b = Button(icon=convert.to_qicon(standard_pixmap, size=QtCore.QSize(50, 50)))
+    b = Button(icon=to_qicon(standard_pixmap, size=QtCore.QSize(50, 50)))
     assert b.iconSize() == QtCore.QSize(50, 50)
 
     for size in [(256,), (256, 256, 256)]:
         with pytest.raises(TypeError, match=r"QSize"):
-            _ = Button(icon=convert.to_qicon(standard_pixmap, size=size))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            _ = Button(icon=to_qicon(standard_pixmap, size=size))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     #
     # use the icon_size kwarg
     #
 
-    b = Button(icon=convert.to_qicon(standard_pixmap), icon_size=1234)
+    b = Button(icon=to_qicon(standard_pixmap), icon_size=1234)
     assert b.iconSize() == QtCore.QSize(1234, 1234)
 
     b = Button(icon=15, icon_size=1234)
     assert b.iconSize() == QtCore.QSize(1234, 1234)
 
-    b = Button(icon=convert.to_qicon(standard_pixmap), icon_size=3.0)
+    b = Button(icon=to_qicon(standard_pixmap), icon_size=3.0)
     # specifying a scale factor will use the largest available size
     assert b.iconSize() == QtCore.QSize(3 * sizes[-1].width(), 3 * sizes[-1].height())
 
-    b = Button(icon=convert.to_qicon(standard_pixmap), icon_size=(312, 312))
+    b = Button(icon=to_qicon(standard_pixmap), icon_size=(312, 312))
     assert b.iconSize() == QtCore.QSize(312, 312)
 
-    b = Button(icon=convert.to_qicon(standard_pixmap), icon_size=QtCore.QSize(500, 500))
+    b = Button(icon=to_qicon(standard_pixmap), icon_size=QtCore.QSize(500, 500))
     assert b.iconSize() == QtCore.QSize(500, 500)
 
     for size in [(256,), (256, 256, 256)]:
         with pytest.raises(TypeError, match=r"QSize"):
-            _ = Button(icon=convert.to_qicon(standard_pixmap), icon_size=size)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            _ = Button(icon=to_qicon(standard_pixmap), icon_size=size)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
 
 def test_text_and_icon() -> None:
