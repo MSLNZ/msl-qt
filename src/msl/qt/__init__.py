@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from ._qt import (
+    Property,
     Qt,
     QtCore,
     QtGui,
@@ -84,6 +85,7 @@ __all__: list[str] = [
     "LineEdit",
     "Logger",
     "LoopUntilAbort",
+    "Property",
     "Qt",
     "QtCore",
     "QtGui",

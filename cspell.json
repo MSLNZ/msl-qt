@@ -52,6 +52,7 @@
         "qcolor",
         "qfont",
         "qicon",
+        "qtpy",
         "rarr",
         "rescalable",
         "RRGGBB",

@@ -54,8 +54,10 @@ nav:
     - release-notes.md
     - license.md
   - API:
+    - api/index.md
     - api/loop_until_abort.md
     - api/prompt.md
+    - api/qt.md
     - api/threading.md
     - api/typing.md
     - api/unicode.md

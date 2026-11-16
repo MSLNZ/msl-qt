@@ -11,6 +11,8 @@ def on_page_content(html: str, **_: object) -> str:
             ("msl.qt._qt.SignalInstance", "PySide6.QtCore.Signal"),  # SignalInstance not in objects.inv
             ("msl.qt._qt.Signal", "PySide6.QtCore.Signal"),
             ("msl.qt._qt", "PySide6"),
+            ("PySide6.application", "msl.qt._qt.application"),
+            ("PySide6.Binding", "msl.qt._qt.Binding"),
         ]
 
         for old, new in replacements:

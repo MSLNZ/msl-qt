@@ -8,7 +8,7 @@ import importlib
 import os
 import sys
 from base64 import b64decode
-from typing import NamedTuple, cast
+from typing import Literal, NamedTuple, cast
 
 __all__: list[str] = [
     "Qt",
@@ -45,7 +45,7 @@ else:
 class Binding(NamedTuple):
     """The Python binding for the Qt framework."""
 
-    name: str
+    name: Literal["PySide6", "PyQt6"]
     """Name of the Python package that binds the Qt framework."""
 
     version: str
@@ -73,6 +73,7 @@ if PYQT6:
         patch = version & 0xFF
         return major, minor, patch
 
+    Property = QtCore.pyqtProperty
     Signal = QtCore.pyqtSignal
     SignalInstance = QtCore.pyqtBoundSignal
     Slot = QtCore.pyqtSlot
@@ -87,6 +88,7 @@ if PYQT6:
 elif PYSIDE6:  # must come after PYQT6 for mkdocstrings-python to use it
     from PySide6 import QtCore, QtGui, QtSvg, QtWidgets, __version__, __version_info__
 
+    Property = QtCore.Property
     Signal = QtCore.Signal
     SignalInstance = QtCore.SignalInstance
     Slot = QtCore.Slot
@@ -122,6 +124,16 @@ if PYQT6:
 
 def application(*args: str) -> QtWidgets.QApplication:
     """Returns the Qt application instance (creating one if necessary).
+
+    There is a single [QApplication][QtWidgets.QApplication] instance during the lifetime
+    of your application. Calling this method multiple times will return the same instance.
+
+    ```pycon
+    >>> from msl.qt import application
+    >>> app = application()
+    >>> assert app is application()
+
+    ```
 
     Args:
         args: Arguments to initialize the application. If not specified, [sys.argv][] is used.
