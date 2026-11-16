@@ -24,11 +24,9 @@ implements [Thread][].
     ```
 
     ??? abstract "Click to view the example source code"
-        <!-- fmt: off -->
         ```python
         --8<-- "src/msl/examples/qt/loop_until_abort_sleep.py"
         ```
-        <!-- fmt: on -->
 """
 
 from __future__ import annotations

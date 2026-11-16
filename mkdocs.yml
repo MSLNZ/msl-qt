@@ -54,6 +54,7 @@ nav:
     - release-notes.md
     - license.md
   - API:
+    - api/loop_until_abort.md
     - api/prompt.md
     - api/threading.md
     - api/typing.md

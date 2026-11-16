@@ -36,31 +36,35 @@ class LoopUntilAbort(ABC):
         This class provides an interface to show the status of a task (e.g., read
         a sensor value and write the value to a file) that you want to perform for
         an unknown period of time (e.g., during lunch or overnight) and you want to
-        stop the task whenever you return. It can be regarded as a way to tell
+        stop the task when you return. It can be regarded as a way to tell
         your program to *"get as much data as possible until I get back"*.
 
-        The following example illustrates how to repeatedly write data to a file in a loop:
+        You are required to override the [loop][..loop] method and optionally
+        override the [cleanup][..cleanup] method.
 
-        ??? example
-            <!-- fmt: off -->
-            ```python
-            --8<-- "src/msl/examples/qt/loop_until_abort.py"
-            ```
-            <!-- fmt: on -->
+        The following example illustrates how to repeatedly write data to a file in a loop.
 
-        !!! example
-            ```python
-            from msl.examples.qt import LoopExample
-            loop = LoopExample()
-            loop.start()
+        !!! example "Run the example"
+            ```console
+            python -c "from msl.examples.qt import show; show('Loop')"
             ```
 
-            Another example which uses *single-shot* mode
-            ```python
-            from msl.examples.qt import LoopExampleSleep
-            loop = LoopExampleSleep()
-            loop.start()
+            ??? abstract "Click to view the example source code"
+                ```python
+                --8<-- "src/msl/examples/qt/loop_until_abort.py"
+                ```
+
+        Another example which uses *single-shot* mode
+
+        !!! example "Run the example"
+            ```console
+            python -c "from msl.examples.qt import show; show('LoopSleep')"
             ```
+
+            ??? abstract "Click to view the example source code"
+                ```python
+                --8<-- "src/msl/examples/qt/loop_until_abort_sleep.py"
+                ```
 
         Args:
             loop_delay: The delay time, in milliseconds, to wait between successive
@@ -69,7 +73,7 @@ class LoopUntilAbort(ABC):
                 The default value is `-1`, which means to loop until the user aborts the program.
             single_shot: Whether to call the [loop][..loop] method once (and only once).
                 If you specify the value to be `True` then you must call the [loop_once][..loop_once]
-                method in the subclass whenever you want to run the [loop][..loop] one more time.
+                method in the subclass when you want to run the [loop][..loop] one more time.
                 This is useful if the [loop][..loop] depends on external factors (e.g., waiting for
                 an oscilloscope to download a trace after a trigger event) and the amount of time
                 that the [loop][..loop] requires to complete is not known.
@@ -178,7 +182,7 @@ class LoopUntilAbort(ABC):
 
     @property
     def start_time(self) -> datetime:
-        """[datetime][] &mdash; The time when the [loop][..loop] started."""
+        """[datetime][] &mdash; The date and time when the [loop][..loop] started."""
         return self._start_time
 
     @property
@@ -193,7 +197,8 @@ class LoopUntilAbort(ABC):
     def cleanup(self) -> None:
         """This method gets called when the [QMainWindow][QtWidgets.QMainWindow] is closing.
 
-        Override this method to properly clean up any tasks, e.g., to close a file that is open.
+        !!! tip
+            Override this method to properly clean up any tasks, e.g., to close a file that is open.
         """
         return
 
@@ -208,7 +213,7 @@ class LoopUntilAbort(ABC):
     def loop_once(self) -> None:
         """Run the [loop][..loop] method once.
 
-        This method should be called if the class was initialized with `single_shot=True`,
+        This method should be called if the class was initialised with `single_shot=True`,
         in order to run the [loop][..loop] method one more time.
         """
         if not self._loop_timer:

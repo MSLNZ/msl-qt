@@ -3,7 +3,6 @@
 Uses single-shot mode using a random sleep time.
 """
 
-# pyright: reportImplicitOverride=false
 from __future__ import annotations
 
 import random

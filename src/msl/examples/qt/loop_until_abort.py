@@ -1,9 +1,9 @@
 """Example script to repeatedly write data to a file until aborted by the user."""
 
-# pyright: reportImplicitOverride=false
 from __future__ import annotations
 
 import tempfile
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from msl.qt import LoopUntilAbort, prompt
@@ -22,7 +22,7 @@ class Loop(LoopUntilAbort):
         """
         super().__init__(loop_delay=250)
 
-        self.output_path: str = tempfile.gettempdir() + "/msl-qt-loop-until-abort.txt"
+        self.output_path: Path = Path(tempfile.gettempdir()) / "msl-qt-loop-until-abort.txt"
         self.f: TextIOWrapper = open(self.output_path, mode="w")
         _ = self.f.write(f"Started at {self.current_time}\n")
 
@@ -31,8 +31,7 @@ class Loop(LoopUntilAbort):
 
         This method gets called repeatedly in a loop (every `loop_delay` ms).
         """
-        _ = self.f.write(f"Iteration: {self.iteration}\n")
-        _ = self.f.write(f"Elapsed time: {self.elapsed_time}\n")
+        _ = self.f.write(f"Iteration: {self.iteration}, Elapsed time: {self.elapsed_time}\n")
         self.set_label_text(f"The current time is\n{self.current_time}")
 
     def cleanup(self) -> None:

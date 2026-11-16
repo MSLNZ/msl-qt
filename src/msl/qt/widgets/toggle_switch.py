@@ -38,11 +38,9 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
             ```
 
             ??? abstract "Click to view the example source code"
-                <!-- fmt: off -->
                 ```python
                 --8<-- "src/msl/examples/qt/toggle_switch.py"
                 ```
-                <!-- fmt: on -->
 
         Args:
             height: The height, in pixels, of the toggle switch.

@@ -159,6 +159,9 @@ reportAny = false
 reportExplicitAny = false
 defineConstant = { PYQT6 = false, PYSIDE6 = true }
 pythonPlatform = "Windows"
+executionEnvironments = [
+  { root = "src/msl/examples/qt", reportImplicitOverride = false},
+]
 
 [tool.ruff]
 cache-dir = ".cache/ruff"

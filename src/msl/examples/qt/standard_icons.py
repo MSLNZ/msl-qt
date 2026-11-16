@@ -1,6 +1,5 @@
 """Display all icons in `QtWidgets.QStyle.StandardPixmap` and in the *standard* Windows DLL/EXE files."""
 
-# pyright: reportImplicitOverride=false
 from __future__ import annotations
 
 import sys
