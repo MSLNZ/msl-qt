@@ -97,6 +97,7 @@ addopts = [
     "--import-mode=importlib",
     "--ignore=src/msl/examples",
     "--ignore=src/msl/qt/typing.py",
+    "--ignore=docs/extension.py",
 ]
 cache_dir = ".cache/pytest"
 consider_namespace_packages = true
