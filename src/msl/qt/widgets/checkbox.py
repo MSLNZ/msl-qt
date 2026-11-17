@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from msl.qt._qt import QtWidgets
+from msl.qt.binding import QtWidgets
 
 if TYPE_CHECKING:
     from typing import Callable
 
-    from msl.qt._qt import QtCore
+    from msl.qt.binding import QtCore
 
 
 class CheckBox(QtWidgets.QCheckBox):

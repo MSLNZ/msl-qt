@@ -37,13 +37,13 @@ import traceback as tb
 from types import TracebackType
 from typing import TYPE_CHECKING
 
-from ._qt import QtCore, Signal, Slot
+from .binding import QtCore, Signal, Slot
 from .prompt import critical
 
 if TYPE_CHECKING:
     from typing import Any, Callable
 
-    from ._qt import SignalInstance
+    from .binding import SignalInstance
 
 
 class Worker(QtCore.QObject):

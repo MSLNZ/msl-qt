@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from ._qt import Qt, QtCore, QtGui, QtWidgets, application
+from .binding import Qt, QtCore, QtGui, QtWidgets, application
 from .prompt import critical, information, yes_no
 from .utils import to_qcolor, to_qfont
 

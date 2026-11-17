@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from msl.qt._qt import QtCore, QtGui, QtWidgets
+from msl.qt.binding import QtCore, QtGui, QtWidgets
 from msl.qt.utils import screen_geometry, to_qcolor
 
 if TYPE_CHECKING:

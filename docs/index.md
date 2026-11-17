@@ -29,7 +29,7 @@ Custom [Qt] components for the graphical user interface.
 * Python 3.8+
 * [PySide6] or [PyQt6] &mdash; you can chose which Python binding you want to use
 
-You can install one of these Python bindings for the Qt framework when `msl-qt` is installed.
+You can install one of these Python bindings for the Qt Framework when `msl-qt` is installed.
 
 For [PySide6],
 

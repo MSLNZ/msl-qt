@@ -56,8 +56,8 @@ nav:
   - API:
     - api/index.md
     - api/loop_until_abort.md
+    - api/binding.md
     - api/prompt.md
-    - api/qt.md
     - api/threading.md
     - api/typing.md
     - api/unicode.md
@@ -87,13 +87,15 @@ plugins:
               domains: [std, py]
             - url: https://doc.qt.io/qtforpython-6/objects.inv
               domains: [py]
+            - url: https://www.riverbankcomputing.com/static/Docs/PyQt6/objects.inv
+              domains: [py, sip]
           options:
             # General
             show_source: true
 
             # Headings
             show_root_full_path: false
-            show_root_heading: true
+            show_root_heading: false
             show_root_toc_entry: false
             show_symbol_type_heading: true
             show_symbol_type_toc: true
@@ -115,6 +117,9 @@ plugins:
             show_signature_annotations: true
             signature_crossrefs: true
 
+            extensions:
+              - docs/extension.py:QtExtension
+
 extra:
   version:
     provider: mike
@@ -123,6 +128,3 @@ extra:
     link: https://github.com/MSLNZ/msl-qt/
   - icon: fontawesome/brands/python
     link: https://pypi.org/project/msl-qt/
-
-hooks:
-  - docs/hooks.py

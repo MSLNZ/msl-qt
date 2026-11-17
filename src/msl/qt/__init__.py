@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ._qt import (
+from .binding import (
     Property,
     Qt,
     QtCore,

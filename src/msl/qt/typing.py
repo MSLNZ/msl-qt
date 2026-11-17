@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Literal, Protocol, TypeVar
 
-from ._qt import QtCore, QtGui
+from .binding import QtCore, QtGui
 
 Family = str | Sequence[str]
 """[QFont][QtGui.QFont] family name(s).

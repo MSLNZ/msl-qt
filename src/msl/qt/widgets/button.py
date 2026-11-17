@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from msl.qt._qt import Qt, QtCore, QtGui, QtWidgets
+from msl.qt.binding import Qt, QtCore, QtGui, QtWidgets
 from msl.qt.utils import rescale_icon, to_qicon
 
 if TYPE_CHECKING:

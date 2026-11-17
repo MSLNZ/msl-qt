@@ -1,4 +1,4 @@
-"""Support different Python bindings for Qt."""
+"""Support for different Python bindings to the [Qt](https://www.qt.io/) Framework."""
 
 # cSpell: ignore PYSIDE mkdocstrings
 # pyright: reportUnreachable=false
@@ -43,10 +43,10 @@ else:
 
 
 class Binding(NamedTuple):
-    """The Python binding for the Qt framework."""
+    """The Python binding to the Qt Framework."""
 
     name: Literal["PySide6", "PyQt6"]
-    """Name of the Python package that binds the Qt framework."""
+    """Name of the Python package that binds the Qt Framework."""
 
     version: str
     """Binding package version."""
@@ -55,10 +55,10 @@ class Binding(NamedTuple):
     """Qt version."""
 
     version_info: tuple[int, int, float, str, str]
-    """Binding package version information."""
+    """Binding package version information as a [tuple][]."""
 
     qt_version_info: tuple[int, int, int]
-    """Qt version information."""
+    """Qt version information as a [tuple][]."""
 
 
 PYQT6 = qt_api == "PyQt6"

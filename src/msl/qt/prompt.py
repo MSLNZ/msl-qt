@@ -6,7 +6,7 @@ event that happened or to request information from the user.
 The functions in this module are importable at the top level, i.e.,
 
 ```pycon
->>> from msl.qt import file, information
+>>> from msl.qt import comment, critical
 
 ```
 
@@ -27,7 +27,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ._qt import Qt, QtGui, QtWidgets, application
+from .binding import Qt, QtGui, QtWidgets, application
 from .utils import screen_geometry, to_qcolor, to_qfont
 
 if TYPE_CHECKING:

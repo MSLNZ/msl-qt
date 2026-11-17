@@ -29,7 +29,7 @@ from math import fabs, floor, isfinite, log10
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ._qt import QtCore, QtGui, QtWidgets, application
+from .binding import QtCore, QtGui, QtWidgets, application
 from .unicode import MICRO
 
 if TYPE_CHECKING:

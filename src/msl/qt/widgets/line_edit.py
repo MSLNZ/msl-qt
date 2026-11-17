@@ -6,7 +6,7 @@ import warnings
 from contextlib import suppress
 from typing import TYPE_CHECKING
 
-from msl.qt._qt import QtCore, QtGui, QtWidgets
+from msl.qt.binding import QtCore, QtGui, QtWidgets
 
 if TYPE_CHECKING:
     from typing import Callable

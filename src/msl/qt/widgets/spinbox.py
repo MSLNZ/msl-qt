@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from msl.qt._qt import QtGui, QtWidgets
+from msl.qt.binding import QtGui, QtWidgets
 from msl.qt.utils import number_to_si, si_to_number
 
 if TYPE_CHECKING:
