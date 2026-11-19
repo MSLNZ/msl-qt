@@ -18,6 +18,9 @@ def test_invalid_constructor() -> None:
     with pytest.raises(TypeError, match=r"not a Worker subclass"):
         _ = Thread(QtCore.QTimer)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
 
+    with pytest.raises(NotImplementedError):
+        MyWorker().process()
+
 
 def test_worker_raises_exception() -> None:  # noqa: C901
 
@@ -173,6 +176,10 @@ def test_connect_signal_slot() -> None:  # noqa: C901, PLR0915
     def on_renamed_3() -> None:
         values.append("renamed-3")
 
+    @Slot()
+    def on_renamed_4() -> None:
+        values.append("renamed-4")
+
     @Slot(float)
     def on_data(val: float) -> None:
         values.append(val)
@@ -195,34 +202,35 @@ def test_connect_signal_slot() -> None:  # noqa: C901, PLR0915
     app = application()
     t = Thread(MyWorker)
 
-    with pytest.raises(TypeError, match=r"QtCore\.Signal or string"):
+    with pytest.raises(TypeError, match=r"The `signal` parameter must be a string or an unbound QtCore\.Signal"):
         t.worker_connect(b"empty", on_empty)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
     with pytest.raises(TypeError, match=r"must be callable"):
         t.worker_connect("empty", None)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
-    with pytest.raises(ValueError, match=r"No Worker signals were connected to slots"):
-        t.worker_disconnect("empty", on_empty)
-    with pytest.raises(ValueError, match=r"No Worker signals were connected to slots"):
-        t.worker_disconnect("empty", lambda: on_empty())  # noqa: PLW0108
+    with pytest.raises(ValueError, match=r"The signal 'x' does not have connected slots created from `worker_connect`"):
+        t.worker_disconnect("x")
+    with pytest.raises(ValueError, match=r"is not connected to the signal 'x' using `worker_connect`"):
+        t.worker_disconnect("x", on_empty)
+
+    # It is ok to disconnect all Worker signals even though `worker_connect` was not successfully called
+    t.worker_disconnect()
 
     if is_pyqt6:
-        # no 'name' attribute defined in the Signal constructor
-        # must use the class attribute name
+        # Usually, PyQt6 can get the Signal name from the `pyqtSignal.signatures` attribute.
+        # Not sure why PyQt6 cannot get the Signal name from the MyWorker class attribute
         with pytest.raises(TypeError, match=r"Cannot determine the Signal name"):
-            t.worker_disconnect(MyWorker.empty, on_empty)
+            t.worker_connect(MyWorker.empty, on_empty)
         t.worker_connect("empty", on_empty)
     else:
         t.worker_connect(MyWorker.empty, on_empty)
 
-    t.worker_connect("empty", on_empty)
+    t.worker_connect("empty", on_empty)  # add twice
     t.worker_connect(MyWorker.renamed, on_renamed_1)
     t.worker_connect("renamed", on_renamed_3)
-    t.worker_connect(MyWorker.renamed, lambda: values.append("renamed-4"))
+    t.worker_connect(MyWorker.renamed, on_renamed_4)
     t.worker_connect("new_name", on_renamed_2)
     t.worker_connect(MyWorker.data, on_data)
     t.worker_connect("floating_point", on_data_plus_10)
     if is_pyqt6:
-        # no 'name' defined in the Signal constructor
-        # must use the class attribute name
         t.worker_connect("state", on_state)
     else:
         t.worker_connect(MyWorker.state, on_state)
@@ -231,7 +239,7 @@ def test_connect_signal_slot() -> None:  # noqa: C901, PLR0915
     t.start()
 
     # allow some time for the event loop to emit the finished() signal
-    for _ in range(100):
+    for _ in range(10):
         QtCore.QThread.msleep(10)
         app.processEvents()
 
@@ -257,6 +265,8 @@ def test_connect_signal_slot() -> None:  # noqa: C901, PLR0915
 
     assert t.stop() is None
 
+    with pytest.raises(ValueError, match=r"The signal 'x' does not have connected slots created from `worker_connect`"):
+        t.worker_disconnect("x")
     with pytest.raises(ValueError, match=r"not connected to the signal 'invalid'"):
         t.worker_disconnect("invalid", on_data)
     with pytest.raises(ValueError, match=r"not connected to the signal 'empty'"):
@@ -268,25 +278,21 @@ def test_connect_signal_slot() -> None:  # noqa: C901, PLR0915
     t.worker_disconnect(MyWorker.renamed, on_renamed_2)
     t.worker_disconnect("floating_point", on_data)
     if is_pyqt6:
-        # no 'name' defined in the Signal constructor
-        # must use the class attribute name
-        t.worker_disconnect("empty", on_empty)
+        t.worker_disconnect("empty")  # removes both connections that were added
     else:
-        t.worker_disconnect(MyWorker.empty, on_empty)
+        t.worker_disconnect(MyWorker.empty)  # removes both connections that were added
 
     values.clear()
     t.start()
 
     # allow some time for the event loop to emit the finished() signal
-    for _ in range(100):
+    for _ in range(10):
         QtCore.QThread.msleep(10)
         app.processEvents()
 
     assert values == [
-        "empty",
         "renamed-1",
         "renamed-4",
-        "empty",
         "renamed-1",
         "renamed-4",
         (True, 1),

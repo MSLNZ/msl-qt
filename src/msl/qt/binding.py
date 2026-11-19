@@ -64,7 +64,21 @@ class Binding(NamedTuple):
 PYQT6 = qt_api == "PyQt6"
 PYSIDE6 = qt_api == "PySide6"
 
-if PYQT6:
+if PYSIDE6:
+    from PySide6 import QtCore, QtGui, QtSvg, QtWidgets, __version__, __version_info__
+
+    Property = QtCore.Property
+    Signal = QtCore.Signal
+    Slot = QtCore.Slot
+    binding = Binding(
+        name="PySide6",
+        version=__version__,
+        qt_version=QtCore.__version__,  # type: ignore[attr-defined]  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
+        version_info=__version_info__,
+        qt_version_info=QtCore.__version_info__,  # type: ignore[attr-defined]  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
+    )
+
+elif PYQT6:
     from PyQt6 import QtCore, QtGui, QtSvg, QtWidgets
 
     def to_version_info(version: int) -> tuple[int, int, int]:
@@ -75,7 +89,6 @@ if PYQT6:
 
     Property = QtCore.pyqtProperty
     Signal = QtCore.pyqtSignal
-    SignalInstance = QtCore.pyqtBoundSignal
     Slot = QtCore.pyqtSlot
     binding = Binding(
         name="PyQt6",
@@ -83,21 +96,6 @@ if PYQT6:
         qt_version=QtCore.QT_VERSION_STR,
         version_info=(*to_version_info(QtCore.PYQT_VERSION), "", ""),
         qt_version_info=to_version_info(QtCore.QT_VERSION),
-    )
-
-elif PYSIDE6:  # must come after PYQT6 for mkdocstrings-python to use it
-    from PySide6 import QtCore, QtGui, QtSvg, QtWidgets, __version__, __version_info__
-
-    Property = QtCore.Property
-    Signal = QtCore.Signal
-    SignalInstance = QtCore.SignalInstance
-    Slot = QtCore.Slot
-    binding = Binding(
-        name="PySide6",
-        version=__version__,
-        qt_version=QtCore.__version__,  # type: ignore[attr-defined]  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
-        version_info=__version_info__,
-        qt_version_info=QtCore.__version_info__,  # type: ignore[attr-defined]  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
     )
 
 else:

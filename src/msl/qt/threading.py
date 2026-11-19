@@ -43,8 +43,6 @@ from .prompt import critical
 if TYPE_CHECKING:
     from typing import Any, Callable
 
-    from .binding import SignalInstance
-
 
 class Worker(QtCore.QObject):
     """Process a long-running or blocking operation in a background thread.
@@ -72,6 +70,7 @@ class Worker(QtCore.QObject):
         msg = "You must override the `Worker.process` method."
         raise NotImplementedError(msg)
 
+    @Slot()
     def _process(self) -> None:
         try:
             self.process()
@@ -105,7 +104,7 @@ class Thread(QtCore.QObject):
         self._thread: QtCore.QThread | None = None
         self._worker: Worker | None = None
         self._finished: bool = False
-        self._signals_slots: list[tuple[str, Callable[..., object]]] = []
+        self._signals_slots: list[tuple[str, Callable[..., object], QtCore.Qt.ConnectionType]] = []
 
         if not callable(worker):
             msg = "The Worker for the Thread must not be instantiated"  # type: ignore[unreachable] # pyright: ignore[reportUnreachable]
@@ -118,15 +117,16 @@ class Thread(QtCore.QObject):
         self._worker_class: type[Worker] = worker
 
     def __getattr__(self, item: str) -> Any:  # noqa: ANN401
-        """All other attributes are assumed to be those of the `Worker`."""
+        """All other attributes are passed to the [Worker][...Worker] instance."""
         if self._worker is not None:
             return getattr(self._worker, item)
 
         msg = "You must start the Thread before accessing an attribute of the Worker"
         raise AttributeError(msg)
 
+    @Slot(BaseException, TracebackType)
     def error_handler(self, exception: BaseException, traceback: TracebackType) -> None:
-        """Handle an exception.
+        """Slot to handle an exception.
 
         If an exception is raised while the [Worker][...Worker] is running the process, the default
         behaviour is to show the error message in a [critical][msl.qt.prompt.critical] dialog window.
@@ -172,10 +172,10 @@ class Thread(QtCore.QObject):
         self._worker = self._worker_class(*args, **kwargs)
         _ = self._worker.moveToThread(self._thread)  # PyQt6 return None, PySide6 returns bool
 
-        for signal, slot in self._signals_slots:
-            getattr(self._worker, signal).connect(slot)
+        for signal, slot, typ in self._signals_slots:
+            getattr(self._worker, signal).connect(slot, type=typ)
 
-        _ = self._worker.error.connect(lambda *_: self._thread.exit(-1))  # pyright: ignore[reportOptionalMemberAccess, reportUnknownArgumentType, reportUnknownLambdaType]
+        _ = self._worker.error.connect(self._on_worker_error)
         _ = self._worker.error.connect(self.error_handler)
         _ = self._worker.finished.connect(self._worker_finished)
         _ = self._worker.finished.connect(self._worker.deleteLater)
@@ -210,52 +210,75 @@ class Thread(QtCore.QObject):
             out = self._check(self._thread.wait, int(milliseconds))
         return out
 
-    def worker_connect(self, signal: str | Signal | SignalInstance, slot: Callable[..., None]) -> None:
+    def worker_connect(
+        self,
+        signal: str | Signal,
+        slot: Callable[..., object],
+        type: QtCore.Qt.ConnectionType = QtCore.Qt.ConnectionType.AutoConnection,  # noqa: A002
+    ) -> None:
         """Connect a [Signal][QtCore.Signal] from the [Worker][...Worker] to a [Slot][QtCore.Slot].
 
-        This method is intended to be called *before* a [Worker][...Worker] starts.
-        Although, you can still call this method while a [Worker][...Worker] is running.
+        This method is intended to be called *before* the [Thread][...Thread] starts.
+        The `signal` is connected to the `slot` after [moveToThread][QtCore.QObject.moveToThread]
+        is called, which occurs in the [start()][...Thread.start] method. You may also call this
+        method while the [Thread][...Thread] is running.
 
         Args:
             signal: The `signal` to connect the `slot` to. If a [str][], then the value is either
-                the name of a class attribute of the [Worker][...Worker] or the `name`
-                parameter that was used in the [Signal][QtCore.Signal] constructor.
+                the name of a class attribute of the [Worker][...Worker] or the `name` parameter
+                that was specified in the [Signal][QtCore.Signal] constructor.
             slot: A callable function to use as the [Slot][QtCore.Slot].
+            type: The type of connection to use between the `signal` and `slot`.
         """
-        signal, slot = _check_signal_slot(signal, slot)
+        if not callable(slot):
+            msg = "The `slot` must be callable"  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
+            raise TypeError(msg)
+
+        signal_name = _signal_to_str(signal)
+        self._signals_slots.append((signal_name, slot, type))
         if self.is_running():
-            getattr(self._worker, signal).connect(slot)
-        else:
-            self._signals_slots.append((signal, slot))
+            getattr(self._worker, signal_name).connect(slot, type=type)
 
-    def worker_disconnect(self, signal: str | Signal | SignalInstance, slot: Callable[..., None]) -> None:
-        """Disconnect a [Slot][QtCore.Slot] from a [Signal][QtCore.Signal] for the [Worker][...Worker].
+    def worker_disconnect(self, signal: str | Signal | None = None, slot: Callable[..., None] | None = None) -> None:
+        """Disconnect [Signal][QtCore.Signal]s from [Slot][QtCore.Slot]s for the [Worker][...Worker].
 
-        This method is intended to be called *before* a [Worker][...Worker] starts.
-        Although, you can still call this method while a [Worker][...Worker] is running.
+        Removes the signal-slot connections that were created by calling [worker_connect][..worker_connect].
 
         Args:
-            signal: The `signal` to disconnect the `slot` from. Must be the same
-                value that was used in [worker_connect][..worker_connect].
-            slot: Must be the same callable that was used in [worker_connect][..worker_connect].
+            signal: The signal to disconnect from the `slot`. If `None`, all signals that
+                were connected by calling [worker_connect][..worker_connect] are disconnected
+                (in which case the `slot` parameter is ignored).
+            slot: The slot to be disconnected from the `signal`. If `None`, disconnect all slots
+                from the specified `signal` that were connected via [worker_connect][..worker_connect],
+                otherwise the value must be the same callable object that was passed to
+                [worker_connect][..worker_connect].
         """
-        signal, slot = _check_signal_slot(signal, slot)
-        if self.is_running():
-            getattr(self._worker, signal).disconnect(slot)
+        if signal is None:
+            if self.is_running():
+                for signal_name, slt, _ in self._signals_slots:
+                    getattr(self._worker, signal_name).disconnect(slt)
+            self._signals_slots.clear()
             return
 
-        try:
-            self._signals_slots.remove((signal, slot))
-        except ValueError:
-            if not self._signals_slots:
-                msg = "No Worker signals were connected to slots"
-                raise ValueError(msg) from None
+        signal_name = _signal_to_str(signal)
+        indices: list[int] = []
+        for i, (name, slt, _) in enumerate(self._signals_slots):
+            if (name == signal_name) and ((slot is None) or (slot is slt)):
+                indices.append(i)
 
-            options = "\n".join(f"  {a!r} {b}" for a, b in self._signals_slots)
-            msg = f"The slot {slot} is not connected to the signal {signal!r}.\nOptions\n{options}"
-            raise ValueError(msg) from None
+        if not indices:
+            if slot is None:
+                msg = f"The signal {signal_name!r} does not have connected slots created from `worker_connect`"
+            else:
+                msg = f"The slot {slot} is not connected to the signal {signal!r} using `worker_connect`"
+            raise ValueError(msg)
 
-    def _check(self, method: Callable[..., Any], *args: int) -> bool | None:
+        for i in reversed(indices):
+            signal_name, slt, _ = self._signals_slots.pop(i)
+            if self.is_running():
+                getattr(self._worker, signal_name).disconnect(slt)
+
+    def _check(self, method: Callable[..., bool | None], *args: int) -> bool | None:
         """Wrap all calls to the QThread in a try-except block to silently ignore the following error.
 
         RuntimeError: Internal C++ object (*.QtCore.QThread) already deleted.
@@ -270,10 +293,16 @@ class Thread(QtCore.QObject):
 
     @Slot()
     def _worker_finished(self) -> None:
-        """Called when the [Worker][...Worker] finished successfully."""
+        """Slot that is called when the Worker finished successfully."""
         if self._thread is not None:
             self._thread.quit()
         self._finished = True
+
+    @Slot(BaseException, TracebackType)
+    def _on_worker_error(self, *_: object) -> None:
+        """Slot to handle an exception from the Worker."""
+        if self._thread is not None:
+            self._thread.exit(-1)
 
 
 class SleepWorker(Worker):
@@ -304,30 +333,24 @@ class Sleep(Thread):
         super().__init__(SleepWorker)
 
 
-def _check_signal_slot(
-    signal: str | Signal | SignalInstance, slot: Callable[..., None]
-) -> tuple[str, Callable[..., None]]:
-    """Check the input types and returns the appropriate types."""
-    if not callable(slot):
-        msg = "`slot` must be callable"  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
+def _signal_to_str(signal: str | Signal) -> str:
+    """Convert `signal` to a str."""
+    if isinstance(signal, str):
+        return signal
+
+    if not isinstance(signal, Signal):  # pyright: ignore[reportUnnecessaryIsInstance]
+        msg = "The `signal` parameter must be a string or an unbound QtCore.Signal"  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
         raise TypeError(msg)
 
-    if isinstance(signal, str):
-        return signal, slot
+    if hasattr(signal, "signatures"):  # PyQt6
+        signature = str(signal.signatures[0])  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportAttributeAccessIssue]
+        if "(" not in signature:
+            msg = (
+                "Cannot determine the Signal name. Either pass in the Signal name as "
+                "a string or define a `name` parameter in the Signal constructor."
+            )
+            raise TypeError(msg)
+    else:  # PySide6
+        signature = str(signal)
 
-    if isinstance(signal, Signal):
-        if hasattr(signal, "signatures"):  # PyQt
-            signature = str(signal.signatures[0])  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportAttributeAccessIssue]
-            if "(" not in signature:
-                msg = (
-                    "Cannot determine the Signal name. Either pass in "
-                    "the Signal name as a string or define a name "
-                    "parameter in the Signal constructor."
-                )
-                raise TypeError(msg)
-        else:
-            signature = str(signal)
-        return signature.split("(")[0], slot
-
-    msg = "`signal` must be a QtCore.Signal or string"
-    raise TypeError(msg)
+    return signature.split("(")[0]
