@@ -45,14 +45,15 @@ if TYPE_CHECKING:
 
 
 class Worker(QtCore.QObject):
-    """Process a long-running or blocking operation in a background thread.
+    r"""Process a long running or blocking operation in a background thread.
 
     The `*args` and `**kwargs` parameters are passed to the constructor of the
     [Worker][..Worker] when the [start][..Thread.start] method is called.
 
     !!! tip
         You can access the attributes of the [Worker][..Worker] as though
-        they are attributes of the [Thread][..Thread] instance.
+        they are attributes of the [Thread][..Thread] instance
+        (see [\_\_getattr\_\_][msl.qt.threading.Thread.__getattr__]).
 
     !!! example
         See [SleepWorker][..SleepWorker] for an example.
@@ -62,7 +63,7 @@ class Worker(QtCore.QObject):
     error: Signal = Signal(BaseException, TracebackType)
 
     def process(self) -> None:
-        """The long-running or blocking process to run.
+        """The long running or blocking process to run.
 
         !!! warning
             You must override this method.
@@ -85,9 +86,9 @@ class Thread(QtCore.QObject):
     """Moves a [Worker][msl.qt.threading.Worker] to a new [QThread][QtCore.QThread]."""
 
     finished: Signal = Signal()
-    """A [Signal][QtCore.Signal] that is emitted when the thread is finished.
+    """A [Signal][] that is emitted when the thread is finished.
 
-    Emitted when [Worker.process][...Worker.process] finishes.
+    Emitted when [Worker.process()][...Worker.process] finishes.
     """
 
     def __init__(self, worker: type[Worker]) -> None:
@@ -117,7 +118,7 @@ class Thread(QtCore.QObject):
         self._worker_class: type[Worker] = worker
 
     def __getattr__(self, item: str) -> Any:  # noqa: ANN401
-        """All other attributes are passed to the [Worker][...Worker] instance."""
+        """All missing attributes of [Thread][...Thread] are passed to the [Worker][...Worker] instance."""
         if self._worker is not None:
             return getattr(self._worker, item)
 
@@ -216,18 +217,45 @@ class Thread(QtCore.QObject):
         slot: Callable[..., object],
         type: QtCore.Qt.ConnectionType = QtCore.Qt.ConnectionType.AutoConnection,  # noqa: A002
     ) -> None:
-        """Connect a [Signal][QtCore.Signal] from the [Worker][...Worker] to a [Slot][QtCore.Slot].
+        """Connect a [Signal][] of the [Worker][...Worker] to a [Slot][].
 
         This method is intended to be called *before* the [Thread][...Thread] starts.
         The `signal` is connected to the `slot` after [moveToThread][QtCore.QObject.moveToThread]
         is called, which occurs in the [start()][...Thread.start] method. You may also call this
         method while the [Thread][...Thread] is running.
 
+        ??? example "Click to view an example"
+            ```python
+            from msl.qt import Signal, Slot, Thread, Worker
+
+            class MyWorker(Worker):
+                value_changed: Signal = Signal(float, name="valueChanged")
+
+                def process(self) -> None:
+                    \"\"\"Implement the blocking code here.\"\"\"
+
+            class MyThread(Thread):
+                \"\"\"Process `MyWorker` in a different thread.\"\"\"
+
+            @Slot(float)
+            def on_value_changed(value: float) -> None:
+                \"\"\"Slot to handle the `MyWorker.value_changed` signal.\"\"\"
+
+            t = MyThread(worker=MyWorker)
+
+            # These are equivalent ways to connect the Signal from MyWorker to the Slot
+            t.worker_connect("value_changed", on_value_changed)  # class attribute name
+            t.worker_connect("valueChanged", on_value_changed)  # Signal name parameter
+            t.worker_connect(MyWorker.value_changed, on_value_changed)  # Signal object
+
+            t.start()
+            ```
+
         Args:
             signal: The `signal` to connect the `slot` to. If a [str][], then the value is either
                 the name of a class attribute of the [Worker][...Worker] or the `name` parameter
-                that was specified in the [Signal][QtCore.Signal] constructor.
-            slot: A callable function to use as the [Slot][QtCore.Slot].
+                that was specified in the [Signal][] constructor.
+            slot: A callable function to use as the [Slot][].
             type: The type of connection to use between the `signal` and `slot`.
         """
         if not callable(slot):
@@ -240,7 +268,7 @@ class Thread(QtCore.QObject):
             getattr(self._worker, signal_name).connect(slot, type=type)
 
     def worker_disconnect(self, signal: str | Signal | None = None, slot: Callable[..., None] | None = None) -> None:
-        """Disconnect [Signal][QtCore.Signal]s from [Slot][QtCore.Slot]s for the [Worker][...Worker].
+        """Disconnect [Signal][]s from [Slot][]s for the [Worker][...Worker].
 
         Removes the signal-slot connections that were created by calling [worker_connect][..worker_connect].
 
@@ -321,7 +349,7 @@ class SleepWorker(Worker):
         self.seconds: float = seconds
 
     def process(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides [process][...Worker.process] to call the blocking [time.sleep][] function."""
+        """Overrides [process()][...Worker.process] to call the blocking [time.sleep][] function."""
         time.sleep(self.seconds)
 
 
@@ -339,7 +367,7 @@ def _signal_to_str(signal: str | Signal) -> str:
         return signal
 
     if not isinstance(signal, Signal):  # pyright: ignore[reportUnnecessaryIsInstance]
-        msg = "The `signal` parameter must be a string or an unbound QtCore.Signal"  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
+        msg = "The `signal` parameter must be a string or an unbound QtCore Signal"  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
         raise TypeError(msg)
 
     if hasattr(signal, "signatures"):  # PyQt6

@@ -88,7 +88,7 @@ plugins:
             - url: https://doc.qt.io/qtforpython-6/objects.inv
               domains: [py]
             - url: https://www.riverbankcomputing.com/static/Docs/PyQt6/objects.inv
-              domains: [py, sip]
+              domains: [sip, py]
           options:
             # General
             show_source: true

@@ -23,11 +23,11 @@ from msl.qt import (
 
 If you are using [PyQt6] as the binding, the following aliases should be used instead.
 
-| PyQt6                 | Alias                                      |
-|-----------------------|--------------------------------------------|
-| `QtCore.pyqtSignal`   | [Signal][msl.qt.binding.QtCore.Signal]     |
-| `QtCore.pyqtSlot`     | [Slot][msl.qt.binding.QtCore.Slot]         |
-| `QtCore.pyqtProperty` | [Property][msl.qt.binding.QtCore.Property] |
+| PyQt6                 | Alias                               |
+| --------------------- | ----------------------------------- |
+| `QtCore.pyqtProperty` | [Property][msl.qt.binding.Property] |
+| `QtCore.pyqtSignal`   | [Signal][msl.qt.binding.Signal]     |
+| `QtCore.pyqtSlot`     | [Slot][msl.qt.binding.Slot]         |
 
 Unscoped enum access is supported for the `QtCore`, `QtWidgets`, `QtGui`, `QtSvg` modules. For example,
 

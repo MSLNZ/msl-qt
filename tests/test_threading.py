@@ -202,7 +202,7 @@ def test_connect_signal_slot() -> None:  # noqa: C901, PLR0915
     app = application()
     t = Thread(MyWorker)
 
-    with pytest.raises(TypeError, match=r"The `signal` parameter must be a string or an unbound QtCore\.Signal"):
+    with pytest.raises(TypeError, match=r"The `signal` parameter must be a string or an unbound QtCore Signal"):
         t.worker_connect(b"empty", on_empty)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
     with pytest.raises(TypeError, match=r"must be callable"):
         t.worker_connect("empty", None)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
