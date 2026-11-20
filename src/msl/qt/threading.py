@@ -235,7 +235,7 @@ class Thread(QtCore.QObject):
 
         ??? abstract "Click to view an example"
             ```python
-            --8<-- "tests/test_thread_worker_connect_for_docstring.py"
+            --8<-- "tests/test_thread_worker_connect_for_docstring.py:1:24"
             ```
 
         Args:
