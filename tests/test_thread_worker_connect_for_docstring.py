@@ -24,11 +24,7 @@ t.worker_connect(MyWorker.value_changed, on_value_changed)  # Signal object
 t.start()
 
 
-# The following lines are excluded from the docstring.
-#
-# Fixes
-#   RuntimeError: wrapped C/C++ object of type MyWorker has been deleted
-# when running the tests on GitHub when using macOS as the runner image
+# The following lines are excluded from the Thread.worker_connect() docstring
 from msl.qt import application  # noqa: E402
 
 app = application()
