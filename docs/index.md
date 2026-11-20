@@ -1,6 +1,30 @@
 # Overview
 
-Custom [Qt] components for the graphical user interface.
+Custom [Qt] components for the graphical user interface (GUI).
+
+The [prompt][] module provides functions to create a window to either notify the user of an event that happened or to request input from the user. The functions are also convenient in scripts, not just in a GUI application.
+
+```python
+from msl.qt import DEGREE, prompt
+
+angle = prompt.number(f"Enter an angle [{DEGREE}]", minimum=0, maximum=360)
+```
+
+The following widgets are provided.
+
+<table>
+  <tr>
+    <th>Widget</th>
+    <th>Description</th>
+    <th>Example</th>
+  </tr>
+  <tr>
+    <td><a href="api/widgets/button">Button</a></td>
+    <td>A button to display text, an icon and a menu.</td>
+    <td><img src="assets/images/button.gif" style="width: 50%; height: auto;"></td>
+  </tr>
+</table>
+
 
 ## Install
 `msl-qt` is available at the [Python Package Index](https://pypi.org/project/msl-qt/). It can be installed using a variety of package managers

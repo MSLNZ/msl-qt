@@ -1,9 +1,9 @@
 """Convenience functions to prompt the user.
 
 The following functions create a dialog window to either notify the user of an
-event that happened or to request information from the user.
+event that happened or to request input from the user.
 
-The functions in this module are importable at the top level, i.e.,
+The functions in this module are importable at the top level,
 
 ```pycon
 >>> from msl.qt import comment, critical
@@ -15,14 +15,6 @@ or you can import the module.
 ```pycon
 >>> from msl.qt import prompt
 
-```
-
-These functions are also convenient in scripts, not just in a GUI application.
-
-```python
-from msl.qt import DEGREE, prompt
-
-angle = prompt.number(f"Enter an angle [{DEGREE}]", minimum=0, maximum=360)
 ```
 """
 
@@ -319,6 +311,9 @@ def comment(
     data rather than having the comment as a constant in your program, which you might
     forget to update before acquiring the next data run.
 
+    !!! note "See also"
+        [password][..password], [text][..text]
+
     Args:
         path: The path to a [JSON](https://www.json.org/) file that contains the history
             of the comments that have been entered. If `None`, the default path is used.
@@ -397,7 +392,7 @@ def text(
     """Prompt for text (a string).
 
     !!! note "See also"
-        [password][..password]
+        [comment][..comment], [password][..password]
 
     Args:
         message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,
@@ -428,7 +423,7 @@ def password(message: str, *, title: str | None = None, font: Font | None = None
     Replaces entered characters with a platform-specific mask symbol.
 
     !!! note "See also"
-        [text][..text]
+        [comment][..comment], [text][..text]
 
     Args:
         message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,

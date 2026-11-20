@@ -1,6 +1,6 @@
 """General functions.
 
-The functions in this module are importable at the top level, i.e.,
+The functions in this module are importable at the top level,
 
 ```pycon
 >>> from msl.qt import drag_drop_paths, excepthook

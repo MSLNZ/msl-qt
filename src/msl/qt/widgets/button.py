@@ -106,7 +106,7 @@ class Button(QtWidgets.QToolButton):
                 If `None`, the item is displayed but it is disabled.
                 The function does not receive input arguments from the [Signal][msl.qt.binding.Signal].
             icon: Any object that is supported by [to_qicon][msl.qt.utils.to_qicon].
-            shortcut: The keyboard shortcut to use to select this item, e.g., `"CTRL+A"`.
+            shortcut: The keyboard shortcut to use to select this item, e.g., `"Ctrl+A"`.
             tooltip: The tooltip to display for this item.
         """
         if self._menu is None:
