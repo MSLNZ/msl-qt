@@ -1,4 +1,15 @@
-"""A [QToolButton][QtWidgets.QToolButton] to display text, an icon and a menu."""
+"""A [QToolButton][QtWidgets.QToolButton] to display text, an icon and a menu.
+
+!!! example "Run the example"
+    ```console
+    python -c "from msl.examples.qt import run; run('Button')"
+    ```
+
+    ??? abstract "Click to view the example source code"
+        ```python
+        --8<-- "src/msl/examples/qt/button.py"
+        ```
+"""
 
 from __future__ import annotations
 
@@ -8,9 +19,7 @@ from msl.qt.binding import Qt, QtCore, QtGui, QtWidgets
 from msl.qt.utils import rescale_icon, to_qicon
 
 if TYPE_CHECKING:
-    from typing import Callable
-
-    from msl.qt.typing import Size
+    from msl.qt.typing import Size, SlotType
 
 
 class Button(QtWidgets.QToolButton):
@@ -22,8 +31,8 @@ class Button(QtWidgets.QToolButton):
         text: str | None = None,
         icon: object = None,
         icon_size: Size | None = None,
-        left_click: Callable[[], None] | None = None,
-        right_click: Callable[[], None] | None = None,
+        left_click: SlotType | None = None,
+        right_click: SlotType | None = None,
         is_text_under_icon: bool = True,
         tooltip: str | None = None,
         parent: QtWidgets.QWidget | None = None,
@@ -32,14 +41,16 @@ class Button(QtWidgets.QToolButton):
 
         Args:
             text: The text to display on the button.
-            icon: Any icon object that is supported by [to_qicon][msl.qt.convert.to_qicon].
+            icon: Any object that is supported by [to_qicon][msl.qt.utils.to_qicon].
             icon_size: Rescale the icon to the specified `size`.
                 If the value is `None` then do not rescale the icon.
                 If an [int][] then set the width and the height to be the `size` value.
                 If a [float][] then a scaling factor.
                 If a [tuple][] then the (width, height) values.
-            left_click: The function to be called for a mouse left-click event.
-            right_click: The function to be called for a mouse right-click event.
+            left_click: The function to be called on a mouse left-click event.
+                The function does not receive input arguments from the [Signal][msl.qt.binding.Signal].
+            right_click: The function to be called on a mouse right-click event.
+                The function does not receive input arguments from the [Signal][msl.qt.binding.Signal].
             is_text_under_icon: If displaying an icon and text then whether to place the text
                 under (`True`) or beside (`False`) the icon.
             tooltip: The tooltip to display for the button.
@@ -82,7 +93,7 @@ class Button(QtWidgets.QToolButton):
         self,
         *,
         text: str | None = None,
-        triggered: Callable[[], None] | None = None,
+        triggered: SlotType | None = None,
         icon: object | None = None,
         shortcut: str | None = None,
         tooltip: str | None = None,
@@ -91,9 +102,10 @@ class Button(QtWidgets.QToolButton):
 
         Args:
             text: The text to display for this item.
-            triggered: The function to be called when this item is selected.
-                If `None` then the item is displayed, but it is disabled.
-            icon: Any icon object that is supported by [to_qicon][msl.qt.convert.to_qicon].
+            triggered: The function to be called when this item is clicked.
+                If `None`, the item is displayed but it is disabled.
+                The function does not receive input arguments from the [Signal][msl.qt.binding.Signal].
+            icon: Any object that is supported by [to_qicon][msl.qt.utils.to_qicon].
             shortcut: The keyboard shortcut to use to select this item, e.g., `"CTRL+A"`.
             tooltip: The tooltip to display for this item.
         """
@@ -123,19 +135,21 @@ class Button(QtWidgets.QToolButton):
             self._menu = self._create_menu()
         _ = self._menu.addSeparator()
 
-    def set_left_click(self, fcn: Callable[[], None]) -> None:
-        """The function to be called for a mouse left-click event.
+    def set_left_click(self, fcn: SlotType) -> None:
+        """The function to be called on a mouse left-click event.
 
         Args:
-            fcn: The function to be called for a mouse left-click event.
+            fcn: The function to be called on a mouse left-click event.
+                The function does not receive input arguments from the [Signal][msl.qt.binding.Signal].
         """
         _ = self.clicked.connect(fcn)
 
-    def set_right_click(self, fcn: Callable[[], None]) -> None:
-        """The function to be called for a mouse right-click event.
+    def set_right_click(self, fcn: SlotType) -> None:
+        """The function to be called on a mouse right-click event.
 
         Args:
-            fcn: The function to be called for a mouse right-click event.
+            fcn: The function to be called on a mouse right-click event.
+                The function does not receive input arguments from the [Signal][msl.qt.binding.Signal].
         """
         _ = self.customContextMenuRequested.connect(fcn)
 

@@ -55,6 +55,8 @@ nav:
     - license.md
   - API:
     - api/index.md
+    - Widgets:
+      - api/widgets/button.md
     - api/loop_until_abort.md
     - api/binding.md
     - api/prompt.md
@@ -62,6 +64,8 @@ nav:
     - api/typing.md
     - api/unicode.md
     - api/utils.md
+  - Examples:
+    - examples.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip

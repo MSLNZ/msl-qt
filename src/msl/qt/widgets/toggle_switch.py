@@ -34,7 +34,7 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
         !!! example "Run the example"
             ```console
-            python -c "from msl.examples.qt import show; show('ToggleSwitch')"
+            python -c "from msl.examples.qt import run; run('ToggleSwitch')"
             ```
 
             ??? abstract "Click to view the example source code"

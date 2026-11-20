@@ -1,6 +1,5 @@
 """Support for different Python bindings to the [Qt](https://www.qt.io/) Framework."""
 
-# cSpell: ignore PYSIDE mkdocstrings
 # pyright: reportUnreachable=false
 from __future__ import annotations
 

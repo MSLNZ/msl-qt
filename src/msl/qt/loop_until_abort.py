@@ -46,7 +46,7 @@ class LoopUntilAbort(ABC):
 
         !!! example "Run the example"
             ```console
-            python -c "from msl.examples.qt import show; show('Loop')"
+            python -c "from msl.examples.qt import run; run('Loop')"
             ```
 
             ??? abstract "Click to view the example source code"
@@ -58,7 +58,7 @@ class LoopUntilAbort(ABC):
 
         !!! example "Run the example"
             ```console
-            python -c "from msl.examples.qt import show; show('LoopSleep')"
+            python -c "from msl.examples.qt import run; run('LoopSleep')"
             ```
 
             ??? abstract "Click to view the example source code"

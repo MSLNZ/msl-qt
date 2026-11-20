@@ -32,11 +32,15 @@ class Logger(QtWidgets.QWidget):
     ) -> None:
         """A [QWidget][QtWidgets.QWidget] to display [logging][] messages.
 
-        !!! example
-            To view an example of the [Logger][] widget run
+        !!! example "Run the example"
             ```console
-            python -c 'from msl.examples.qt import show; show("Logger")'
+            python -c "from msl.examples.qt import run; run('Logger')"
             ```
+
+            ??? abstract "Click to view the example source code"
+                ```python
+                --8<-- "src/msl/examples/qt/logger.py"
+                ```
 
         Args:
             level: The [Logging Level][levels] to use to display the [LogRecord][logging.LogRecord].

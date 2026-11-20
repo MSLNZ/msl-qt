@@ -1,4 +1,4 @@
-"""Example to show the [Button][msl.qt.widgets.button.Button] widget."""
+"""Example to show the `Button` widget."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ def item4() -> None:
 def show() -> None:
     """Create the QApplication and show the Button."""
     app = application()
-    b = Button(text="My button", icon=32, icon_size=4.0, left_click=left, right_click=right, tooltip="Example button")
+    b = Button(text="My button", icon=32, icon_size=1.5, left_click=left, right_click=right, tooltip="Example button")
     b.add_menu_item(text="Item #1", triggered=item1, icon=43, tooltip="Item #1")
     b.add_menu_item(text="Item #2", triggered=item2, icon=47, tooltip="Second")
     b.add_menu_item(

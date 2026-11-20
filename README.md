@@ -26,6 +26,6 @@ The documentation for `msl-qt` can be found [here].
 
 [Qt]: https://www.qt.io/
 [Python Package Index]: https://pypi.org/project/msl-qt/
-[PySide6]: https://pypi.org/project/PySide6/
-[PyQt6]: https://pypi.org/project/PyQt6/
+[PySide6]: https://doc.qt.io/qtforpython-6/
+[PyQt6]: https://www.riverbankcomputing.com/software/pyqt/
 [here]: https://mslnz.github.io/msl-qt/latest/

@@ -20,7 +20,7 @@ implements [Thread][].
 
 !!! example "Run the example"
     ```console
-    python -c "from msl.examples.qt import show; show('LoopSleep')"
+    python -c "from msl.examples.qt import run; run('LoopSleep')"
     ```
 
     ??? abstract "Click to view the example source code"
@@ -43,24 +43,32 @@ from .prompt import critical
 if TYPE_CHECKING:
     from typing import Any, Callable
 
+    from .typing import SlotType
+
 
 class Worker(QtCore.QObject):
-    r"""Process a long running or blocking operation in a background thread.
-
-    The `*args` and `**kwargs` parameters are passed to the constructor of the
-    [Worker][..Worker] when the [start][..Thread.start] method is called.
-
-    !!! tip
-        You can access the attributes of the [Worker][..Worker] as though
-        they are attributes of the [Thread][..Thread] instance
-        (see [\_\_getattr\_\_][msl.qt.threading.Thread.__getattr__]).
-
-    !!! example
-        See [SleepWorker][..SleepWorker] for an example.
-    """
+    """Process a long running or blocking operation in a background thread."""
 
     finished: Signal = Signal()
     error: Signal = Signal(BaseException, TracebackType)
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401, ARG002
+        r"""Process a long running or blocking operation in a background thread.
+
+        Subclass [Worker][...Worker] and override the [process()][...Worker.process] method.
+
+        The `*args` and `**kwargs` parameters are passed to the constructor of the
+        [Worker][...Worker] when the [Thread.start()][...Thread.start] method is called.
+
+        !!! tip
+            You can access the attributes of the [Worker][...Worker] as though
+            they are attributes of the [Thread][...Thread] instance
+            (see [\_\_getattr\_\_][...Thread.__getattr__]).
+
+        !!! example
+            See [SleepWorker][...SleepWorker] for an example.
+        """
+        super().__init__(parent=None)  # the parent must always be None
 
     def process(self) -> None:
         """The long running or blocking process to run.
@@ -105,7 +113,7 @@ class Thread(QtCore.QObject):
         self._thread: QtCore.QThread | None = None
         self._worker: Worker | None = None
         self._finished: bool = False
-        self._signals_slots: list[tuple[str, Callable[..., object], QtCore.Qt.ConnectionType]] = []
+        self._signals_slots: list[tuple[str, SlotType, QtCore.Qt.ConnectionType]] = []
 
         if not callable(worker):
             msg = "The Worker for the Thread must not be instantiated"  # type: ignore[unreachable] # pyright: ignore[reportUnreachable]
@@ -214,47 +222,26 @@ class Thread(QtCore.QObject):
     def worker_connect(
         self,
         signal: str | Signal,
-        slot: Callable[..., object],
+        slot: SlotType,
         type: QtCore.Qt.ConnectionType = QtCore.Qt.ConnectionType.AutoConnection,  # noqa: A002
     ) -> None:
         """Connect a [Signal][] of the [Worker][...Worker] to a [Slot][].
 
-        This method is intended to be called *before* the [Thread][...Thread] starts.
-        The `signal` is connected to the `slot` after [moveToThread][QtCore.QObject.moveToThread]
-        is called, which occurs in the [start()][...Thread.start] method. You may also call this
-        method while the [Thread][...Thread] is running.
+        This method is intended to be called *before* the [Thread][...Thread]
+        starts. The `signal` is connected to the `slot` *after* the
+        [QObject.moveToThread()](https://doc.qt.io/qt-6/qobject.html#moveToThread)
+        function is called, which occurs in the [start()][...Thread.start] method.
+        You may also call this method while the [Thread][...Thread] is running.
 
-        ??? example "Click to view an example"
+        ??? abstract "Click to view an example"
             ```python
-            from msl.qt import Signal, Slot, Thread, Worker
-
-            class MyWorker(Worker):
-                value_changed: Signal = Signal(float, name="valueChanged")
-
-                def process(self) -> None:
-                    \"\"\"Implement the blocking code here.\"\"\"
-
-            class MyThread(Thread):
-                \"\"\"Process `MyWorker` in a different thread.\"\"\"
-
-            @Slot(float)
-            def on_value_changed(value: float) -> None:
-                \"\"\"Slot to handle the `MyWorker.value_changed` signal.\"\"\"
-
-            t = MyThread(worker=MyWorker)
-
-            # These are equivalent ways to connect the Signal from MyWorker to the Slot
-            t.worker_connect("value_changed", on_value_changed)  # class attribute name
-            t.worker_connect("valueChanged", on_value_changed)  # Signal name parameter
-            t.worker_connect(MyWorker.value_changed, on_value_changed)  # Signal object
-
-            t.start()
+            --8<-- "tests/test_thread_worker_connect_for_docstring.py"
             ```
 
         Args:
-            signal: The `signal` to connect the `slot` to. If a [str][], then the value is either
-                the name of a class attribute of the [Worker][...Worker] or the `name` parameter
-                that was specified in the [Signal][] constructor.
+            signal: The `signal` to connect the `slot` to. If a [str][], then the value
+                is either the name of a class attribute of the [Worker][...Worker] or
+                the `name` parameter that was specified in the [Signal][] constructor.
             slot: A callable function to use as the [Slot][].
             type: The type of connection to use between the `signal` and `slot`.
         """
@@ -267,7 +254,7 @@ class Thread(QtCore.QObject):
         if self.is_running():
             getattr(self._worker, signal_name).connect(slot, type=type)
 
-    def worker_disconnect(self, signal: str | Signal | None = None, slot: Callable[..., None] | None = None) -> None:
+    def worker_disconnect(self, signal: str | Signal | None = None, slot: SlotType | None = None) -> None:
         """Disconnect [Signal][]s from [Slot][]s for the [Worker][...Worker].
 
         Removes the signal-slot connections that were created by calling [worker_connect][..worker_connect].

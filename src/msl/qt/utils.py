@@ -536,7 +536,7 @@ def to_qicon(  # noqa: C901, PLR0912
     To view the standard icons that come with Qt (and that come with Windows) run
 
     ```console
-    python -c 'from msl.examples.qt import show; show("StandardIcons")'
+    python -c "from msl.examples.qt import run; run('StandardIcons')"
     ```
 
     Args:

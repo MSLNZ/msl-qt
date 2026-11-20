@@ -162,6 +162,7 @@ defineConstant = { PYQT6 = false, PYSIDE6 = true }
 pythonPlatform = "Windows"
 executionEnvironments = [
   { root = "src/msl/examples/qt", reportImplicitOverride = false},
+  { root = "tests/test_thread_worker_connect_for_docstring.py", reportImplicitOverride = false, reportUnusedParameter = false},
 ]
 
 [tool.ruff]

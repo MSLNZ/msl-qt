@@ -47,7 +47,7 @@ mapping: dict[str, Callable[[], None]] = {
 }
 
 
-def show(name: str = "") -> None:
+def run(name: str = "") -> None:
     """Show an example widget."""
     fcn = mapping.get(name)
     if fcn is None:
@@ -64,6 +64,6 @@ def show(name: str = "") -> None:
             items=list(mapping.keys()),
         )
         if name:
-            show(name)
+            run(name)
     else:
         fcn()

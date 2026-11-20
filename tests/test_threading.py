@@ -22,6 +22,14 @@ def test_invalid_constructor() -> None:
         MyWorker().process()
 
 
+def test_worker_cannot_have_parent() -> None:
+    class MyWorker(Worker):
+        pass
+
+    w = MyWorker(parent=QtCore.QObject())
+    assert w.parent() is None
+
+
 def test_worker_raises_exception() -> None:  # noqa: C901
 
     class MyWorker(Worker):

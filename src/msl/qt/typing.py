@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Literal, Protocol, TypeVar
+from typing import Any, Callable, Literal, Protocol, TypeVar
 
 from .binding import QtCore, QtGui
 
@@ -105,3 +105,6 @@ ImageFormat = Literal[
     "xpm",
 ]
 """Image formats supported by [QImageWriter][QtGui.QImageWriter]."""
+
+SlotType = Callable[..., Any]
+"""A callable function to use as a [Slot][msl.qt.binding.Slot]."""
