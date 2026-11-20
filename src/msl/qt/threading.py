@@ -127,6 +127,13 @@ class Thread(QtCore.QObject):
 
     def __getattr__(self, item: str) -> Any:  # noqa: ANN401
         """All missing attributes of [Thread][...Thread] are passed to the [Worker][...Worker] instance."""
+        if item == "__wrapped__":
+            # When pytest collects tests/test_thread_worker_connect_for_docstring.py
+            # the value of the `item` argument can be "__wrapped__".
+            # If PyQt6 is used as the binding, the following error occurs
+            #   RuntimeError: wrapped C/C++ object of type ... has been deleted
+            return None
+
         if self._worker is not None:
             return getattr(self._worker, item)
 
