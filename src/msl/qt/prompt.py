@@ -16,6 +16,14 @@ or you can import the module.
 >>> from msl.qt import prompt
 
 ```
+
+These functions are also convenient in scripts, not just in a GUI application.
+
+```python
+from msl.qt import DEGREE, prompt
+
+angle = prompt.number(f"Enter an angle [{DEGREE}]", minimum=0, maximum=360)
+```
 """
 
 from __future__ import annotations
@@ -39,13 +47,13 @@ if TYPE_CHECKING:
 __all__: list[str] = [
     "comment",
     "critical",
-    "double",
     "file",
     "files",
     "folder",
     "information",
     "integer",
     "item",
+    "number",
     "ok_cancel",
     "password",
     "save",
@@ -58,6 +66,9 @@ __all__: list[str] = [
 
 def critical(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
     """Display a message in a dialog window using a *critical* alert icon.
+
+    !!! note "See also"
+        [information][..information], [warning][..warning]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
@@ -73,7 +84,7 @@ def critical(message: str | Exception, *, title: str | None = None, font: Font |
     _ = mb.exec()
 
 
-def double(
+def number(
     message: str,
     *,
     title: str | None = None,
@@ -84,7 +95,10 @@ def double(
     step: float = 1,
     decimals: int = 2,
 ) -> float | None:
-    """Prompt for a double-precision value (a Python [float][] data type).
+    """Prompt for a floating-point number.
+
+    !!! note "See also"
+        [integer][..integer]
 
     Args:
         message: The message that is shown to the user to describe what the value represents.
@@ -123,6 +137,9 @@ def file(
 ) -> str:
     """Select a file.
 
+    !!! note "See also"
+        [files][..files], [folder][..folder], [save][..save]
+
     Args:
         title: The text to display in the title bar of the dialog window.
         directory: The initial directory to start in.
@@ -146,6 +163,9 @@ def files(
 ) -> list[str]:
     """Select multiple files.
 
+    !!! note "See also"
+        [file][..file], [folder][..folder], [save][..save]
+
     Args:
         title: The text to display in the title bar of the dialog window.
         directory: The initial directory to start in.
@@ -164,6 +184,9 @@ def files(
 def folder(*, title: str = "Select Folder", directory: str | Path | None = None) -> str:
     """Select a folder.
 
+    !!! note "See also"
+        [file][..file], [files][..files], [save][..save]
+
     Args:
         title: The text to display in the title bar of the dialog window.
         directory: The initial directory to start in.
@@ -178,6 +201,9 @@ def folder(*, title: str = "Select Folder", directory: str | Path | None = None)
 
 def information(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
     """Display a message in a dialog window using an *information* alert icon.
+
+    !!! note "See also"
+        [critical][..critical], [warning][..warning]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
@@ -204,6 +230,9 @@ def integer(
     step: int = 1,
 ) -> int | None:
     """Prompt for an integer value.
+
+    !!! note "See also"
+        [number][..number]
 
     Args:
         message: The message that is shown to the user to describe what the value represents.
@@ -334,6 +363,9 @@ def save(
 ) -> str:
     """Select where to save a file.
 
+    !!! note "See also"
+        [file][..file], [files][..files], [folder][..folder]
+
     Args:
         title: The text to display in the title bar of the dialog window.
         directory: The initial directory to start in.
@@ -364,6 +396,9 @@ def text(
 ) -> str:
     """Prompt for text (a string).
 
+    !!! note "See also"
+        [password][..password]
+
     Args:
         message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,
             `#!py "<html>Enter a <i>hostname</i> or <i>IP address</i></html>"`.
@@ -372,7 +407,7 @@ def text(
         font: The font to use.
         value: The initial value.
         multi_line: Whether the entered text can span multiple lines.
-        echo: The *echo* mode to use for the entered value (see also, [password][..password]).
+        echo: How the entered content should be displayed.
 
     Returns:
         The text that was entered.
@@ -392,6 +427,9 @@ def password(message: str, *, title: str | None = None, font: Font | None = None
 
     Replaces entered characters with a platform-specific mask symbol.
 
+    !!! note "See also"
+        [text][..text]
+
     Args:
         message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,
             `#!py "<html>Enter a <i>secure password</i></html>"`.
@@ -407,6 +445,9 @@ def password(message: str, *, title: str | None = None, font: Font | None = None
 
 def warning(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
     """Display a message in a dialog window using a *warning* alert icon.
+
+    !!! note "See also"
+        [critical][..critical], [information][..information]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
@@ -424,6 +465,9 @@ def warning(message: str | Exception, *, title: str | None = None, font: Font | 
 
 def ok_cancel(message: str, *, title: str | None = None, font: Font | None = None, default: bool = True) -> bool:
     """Prompt for a response to a message where the logical options are `Ok` or `Cancel`.
+
+    !!! note "See also"
+        [yes_no][..yes_no], [yes_no_cancel][..yes_no_cancel]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
@@ -448,6 +492,9 @@ def ok_cancel(message: str, *, title: str | None = None, font: Font | None = Non
 
 def yes_no(message: str, *, title: str | None = None, font: Font | None = None, default: bool = True) -> bool:
     """Prompt for a response to a message where the logical options are `Yes` or `No`.
+
+    !!! note "See also"
+        [ok_cancel][..ok_cancel], [yes_no_cancel][..yes_no_cancel]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
@@ -474,6 +521,9 @@ def yes_no_cancel(
     message: str, *, title: str | None = None, font: Font | None = None, default: bool | None = True
 ) -> bool | None:
     """Prompt for a response to a message where the logical options are `Yes`, `No` or `Cancel`.
+
+    !!! note "See also"
+        [ok_cancel][..ok_cancel], [yes_no][..yes_no]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,

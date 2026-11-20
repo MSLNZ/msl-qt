@@ -307,3 +307,39 @@ def update_qt_widgets(qt_widgets: griffe.Module) -> None:
         ),
     )
     qt_widgets.set_member(q_widget.name, q_widget)
+
+    q_file_dialog = griffe.Class(
+        name="QFileDialog",
+        docstring=griffe.Docstring(
+            "Binding to the [QFileDialog](https://doc.qt.io/qt-6/qfiledialog.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QFileDialog] or [PyQt6][PyQt6.QtWidgets.QFileDialog])."
+        ),
+    )
+    qt_widgets.set_member(q_file_dialog.name, q_file_dialog)
+
+    option = griffe.Class(
+        name="Option",
+        docstring=griffe.Docstring(
+            "Binding to the [Option](https://doc.qt.io/qt-6/qfiledialog.html#Option-enum) enum "
+            "(via [PySide6][PySide6.QtWidgets.QFileDialog.Option] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qfiledialog.html#Option))."
+        ),
+    )
+    q_file_dialog.set_member(option.name, option)
+
+    q_line_edit = griffe.Class(
+        name="QLineEdit",
+        docstring=griffe.Docstring(
+            "Binding to the [QLineEdit](https://doc.qt.io/qt-6/qlineedit.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QLineEdit] or [PyQt6][PyQt6.QtWidgets.QLineEdit])."
+        ),
+    )
+    qt_widgets.set_member(q_line_edit.name, q_line_edit)
+
+    echo_mode = griffe.Class(
+        name="EchoMode",
+        docstring=griffe.Docstring(
+            "Binding to the [EchoMode](https://doc.qt.io/qt-6/qlineedit.html#EchoMode-enum) enum "
+            "(via [PySide6][PySide6.QtWidgets.QLineEdit.EchoMode] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qlineedit.html#EchoMode))."
+        ),
+    )
+    q_line_edit.set_member(echo_mode.name, echo_mode)

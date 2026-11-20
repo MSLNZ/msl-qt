@@ -1,4 +1,4 @@
-"""Repeatedly perform a task until aborted by the user."""
+"""Repeatedly perform a task until aborted."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 class LoopUntilAbort(ABC):
-    """Repeatedly perform a task until aborted by the user."""
+    """Repeatedly perform a task until aborted."""
 
     def __init__(
         self,
@@ -31,7 +31,7 @@ class LoopUntilAbort(ABC):
         text_color: Color | None = None,
         font: Font | None = None,
     ) -> None:
-        """Repeatedly perform a task until aborted by the user.
+        """Repeatedly perform a task until aborted.
 
         This class provides an interface to show the status of a task (e.g., read
         a sensor value and write the value to a file) that you want to perform for
@@ -70,7 +70,7 @@ class LoopUntilAbort(ABC):
             loop_delay: The delay time, in milliseconds, to wait between successive
                 calls to the [loop][..loop] method.
             max_iterations: The maximum number of times to call the [loop][..loop] method.
-                The default value is `-1`, which means to loop until the user aborts the program.
+                The default value is `-1`, which means to loop until the program is aborted.
             single_shot: Whether to call the [loop][..loop] method once (and only once).
                 If you specify the value to be `True` then you must call the [loop_once][..loop_once]
                 method in the subclass when you want to run the [loop][..loop] one more time.
