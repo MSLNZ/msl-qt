@@ -1,4 +1,7 @@
-"""A toggle switch widget."""
+"""A toggle switch to signify two states &mdash; *on* and *off*.
+
+<img src="../../../assets/images/toggle_switch.gif" style="width: 15%; height: auto;">
+"""
 
 from __future__ import annotations
 
@@ -8,16 +11,13 @@ from msl.qt.binding import QtCore, QtGui, QtWidgets
 from msl.qt.utils import screen_geometry, to_qcolor
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from typing import Any, Callable
 
     from msl.qt.typing import Color
 
 
 class ToggleSwitch(QtWidgets.QAbstractButton):
-    """A toggle switch.
-
-    <img src="../assets/images/toggle_switch.gif" style="width: 15%; height: auto;">
-    """
+    """A toggle switch to signify two states &mdash; *on* and *off*."""
 
     def __init__(
         self,
@@ -27,10 +27,10 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         on_color: Color = "#009688",
         off_color: Color = "#B4B4B4",
         parent: QtWidgets.QWidget | None = None,
-        toggled: Callable[[bool], None] | None = None,
+        toggled: Callable[[bool], Any] | None = None,
         tooltip: str | None = None,
     ) -> None:
-        """A toggle switch.
+        """A toggle switch to signify two states &mdash; *on* and *off*.
 
         !!! example "Run the example"
             ```console
@@ -44,11 +44,14 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
         Args:
             height: The height, in pixels, of the toggle switch.
-            initial: Whether the toggle switch is initially in the on (`True`) or off (`False`) state.
-            on_color: The color when the toggle switch is on.
-            off_color: The color when the toggle switch is off.
+                The default value is 3% of the screen height.
+            initial: Whether the toggle switch is initially in the *on* (`True`) or *off* (`False`) state.
+            on_color: The color when the toggle switch is *on*.
+            off_color: The color when the toggle switch is *off*.
             parent: The parent widget.
-            toggled: A callable function to use as a slot for the [toggled][QtWidgets.QAbstractButton.toggled] signal.
+            toggled: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
+                [toggled][QtWidgets.QAbstractButton.toggled] [Signal][msl.qt.binding.Signal].
+                The function receives the *checked* state from the [Signal][msl.qt.binding.Signal].
             tooltip: The tooltip to use for the toggle switch.
         """
         super().__init__(parent=parent)
@@ -74,11 +77,11 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
 
     @property
     def is_on(self) -> bool:
-        """Whether the [ToggleSwitch][] is in the on or off state."""
+        """Returns whether the [ToggleSwitch][] is in the *on* (`True`) or *off* (`False`) state."""
         return self.isChecked()
 
     def off_color(self) -> QtGui.QColor:
-        """Get the color of the [ToggleSwitch][] when it is off.
+        """Get the color of the [ToggleSwitch][] when it is *off*.
 
         Returns:
             The *off* color.
@@ -86,16 +89,16 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         return self._off_brush.color()
 
     def set_off_color(self, color: Color) -> None:
-        """Set the color of the [ToggleSwitch][] when it is off.
+        """Set the color of the [ToggleSwitch][] when it is *off*.
 
         Args:
-            color: The color when the [ToggleSwitch][] is off.
+            color: The color when the [ToggleSwitch][] is *off*.
         """
         self._off_brush = QtGui.QBrush(to_qcolor(color))
         self.update()
 
     def on_color(self) -> QtGui.QColor:
-        """Get the color of the [ToggleSwitch][] when it is on.
+        """Get the color of the [ToggleSwitch][] when it is *on*.
 
         Returns:
             The *on* color.
@@ -103,10 +106,10 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         return self._on_brush.color()
 
     def set_on_color(self, color: Color) -> None:
-        """Set the color of the [ToggleSwitch][] when it is on.
+        """Set the color of the [ToggleSwitch][] when it is *on*.
 
         Args:
-            color: The color when the [ToggleSwitch][] is on.
+            color: The color when the [ToggleSwitch][] is *on*.
         """
         self._on_brush = QtGui.QBrush(to_qcolor(color))
         self.update()

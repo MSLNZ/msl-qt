@@ -23,6 +23,11 @@ The following widgets are provided.
     <td>A button to display text, an icon and a menu.</td>
     <td><img src="assets/images/button.gif" style="width: 50%; height: auto;"></td>
   </tr>
+  <tr>
+    <td><a href="api/widgets/toggle_switch">ToggleSwitch</a></td>
+    <td>A toggle switch to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
+    <td><img src="assets/images/toggle_switch.gif" style="width: 50%; height: auto;"></td>
+  </tr>
 </table>
 
 

@@ -127,6 +127,15 @@ def update_qt_core(qt_core: griffe.Module) -> None:
     )
     qt_namespace.set_member(connection_type.name, connection_type)
 
+    global_color = griffe.Class(
+        name="GlobalColor",
+        docstring=griffe.Docstring(
+            "Binding to the [GlobalColor](https://doc.qt.io/qt-6/qt.html#GlobalColor-enum) enum "
+            "(via [PySide6][PySide6.QtCore.Qt.GlobalColor] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtcore/qt.html#GlobalColor))."
+        ),
+    )
+    qt_namespace.set_member(global_color.name, global_color)
+
     q_byte_array = griffe.Class(
         name="QByteArray",
         docstring=griffe.Docstring(
@@ -162,6 +171,15 @@ def update_qt_core(qt_core: griffe.Module) -> None:
         ),
     )
     qt_core.set_member(q_object.name, q_object)
+
+    q_size = griffe.Class(
+        name="QSize",
+        docstring=griffe.Docstring(
+            "Binding to the [QSize](https://doc.qt.io/qt-6/qsize.html) class "
+            "(via [PySide6][PySide6.QtCore.QSize] or [PyQt6][PyQt6.QtCore.QSize])."
+        ),
+    )
+    qt_core.set_member(q_size.name, q_size)
 
 
 def update_qt_gui(qt_gui: griffe.Module) -> None:
@@ -202,6 +220,15 @@ def update_qt_gui(qt_gui: griffe.Module) -> None:
     )
     qt_gui.set_member(q_font.name, q_font)
 
+    weight = griffe.Class(
+        name="Weight",
+        docstring=griffe.Docstring(
+            "Binding to the [Weight](https://doc.qt.io/qt-6/qfont.html#Weight-enum) enum "
+            "(via [PySide6][PySide6.QtGui.QFont.Weight] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtgui/qfont.html#Weight))."
+        ),
+    )
+    q_font.set_member(weight.name, weight)
+
     q_color = griffe.Class(
         name="QColor",
         docstring=griffe.Docstring(
@@ -219,6 +246,15 @@ def update_qt_gui(qt_gui: griffe.Module) -> None:
         ),
     )
     qt_gui.set_member(q_image_writer.name, q_image_writer)
+
+    q_rgba_64 = griffe.Class(
+        name="QRgba64",
+        docstring=griffe.Docstring(
+            "Binding to the [QRgba64](https://doc.qt.io/qt-6/qrgba64.html) class "
+            "(via [PySide6][PySide6.QtGui.QRgba64] or [PyQt6][PyQt6.QtGui.QRgba64])."
+        ),
+    )
+    qt_gui.set_member(q_rgba_64.name, q_rgba_64)
 
 
 def update_qt_svg(_: griffe.Module) -> None:
@@ -343,3 +379,27 @@ def update_qt_widgets(qt_widgets: griffe.Module) -> None:
         ),
     )
     q_line_edit.set_member(echo_mode.name, echo_mode)
+
+    q_abstract_button = griffe.Class(
+        name="QAbstractButton",
+        docstring=griffe.Docstring(
+            "Binding to the [QAbstractButton](https://doc.qt.io/qt-6/qabstractbutton.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QAbstractButton] or [PyQt6][PyQt6.QtWidgets.QAbstractButton])."
+        ),
+    )
+    qt_widgets.set_member(q_abstract_button.name, q_abstract_button)
+
+    toggled = griffe.Function(
+        name="toggled",
+        docstring=griffe.Docstring(
+            "Binding to the [toggled](https://doc.qt.io/qt-6/qabstractbutton.html#toggled) function "
+            "(via [PySide6][PySide6.QtWidgets.QAbstractButton.toggled] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qabstractbutton.html#toggled))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "checked",
+                annotation=griffe.ExprName("bool"),
+            ),
+        ),
+    )
+    q_abstract_button.set_member(toggled.name, toggled)

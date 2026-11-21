@@ -1,5 +1,7 @@
 """A [QToolButton][QtWidgets.QToolButton] to display text, an icon and a menu.
 
+<img src="../../../assets/images/button.gif" style="width: 20%; height: auto;">
+
 !!! example "Run the example"
     ```console
     python -c "from msl.examples.qt import run; run('Button')"
@@ -19,7 +21,9 @@ from msl.qt.binding import Qt, QtCore, QtGui, QtWidgets
 from msl.qt.utils import rescale_icon, to_qicon
 
 if TYPE_CHECKING:
-    from msl.qt.typing import Size, SlotType
+    from typing import Any, Callable
+
+    from msl.qt.typing import Size
 
 
 class Button(QtWidgets.QToolButton):
@@ -31,8 +35,8 @@ class Button(QtWidgets.QToolButton):
         text: str | None = None,
         icon: object = None,
         icon_size: Size | None = None,
-        left_click: SlotType | None = None,
-        right_click: SlotType | None = None,
+        left_click: Callable[[], Any] | None = None,
+        right_click: Callable[[], Any] | None = None,
         is_text_under_icon: bool = True,
         tooltip: str | None = None,
         parent: QtWidgets.QWidget | None = None,
@@ -93,7 +97,7 @@ class Button(QtWidgets.QToolButton):
         self,
         *,
         text: str | None = None,
-        triggered: SlotType | None = None,
+        triggered: Callable[[], Any] | None = None,
         icon: object | None = None,
         shortcut: str | None = None,
         tooltip: str | None = None,
@@ -135,7 +139,7 @@ class Button(QtWidgets.QToolButton):
             self._menu = self._create_menu()
         _ = self._menu.addSeparator()
 
-    def set_left_click(self, fcn: SlotType) -> None:
+    def set_left_click(self, fcn: Callable[[], Any]) -> None:
         """The function to be called on a mouse left-click event.
 
         Args:
@@ -144,7 +148,7 @@ class Button(QtWidgets.QToolButton):
         """
         _ = self.clicked.connect(fcn)
 
-    def set_right_click(self, fcn: SlotType) -> None:
+    def set_right_click(self, fcn: Callable[[], Any]) -> None:
         """The function to be called on a mouse right-click event.
 
         Args:

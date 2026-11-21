@@ -1,4 +1,4 @@
-"""Example showing the [ToggleSwitch][msl.qt.widgets.toggle_switch.ToggleSwitch] widget."""
+"""Example showing the `ToggleSwitch` widget."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ def show() -> None:
     window.setWindowTitle("Toggle Switch Example")
     layout = QtWidgets.QVBoxLayout()
     ts1 = ToggleSwitch(toggled=print_state)
-    ts2 = ToggleSwitch(initial=True, on_color="red", tooltip="Not connected")
+    ts2 = ToggleSwitch(initial=True, on_color="red", tooltip="Not connected to a slot")
     layout.addWidget(ts1)
     layout.addWidget(ts2)
     window.setLayout(layout)
