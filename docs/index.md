@@ -20,13 +20,18 @@ The following widgets are provided.
   </tr>
   <tr>
     <td><a href="api/widgets/button">Button</a></td>
-    <td>A button to display text, an icon and a menu.</td>
+    <td>A button to display text, an icon and a menu. The button supports a left-click and a right-click event.</td>
     <td><img src="assets/images/button.gif" style="width: 50%; height: auto;"></td>
   </tr>
   <tr>
     <td><a href="api/widgets/checkbox">CheckBox</a></td>
-    <td>A checkbox with a text label.</td>
+    <td>A checkbox with a text label. A checkbox can be in either the checked, unchecked or partially-checked state.</td>
     <td><img src="assets/images/checkbox.png" style="width: 50%; height: auto;"></td>
+  </tr>
+  <tr>
+    <td><a href="api/widgets/combobox">ComboBox</a></td>
+    <td>A combobox to select an item from a list of items. An item can include text, an icon and user data.</td>
+    <td><img src="assets/images/combobox.gif" style="width: 50%; height: auto;"></td>
   </tr>
   <tr>
     <td><a href="api/widgets/toggle_switch">ToggleSwitch</a></td>

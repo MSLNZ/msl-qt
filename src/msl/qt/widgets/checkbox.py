@@ -1,7 +1,5 @@
 """A [QCheckBox][QtWidgets.QCheckBox] widget.
 
-<img src="../../../assets/images/checkbox.png" style="width: 25%; height: auto;">
-
 !!! example "Run the example"
     ```console
     python -c "from msl.examples.qt import run; run('CheckBox')"

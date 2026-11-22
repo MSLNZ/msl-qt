@@ -1,8 +1,6 @@
-"""Example to show the [ComboBox][msl.qt.widgets.combobox.ComboBox] widget."""
+"""Example to show the `ComboBox` widget."""
 
 from __future__ import annotations
-
-from typing import cast
 
 from msl.qt import ComboBox, QtWidgets, Slot, application, to_qicon
 
@@ -15,23 +13,23 @@ class Window(QtWidgets.QWidget):
         super().__init__()
 
         self.c1: ComboBox = ComboBox(
-            items="has tooltip",
-            tooltip="only 1 item :(",
+            items=["\U0001f600", "\U0001f641", "\U0001f914"],
+            text_changed=self.on_text_changed,
         )
         self.c2: ComboBox = ComboBox(
-            items=[*list("abcdefg"), "initial"],
-            initial="initial",
+            items=["Red", "Orange", "Yellow", "Green", "Blue"],
+            initial="Green",
             text_changed=self.on_text_changed,
         )
         self.c3: ComboBox = ComboBox(
             items={
-                "data": 6,
-                "icon": to_qicon(20),
-                "icon-data": (to_qicon(12), "icon"),
+                "data-only": 6,
+                "icon-only": to_qicon(20),
+                "icon-and-data": (to_qicon(12), "icon"),
             },
             index_changed=self.on_index_changed,
         )
-        self.c4: ComboBox = ComboBox(parent=self)
+        self.c4: ComboBox = ComboBox(tooltip="Empty, no items")
 
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.c1)
@@ -43,8 +41,7 @@ class Window(QtWidgets.QWidget):
     @Slot(int)
     def on_index_changed(self, index: int) -> None:
         """Slot called when the index changes."""
-        sender = cast("ComboBox", self.sender())
-        data = sender.itemData(index)
+        data = self.c3.itemData(index)
         print(f"index={index}, data={data}")
 
     @staticmethod

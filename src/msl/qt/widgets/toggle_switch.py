@@ -1,7 +1,5 @@
 """A toggle switch to signify two states &mdash; *on* and *off*.
 
-<img src="../../../assets/images/toggle_switch.gif" style="width: 15%; height: auto;">
-
 !!! example "Run the example"
     ```console
     python -c "from msl.examples.qt import run; run('ToggleSwitch')"

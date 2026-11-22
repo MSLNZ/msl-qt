@@ -1,7 +1,5 @@
 """A [QToolButton][QtWidgets.QToolButton] to display text, an icon and a menu.
 
-<img src="../../../assets/images/button.gif" style="width: 20%; height: auto;">
-
 !!! example "Run the example"
     ```console
     python -c "from msl.examples.qt import run; run('Button')"

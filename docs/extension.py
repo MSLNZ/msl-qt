@@ -436,3 +436,42 @@ def update_qt_widgets(qt_widgets: griffe.Module) -> None:
         ),
     )
     q_checkbox.set_member(check_state_changed.name, check_state_changed)
+
+    q_combobox = griffe.Class(
+        name="QComboBox",
+        docstring=griffe.Docstring(
+            "Binding to the [QComboBox](https://doc.qt.io/qt-6/qcombobox.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QComboBox] or [PyQt6][PyQt6.QtWidgets.QComboBox])."
+        ),
+    )
+    qt_widgets.set_member(q_combobox.name, q_combobox)
+
+    current_index_changed = griffe.Function(
+        name="currentIndexChanged",
+        docstring=griffe.Docstring(
+            "Binding to the [currentIndexChanged](https://doc.qt.io/qt-6/qcombobox.html#currentIndexChanged) function "
+            "(via [PySide6][PySide6.QtWidgets.QComboBox.currentIndexChanged] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qcombobox.html#currentIndexChanged))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "index",
+                annotation=griffe.ExprName("int"),
+            ),
+        ),
+    )
+    q_combobox.set_member(current_index_changed.name, current_index_changed)
+
+    current_text_changed = griffe.Function(
+        name="currentTextChanged",
+        docstring=griffe.Docstring(
+            "Binding to the [currentTextChanged](https://doc.qt.io/qt-6/qcombobox.html#currentTextChanged) function "
+            "(via [PySide6][PySide6.QtWidgets.QComboBox.currentTextChanged] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qcombobox.html#currentTextChanged))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "text",
+                annotation=griffe.ExprName("str"),
+            ),
+        ),
+    )
+    q_combobox.set_member(current_text_changed.name, current_text_changed)

@@ -1,4 +1,15 @@
-"""A [QComboBox][QtWidgets.QComboBox] widget."""
+"""A [QComboBox][QtWidgets.QComboBox] widget.
+
+!!! example "Run the example"
+    ```console
+    python -c "from msl.examples.qt import run; run('ComboBox')"
+    ```
+
+    ??? abstract "Click to view the example source code"
+        ```python
+        --8<-- "src/msl/examples/qt/combobox.py"
+        ```
+"""
 
 from __future__ import annotations
 
@@ -8,7 +19,7 @@ from msl.qt.binding import QtGui, QtWidgets
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from typing import Callable
+    from typing import Any, Callable
 
 
 class ComboBox(QtWidgets.QComboBox):
@@ -19,25 +30,32 @@ class ComboBox(QtWidgets.QComboBox):
         *,
         items: str | Sequence[str] | dict[str, QtGui.QIcon | object | tuple[QtGui.QIcon, object]] | None = None,
         initial: int | str | None = None,
-        index_changed: Callable[[int], None] | None = None,
-        text_changed: Callable[[str], None] | None = None,
+        index_changed: Callable[[int], Any] | None = None,
+        text_changed: Callable[[str], Any] | None = None,
         tooltip: str | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         """A [QComboBox][QtWidgets.QComboBox].
 
+        This widget simply provides more configuration options in its constructor
+        than its parent [QComboBox][QtWidgets.QComboBox] does.
+
         Args:
             items: The item(s) to add to the combobox. If a string, adds the single item.
                 If a sequence, adds all items. If a [dict][], then the keys are the text
                 of each item and the values can either be a [QIcon][QtGui.QIcon] to use as
-                the icon, any object to use as the `userData` parameter or an `(icon, userData)`
-                [tuple][].
-            initial: The index or text of the item to initially display. This value is set
-                before the slots are registered.
-            index_changed: A callable function to use as a slot for the
-                [currentIndexChanged][QtWidgets.QComboBox.currentIndexChanged] signal.
-            text_changed: A callable function to use as a slot for the
-                [currentTextChanged][QtWidgets.QComboBox.currentTextChanged] signal.
+                the icon, any object to use as the `userData` parameter or an
+                `(icon, userData)` [tuple][].
+            initial: The index or text of the item to initially display. This value is
+                set before the [Slot][msl.qt.binding.Slot]s are connected.
+            index_changed: A callable function to use as a [Slot][msl.qt.binding.Slot]
+                for the [currentIndexChanged][QtWidgets.QComboBox.currentIndexChanged]
+                [Signal][msl.qt.binding.Signal]. The function receives the index value
+                (as an [int][]) that is selected.
+            text_changed: A callable function to use as a [Slot][msl.qt.binding.Slot]
+                for the [currentTextChanged][QtWidgets.QComboBox.currentTextChanged]
+                [Signal][msl.qt.binding.Signal]. The function receives the text value
+                (as a [str][]) that is selected.
             tooltip: The tooltip to display for the combobox.
             parent: The parent widget.
         """
