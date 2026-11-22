@@ -127,6 +127,15 @@ def update_qt_core(qt_core: griffe.Module) -> None:
     )
     qt_namespace.set_member(connection_type.name, connection_type)
 
+    check_state = griffe.Class(
+        name="CheckState",
+        docstring=griffe.Docstring(
+            "Binding to the [CheckState](https://doc.qt.io/qt-6/qt.html#CheckState-enum) enum "
+            "(via [PySide6][PySide6.QtCore.Qt.CheckState] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtcore/qt.html#CheckState))."
+        ),
+    )
+    qt_namespace.set_member(check_state.name, check_state)
+
     global_color = griffe.Class(
         name="GlobalColor",
         docstring=griffe.Docstring(
@@ -403,3 +412,27 @@ def update_qt_widgets(qt_widgets: griffe.Module) -> None:
         ),
     )
     q_abstract_button.set_member(toggled.name, toggled)
+
+    q_checkbox = griffe.Class(
+        name="QCheckBox",
+        docstring=griffe.Docstring(
+            "Binding to the [QCheckBox](https://doc.qt.io/qt-6/qcheckbox.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QCheckBox] or [PyQt6][PyQt6.QtWidgets.QCheckBox])."
+        ),
+    )
+    qt_widgets.set_member(q_checkbox.name, q_checkbox)
+
+    check_state_changed = griffe.Function(
+        name="checkStateChanged",
+        docstring=griffe.Docstring(
+            "Binding to the [checkStateChanged](https://doc.qt.io/qt-6/qcheckbox.html#checkStateChanged) function "
+            "(via [PySide6][PySide6.QtWidgets.QCheckBox.checkStateChanged] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qcheckbox.html#checkStateChanged))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "state",
+                annotation=griffe.ExprName("CheckState", parent="msl.qt.binding.QtCore.Qt"),
+            ),
+        ),
+    )
+    q_checkbox.set_member(check_state_changed.name, check_state_changed)

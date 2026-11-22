@@ -1,4 +1,4 @@
-"""Example to show the [CheckBox][msl.qt.widgets.checkbox.CheckBox] widget."""
+"""Example to show the `CheckBox` widget."""
 
 from __future__ import annotations
 
@@ -12,13 +12,19 @@ class Window(QtWidgets.QWidget):
         """Main Window that contains different kinds of CheckBoxes."""
         super().__init__()
 
-        self.c1: CheckBox = CheckBox(initial=True, tooltip="The displayed text is empty")
-        self.c2: CheckBox = CheckBox(text="Has Slot handler", state_changed=self.on_state_changed)
-        self.c3: CheckBox = CheckBox(checkable=False, text="uncheckable")
+        self.c1: CheckBox = CheckBox(initial=True, tooltip="No displayed text")
+        self.c2: CheckBox = CheckBox(checkable=False, text="uncheckable")
+        self.c3: CheckBox = CheckBox(
+            text="On/off checkable",
+            initial=Qt.CheckState.Unchecked,
+            state_changed=self.on_bi_state_changed,
+            tooltip="CheckBox that may be in one of two states",
+        )
         self.c4: CheckBox = CheckBox(
             text="Partially checkable",
             initial=Qt.CheckState.PartiallyChecked,
-            tooltip="partially checkable without a slot",
+            state_changed=self.on_tri_state_changed,
+            tooltip="CheckBox that may be in one of three states",
         )
 
         layout = QtWidgets.QVBoxLayout()
@@ -30,9 +36,15 @@ class Window(QtWidgets.QWidget):
 
     @staticmethod
     @Slot(Qt.CheckState)
-    def on_state_changed(state: Qt.CheckState) -> None:
-        """Slot to handle the state changed signal."""
-        print(f'The state of "Click Me!" is now {state}')
+    def on_bi_state_changed(state: Qt.CheckState) -> None:
+        """Slot to handle the state-changed signal."""
+        print(f"The state of 'On/off checkable' is now {state!r}")
+
+    @staticmethod
+    @Slot(Qt.CheckState)
+    def on_tri_state_changed(state: Qt.CheckState) -> None:
+        """Slot to handle the state-changed signal."""
+        print(f"The state of 'Partially checkable' is now {state!r}")
 
 
 def show() -> None:

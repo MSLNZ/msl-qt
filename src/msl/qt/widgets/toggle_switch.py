@@ -1,6 +1,16 @@
 """A toggle switch to signify two states &mdash; *on* and *off*.
 
 <img src="../../../assets/images/toggle_switch.gif" style="width: 15%; height: auto;">
+
+!!! example "Run the example"
+    ```console
+    python -c "from msl.examples.qt import run; run('ToggleSwitch')"
+    ```
+
+    ??? abstract "Click to view the example source code"
+        ```python
+        --8<-- "src/msl/examples/qt/toggle_switch.py"
+        ```
 """
 
 from __future__ import annotations
@@ -31,16 +41,6 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
         tooltip: str | None = None,
     ) -> None:
         """A toggle switch to signify two states &mdash; *on* and *off*.
-
-        !!! example "Run the example"
-            ```console
-            python -c "from msl.examples.qt import run; run('ToggleSwitch')"
-            ```
-
-            ??? abstract "Click to view the example source code"
-                ```python
-                --8<-- "src/msl/examples/qt/toggle_switch.py"
-                ```
 
         Args:
             height: The height, in pixels, of the toggle switch.
