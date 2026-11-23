@@ -1,4 +1,4 @@
-"""Example to show the [LineEdit][msl.qt.widgets.line_edit.LineEdit] widget."""
+"""Example to show the `LineEdit` widget."""
 
 from __future__ import annotations
 
@@ -14,12 +14,8 @@ class Window(QtWidgets.QWidget):
         """Main window to contain the `LineEdit`."""
         super().__init__()
 
-        self.timer: QtCore.QTimer = QtCore.QTimer()
-        _ = self.timer.timeout.connect(self.on_timeout)
-        self.timer.start(1000)
-
         self.e1: LineEdit = LineEdit(text="fixed", read_only=True)
-        self.e2: LineEdit = LineEdit(text="enter text", rescale=True, text_changed=self.on_text_changed)
+        self.e2: LineEdit = LineEdit(text="resize window", rescale=True, text_changed=self.on_text_changed)
         self.e3: LineEdit = LineEdit(rescale=True, tooltip="Connected to QTimer")
 
         layout = QtWidgets.QVBoxLayout()
@@ -27,6 +23,10 @@ class Window(QtWidgets.QWidget):
         layout.addWidget(self.e2)
         layout.addWidget(self.e3)
         self.setLayout(layout)
+
+        self.timer: QtCore.QTimer = QtCore.QTimer()
+        _ = self.timer.timeout.connect(self.on_timeout)
+        self.timer.start(1000)
 
     @Slot()
     def on_timeout(self) -> None:

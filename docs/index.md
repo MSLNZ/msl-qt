@@ -10,7 +10,7 @@ from msl.qt import DEGREE, prompt
 angle = prompt.number(f"Enter an angle [{DEGREE}]", minimum=0, maximum=360)
 ```
 
-The following widgets are provided.
+The following widgets are provided, plus all of the [widget classes](https://doc.qt.io/qt-6/widget-classes.html) from [Qt] are available.
 
 <table>
   <tr>
@@ -37,6 +37,11 @@ The following widgets are provided.
     <td><a href="api/widgets/led">LED</a></td>
     <td>An LED (i.e., light-emitting diode) to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
     <td><img src="assets/images/led.gif" style="width: 50%; height: auto;"></td>
+  </tr>
+  <tr>
+    <td><a href="api/widgets/line_edit">LineEdit</a></td>
+    <td>Editable text that can rescale the font size based on the widget size.</td>
+    <td><img src="assets/images/line_edit.gif" style="width: 50%; height: auto;"></td>
   </tr>
   <tr>
     <td><a href="api/widgets/toggle_switch">ToggleSwitch</a></td>

@@ -136,6 +136,15 @@ def update_qt_core(qt_core: griffe.Module) -> None:
     )
     qt_namespace.set_member(check_state.name, check_state)
 
+    alignment_flag = griffe.Class(
+        name="AlignmentFlag",
+        docstring=griffe.Docstring(
+            "Binding to the [AlignmentFlag](https://doc.qt.io/qt-6/qt.html#AlignmentFlag-enum) enum "
+            "(via [PySide6][PySide6.QtCore.Qt.AlignmentFlag] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtcore/qt.html#AlignmentFlag))."
+        ),
+    )
+    qt_namespace.set_member(alignment_flag.name, alignment_flag)
+
     global_color = griffe.Class(
         name="GlobalColor",
         docstring=griffe.Docstring(
@@ -379,6 +388,21 @@ def update_qt_widgets(qt_widgets: griffe.Module) -> None:
         ),
     )
     qt_widgets.set_member(q_line_edit.name, q_line_edit)
+
+    text_changed = griffe.Function(
+        name="textChanged",
+        docstring=griffe.Docstring(
+            "Binding to the [textChanged](https://doc.qt.io/qt-6/qlineedit.html#textChanged) function "
+            "(via [PySide6][PySide6.QtWidgets.QLineEdit.textChanged] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qlineedit.html#textChanged))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "text",
+                annotation=griffe.ExprName("str"),
+            ),
+        ),
+    )
+    q_line_edit.set_member(text_changed.name, text_changed)
 
     echo_mode = griffe.Class(
         name="EchoMode",

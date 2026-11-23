@@ -34,15 +34,13 @@ class Window(QtWidgets.QWidget):
         layout.addWidget(self.c4)
         self.setLayout(layout)
 
-    @staticmethod
     @Slot(Qt.CheckState)
-    def on_bi_state_changed(state: Qt.CheckState) -> None:
+    def on_bi_state_changed(self, state: Qt.CheckState) -> None:
         """Slot to handle the state-changed signal."""
         print(f"The state of 'On/off checkable' is now {state!r}")
 
-    @staticmethod
     @Slot(Qt.CheckState)
-    def on_tri_state_changed(state: Qt.CheckState) -> None:
+    def on_tri_state_changed(self, state: Qt.CheckState) -> None:
         """Slot to handle the state-changed signal."""
         print(f"The state of 'Partially checkable' is now {state!r}")
 
