@@ -149,5 +149,5 @@ class LineEdit(QtWidgets.QLineEdit):
             delta = abs(previous - current) / current
             if delta < 0.01:  # noqa: PLR2004
                 break
-        font.setPointSizeF(current - 2.0)  # under fill the widget
+        font.setPointSizeF(max(0.1, current - 2.0))  # under fill the widget
         self.setFont(font)

@@ -40,7 +40,7 @@ The following widgets are provided, plus all of the [widget classes](https://doc
   </tr>
   <tr>
     <td><a href="api/widgets/line_edit">LineEdit</a></td>
-    <td>Editable text that can rescale the font size based on the widget size.</td>
+    <td>A single line of editable text that can rescale the font size based on the widget size.</td>
     <td><img src="assets/images/line_edit.gif" style="width: 50%; height: auto;"></td>
   </tr>
   <tr>

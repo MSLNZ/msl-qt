@@ -1,4 +1,4 @@
-"""Example to show the [comment][msl.qt.prompt.comment] prompt."""
+"""Example to show the `comment` prompt."""
 
 from __future__ import annotations
 

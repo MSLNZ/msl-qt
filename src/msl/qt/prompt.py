@@ -311,6 +311,16 @@ def comment(
     data rather than having the comment as a constant in your program, which you might
     forget to update before acquiring the next data run.
 
+    !!! example "Run the example"
+        ```console
+        python -c "from msl.examples.qt import run; run('Comment')"
+        ```
+
+        ??? abstract "Click to view the example source code"
+            ```python
+            --8<-- "src/msl/examples/qt/comment.py"
+            ```
+
     !!! note "See also"
         [password][..password], [text][..text]
 
