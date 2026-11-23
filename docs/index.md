@@ -34,6 +34,11 @@ The following widgets are provided.
     <td><img src="assets/images/combobox.gif" style="width: 50%; height: auto;"></td>
   </tr>
   <tr>
+    <td><a href="api/widgets/led">LED</a></td>
+    <td>An LED (i.e., light-emitting diode) to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
+    <td><img src="assets/images/led.gif" style="width: 50%; height: auto;"></td>
+  </tr>
+  <tr>
     <td><a href="api/widgets/toggle_switch">ToggleSwitch</a></td>
     <td>A toggle switch to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
     <td><img src="assets/images/toggle_switch.gif" style="width: 50%; height: auto;"></td>

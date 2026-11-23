@@ -45,11 +45,13 @@ class ToggleSwitch(QtWidgets.QAbstractButton):
                 The default value is 3% of the screen height.
             initial: Whether the toggle switch is initially in the *on* (`True`) or *off* (`False`) state.
             on_color: The color when the toggle switch is *on*.
+                The value is passed to [to_qcolor][msl.qt.utils.to_qcolor].
             off_color: The color when the toggle switch is *off*.
+                The value is passed to [to_qcolor][msl.qt.utils.to_qcolor].
             parent: The parent widget.
             toggled: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
                 [toggled][QtWidgets.QAbstractButton.toggled] [Signal][msl.qt.binding.Signal].
-                The function receives the *checked* state from the [Signal][msl.qt.binding.Signal].
+                The function receives the *on*/*off* state from the [Signal][msl.qt.binding.Signal].
             tooltip: The tooltip to use for the toggle switch.
         """
         super().__init__(parent=parent)

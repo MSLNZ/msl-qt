@@ -1,4 +1,15 @@
-"""An LED widget."""
+"""An LED (i.e., light-emitting diode) to signify two states &mdash; *on* and *off*.
+
+!!! example "Run the example"
+    ```console
+    python -c "from msl.examples.qt import run; run('LED')"
+    ```
+
+    ??? abstract "Click to view the example source code"
+        ```python
+        --8<-- "src/msl/examples/qt/led.py"
+        ```
+"""
 
 from __future__ import annotations
 
@@ -9,11 +20,20 @@ from msl.qt.binding import QtCore, QtGui, QtSvg, QtWidgets, Signal
 from msl.qt.utils import screen_geometry, to_qcolor
 
 if TYPE_CHECKING:
+    from typing import Any, Callable
+
     from msl.qt.typing import Color
 
 
 class Shape(Enum):
-    """[LED][msl.qt.widgets.LED] shapes."""
+    """[LED][msl.qt.widgets.led.LED] shapes.
+
+    Attributes:
+        Circle (str): Circle.
+        Rounded (str): Rectangle with rounded corners.
+        Square (str): Square.
+        Triangle (str): Triangle.
+    """
 
     Circle = "Circle"
     Rounded = "Rounded"
@@ -22,45 +42,62 @@ class Shape(Enum):
 
 
 class LED(QtWidgets.QWidget):
-    """An LED widget."""
+    """An LED (i.e., light-emitting diode) to signify two states &mdash; *on* and *off*."""
 
     Circle: Shape = Shape.Circle
-    Rounded: Shape = Shape.Rounded
-    Square: Shape = Shape.Square
-    Triangle: Shape = Shape.Triangle
+    """Draw the LED as a circle."""
 
-    clicked: Signal = Signal()
-    """Emitted when the LED is clicked (even if it is not `clickable`)."""
+    Rounded: Shape = Shape.Rounded
+    """Draw the LED as a rounded rectangle."""
+
+    Square: Shape = Shape.Square
+    """Draw the LED as a square."""
+
+    Triangle: Shape = Shape.Triangle
+    """Draw the LED as a triangle."""
+
+    clicked: Signal = Signal(bool)
+    """[Signal][msl.qt.binding.Signal] emitted when the LED is clicked (even if [is_clickable][..is_clickable] is `False`).
+
+    The *on*/*off* state of the LED is emitted.
+    """  # noqa: E501
 
     toggled: Signal = Signal(bool)
-    """Emitted when the LED changes state."""
+    """[Signal][msl.qt.binding.Signal] emitted when the LED changes its *on*/*off* state.
+
+    The *on*/*off* state of the LED is emitted.
+    """
 
     def __init__(
         self,
         *,
+        clickable: bool = False,
+        clicked: Callable[[bool], Any] | None = None,
+        on_color: Color = "green",
+        off_color: Color = "grey",
         parent: QtWidgets.QWidget | None = None,
         shape: str | Shape = "Circle",
-        on_color: Color = "#0F6900",
-        off_color: Color = "grey",
-        clickable: bool = False,
+        toggled: Callable[[bool], Any] | None = None,
         tooltip: str | None = None,
     ) -> None:
-        """An LED widget, <img src="assets/images/led_widget.gif" style="width: 40%; height: auto;">.
+        """An LED (i.e., light-emitting diode) to signify two states &mdash; *on* and *off*.
 
-        This class is based off of the [QLed](https://github.com/jazzycamel/QLed) project.
-
-        !!! example
-            ```python
-            from msl.examples.qt import led
-            led.show()
-            ```
+        Based on the [QLed](https://github.com/jazzycamel/QLed) project.
 
         Args:
+            clickable: Whether the *on*/*off* state of the LED can be changed by clicking on it.
+            clicked: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
+                [clicked][..clicked] [Signal][msl.qt.binding.Signal]. The function receives
+                the *on*/*off* state from the [Signal][msl.qt.binding.Signal].
+            on_color: The color of the LED when it is *on*.
+                The value is passed to [to_qcolor][msl.qt.utils.to_qcolor].
+            off_color: The color of the LED when it is *off*.
+                The value is passed to [to_qcolor][msl.qt.utils.to_qcolor].
             parent: The parent widget.
             shape: The shape to draw the LED.
-            on_color: The color of the LED when it is on.
-            off_color: The color of the LED when it is off.
-            clickable: Whether the state of the LED can be changed by clicking on it.
+            toggled: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
+                [toggled][..toggled] [Signal][msl.qt.binding.Signal]. The function receives
+                the *on*/*off* state from the [Signal][msl.qt.binding.Signal].
             tooltip: The tooltip to use for the LED.
         """
         super().__init__(parent=parent)
@@ -71,64 +108,67 @@ class LED(QtWidgets.QWidget):
         self._rounded_factor: float = 2.0
         self._triangle_factor: float = 4.0 / 3.0
 
-        if tooltip:
-            self.setToolTip(tooltip)
-
         self._is_clickable: bool = bool(clickable)
         self._off_color: QtGui.QColor = to_qcolor(off_color)
         self._on_color: QtGui.QColor = to_qcolor(on_color)
         self._shape: Shape = Shape(shape)
         self.update()
 
-    @property
-    def is_on(self) -> bool:
-        """[bool][] &mdash; Whether the LED is on or off."""
-        return self._is_on
+        if clicked:
+            _ = self.clicked.connect(clicked)
 
-    def clickable(self) -> bool:
-        """Get if the on/off state of the LED can be changed by clicking on it."""
+        if toggled:
+            _ = self.toggled.connect(toggled)
+
+        if tooltip:
+            self.setToolTip(tooltip)
+
+    @property
+    def is_clickable(self) -> bool:
+        """[bool][] &mdash; Get/set whether the *on*/*off* state of the [LED][] can be changed by clicking on it."""
         return self._is_clickable
 
-    def set_clickable(self, clickable: bool) -> None:  # noqa: FBT001
-        """Set if the on/off state of the LED can be changed by clicking on it.
-
-        Args:
-            clickable: Whether the state of the LED can be changed by clicking on it.
-        """
+    @is_clickable.setter
+    def is_clickable(self, clickable: bool) -> None:
         self._is_clickable = bool(clickable)
 
+    @property
+    def is_on(self) -> bool:
+        """[bool][] &mdash; Returns whether the [LED][] is in the *on* (`True`) or *off* (`False`) state."""
+        return self._is_on
+
     def off_color(self) -> QtGui.QColor:
-        """Get the color of the LED when it is off."""
+        """Get the color of the [LED][] when it is *off*."""
         return self._off_color
 
     def set_off_color(self, color: Color) -> None:
-        """Set the color of the LED when it is off.
+        """Set the color of the [LED][] when it is *off*.
 
         Args:
-            color: The color when the LED is off.
+            color: The *off* color. The value is passed to [to_qcolor][msl.qt.utils.to_qcolor].
         """
         self._off_color = to_qcolor(color)
         self.update()
 
     def on_color(self) -> QtGui.QColor:
-        """Get the color of the LED when it is on."""
+        """Get the color of the [LED][] when it is *on*."""
         return self._on_color
 
     def set_on_color(self, color: Color) -> None:
-        """Set the color of the LED when it is on.
+        """Set the color of the [LED][] when it is *on*.
 
         Args:
-            color: The *on* color.
+            color: The *on* color. The value is passed to [to_qcolor][msl.qt.utils.to_qcolor].
         """
         self._on_color = to_qcolor(color)
         self.update()
 
     def shape(self) -> Shape:
-        """Get the shape of the LED."""
+        """Get the shape of the [LED][]."""
         return self._shape
 
     def set_shape(self, shape: str | Shape) -> None:
-        """Set the shape of the LED.
+        """Set the shape of the [LED][].
 
         Args:
             shape: The shape to draw the LED.
@@ -137,18 +177,21 @@ class LED(QtWidgets.QWidget):
         self.update()
 
     def toggle(self) -> None:
-        """Toggle the on/off state of the LED."""
+        """Toggle the *on*/*off* state of the [LED][].
+
+        If it is *on* turn it *off*. If it is *off* turn it *on*.
+        """
         self._is_on = not self._is_on
         self.update()
         self.toggled.emit(self._is_on)
 
     def turn_off(self) -> None:
-        """Turn the LED off."""
+        """Turn the [LED][] to the *off* state."""
         if self._is_on:
             self.toggle()
 
     def turn_on(self) -> None:
-        """Turn the LED on."""
+        """Turn the [LED][] to the *on* state."""
         if not self._is_on:
             self.toggle()
 
@@ -201,7 +244,7 @@ class LED(QtWidgets.QWidget):
         """Overrides [mouseReleaseEvent][QtWidgets.QWidget.mouseReleaseEvent]."""
         if self._is_clickable:
             self.toggle()
-        self.clicked.emit()
+        self.clicked.emit(self._is_on)
         super().mouseReleaseEvent(event)
 
 
