@@ -1,4 +1,15 @@
-"""A [QWidget][QtWidgets.QWidget] to display [logging][] messages."""
+"""A [QWidget][QtWidgets.QWidget] to display [logging][] records.
+
+!!! example "Run the example"
+    ```console
+    python -c "from msl.examples.qt import run; run('Logger')"
+    ```
+
+    ??? abstract "Click to view the example source code"
+        ```python
+        --8<-- "src/msl/examples/qt/logger.py"
+        ```
+"""
 
 from __future__ import annotations
 
@@ -7,19 +18,19 @@ import random
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from msl.qt.binding import QtGui, QtWidgets
+from msl.qt.binding import Qt, QtGui, QtWidgets, application
 from msl.qt.prompt import information, save
-from msl.qt.utils import to_qicon
+from msl.qt.utils import to_qcolor, to_qicon
 
 if TYPE_CHECKING:
     from logging import LogRecord
     from pathlib import Path
 
-    from msl.qt.typing import SupportsWrite
+    from msl.qt.typing import Color, SupportsWrite
 
 
 class Logger(QtWidgets.QWidget):
-    """A [QWidget][QtWidgets.QWidget] to display [logging][] messages."""
+    """A [QWidget][QtWidgets.QWidget] to display [logging][] records."""
 
     def __init__(  # noqa: PLR0915
         self,
@@ -30,26 +41,16 @@ class Logger(QtWidgets.QWidget):
         logger: logging.Logger | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
-        """A [QWidget][QtWidgets.QWidget] to display [logging][] messages.
-
-        !!! example "Run the example"
-            ```console
-            python -c "from msl.examples.qt import run; run('Logger')"
-            ```
-
-            ??? abstract "Click to view the example source code"
-                ```python
-                --8<-- "src/msl/examples/qt/logger.py"
-                ```
+        """A [QWidget][QtWidgets.QWidget] to display [logging][] records.
 
         Args:
             level: The [Logging Level][levels] to use to display the [LogRecord][logging.LogRecord].
             fmt: The [attributes][logrecord-attributes] to use to display the [LogRecord][logging.LogRecord].
-                Default is `"%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s"`
+                Default is `"%(asctime)s [%(levelname)s] %(message)s"`.
             datefmt: The [strftime format][strftime-strptime-behavior] to use for the time stamp.
-                If `None` then the `ISO-8601` date format is used, `YYYY-mm-dd HH:MM:SS.sss`.
-            logger: The [Logger][logging.Logger] to add this [Handler][logging.Handler] to.
-                If `None` the uses the root [Logger][logging.Logger].
+                If `None`, the `YYYY-mm-dd HH:MM:SS.sss` format is used.
+            logger: The [Logger][logging.Logger] to handle logging records from.
+                If `None`, the root [Logger][logging.Logger] is used.
             parent: The parent widget.
         """
         super().__init__(parent=parent)
@@ -57,14 +58,25 @@ class Logger(QtWidgets.QWidget):
         self._records: list[logging.LogRecord] = []
         self._num_displayed: int = 0
 
-        self.color_map: dict[int, QtGui.QColor] = {
-            logging.CRITICAL: QtGui.QColor(255, 0, 0),
-            logging.ERROR: QtGui.QColor(175, 25, 25),
-            logging.WARNING: QtGui.QColor(180, 100, 127),
-            logging.INFO: QtGui.QColor(0, 0, 255),
-            logging.DEBUG: QtGui.QColor(127, 127, 127),
-            logging.NOTSET: QtGui.QColor(40, 110, 95),
-        }
+        scheme = application().styleHints().colorScheme()
+        if scheme == Qt.ColorScheme.Dark:
+            self._color_map: dict[int, QtGui.QColor] = {
+                logging.CRITICAL: QtGui.QColor(255, 0, 0),
+                logging.ERROR: QtGui.QColor(244, 71, 71),
+                logging.WARNING: QtGui.QColor(255, 251, 0),
+                logging.INFO: QtGui.QColor(103, 150, 230),
+                logging.DEBUG: QtGui.QColor(178, 103, 230),
+                logging.NOTSET: QtGui.QColor(40, 110, 95),
+            }
+        else:
+            self._color_map = {
+                logging.CRITICAL: QtGui.QColor(255, 0, 0),
+                logging.ERROR: QtGui.QColor(175, 25, 25),
+                logging.WARNING: QtGui.QColor(180, 100, 127),
+                logging.INFO: QtGui.QColor(0, 0, 255),
+                logging.DEBUG: QtGui.QColor(127, 127, 127),
+                logging.NOTSET: QtGui.QColor(40, 110, 95),
+            }
 
         self._level_names: dict[str, int] = {
             "DEBUG": logging.DEBUG,
@@ -74,9 +86,6 @@ class Logger(QtWidgets.QWidget):
             "CRITICAL": logging.CRITICAL,
         }
 
-        #
-        # configure logging
-        #
         if logger is None:
             logger = logging.getLogger()
 
@@ -87,7 +96,7 @@ class Logger(QtWidgets.QWidget):
             level = self._level_names[level.upper()]
 
         if not fmt:
-            fmt = "%(asctime)s [%(levelname)s] -- %(name)s -- %(message)s"
+            fmt = "%(asctime)s [%(levelname)s] %(message)s"
 
         self._current_level: int = level
         formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
@@ -97,10 +106,6 @@ class Logger(QtWidgets.QWidget):
         self._handler.setFormatter(formatter)
         self._handler.emit = self._emit  # type: ignore[method-assign]
         logger.addHandler(self._handler)
-
-        #
-        # create the widgets
-        #
 
         self._level_combobox: QtWidgets.QComboBox = QtWidgets.QComboBox(self)
         for name, data in self._level_names.items():
@@ -128,10 +133,6 @@ class Logger(QtWidgets.QWidget):
         self._text_browser.setLineWrapMode(QtWidgets.QTextBrowser.LineWrapMode.NoWrap)
         self._vsb: QtWidgets.QScrollBar = self._text_browser.verticalScrollBar()
 
-        #
-        # add the widgets to the layout
-        #
-
         top = QtWidgets.QHBoxLayout()
         top.addWidget(self._level_combobox)
         top.addWidget(self._level_checkbox)
@@ -147,17 +148,16 @@ class Logger(QtWidgets.QWidget):
 
     @property
     def records(self) -> list[LogRecord]:
-        """Returns the history of all the log records."""
+        """[list][][[LogRecord][logging.LogRecord]] &mdash; Returns the logging records."""
         return self._records
 
     def save(self, path: str | Path, *, level: int = logging.INFO) -> None:
-        """Save log records to a file.
+        """Save the logging records to a file.
 
         Args:
-            path: The path to save the log records to. Appends the records to the file
-                if the file already exists, otherwise creates a new log file. It is
-                recommended that the file extension be `.log`, but not mandatory.
-            level: All [LogRecord][logging.LogRecord]s with a [Logging Level][levels]`
+            path: The path to save the logging records to. Appends the records to the
+                file if the file already exists, otherwise creates a new file.
+            level: All [LogRecord][logging.LogRecord]s with a [Logging Level][levels]
                 &ge; `level` will be saved.
         """
         with open(path, mode="a") as fp:  # noqa: PTH123
@@ -167,9 +167,21 @@ class Logger(QtWidgets.QWidget):
                     _ = fp.write(self._handler.format(record) + "\n")
             _ = fp.write("\n")
 
+    def set_level_color(self, level: int | str, color: Color) -> None:
+        """Set the font color to use for a logging level.
+
+        Args:
+            level: The logging [level][levels] to change the color of.
+                Can be the name or value of a logging [level][levels], e.g., `"INFO"`, `20` or [logging.INFO][].
+            color: The color to use. The value is passed to [to_qcolor][msl.qt.utils.to_qcolor].
+        """
+        if isinstance(level, str):
+            level = self._level_names[level.upper()]
+        self._color_map[level] = to_qcolor(color)
+
     def _add_new_level(self, record: LogRecord) -> None:
         color = QtGui.QColor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-        self.color_map[record.levelno] = color
+        self._color_map[record.levelno] = color
         self._level_names[record.levelname] = record.levelno
         for i in range(self._level_combobox.count()):
             if record.levelno < self._level_combobox.itemData(i):
@@ -183,10 +195,10 @@ class Logger(QtWidgets.QWidget):
             return
         msg = self._handler.format(record)
         try:
-            self._text_browser.setTextColor(self.color_map[record.levelno])
+            self._text_browser.setTextColor(self._color_map[record.levelno])
         except KeyError:
             self._add_new_level(record)
-            self._text_browser.setTextColor(self.color_map[record.levelno])
+            self._text_browser.setTextColor(self._color_map[record.levelno])
         self._text_browser.append(msg)
         self._num_displayed += 1
         if self._vsb.maximum() - self._vsb.value() <= self._vsb.singleStep():

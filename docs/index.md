@@ -21,42 +21,83 @@ The following widgets are provided, plus all of the [widget classes](https://doc
   <tr>
     <td><a href="api/widgets/button">Button</a></td>
     <td>A button to display text, an icon and a menu. The button supports a left-click and a right-click event.</td>
-    <td><img src="assets/images/button.gif" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/button.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/button.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
   <tr>
     <td><a href="api/widgets/checkbox">CheckBox</a></td>
     <td>A checkbox with a text label. A checkbox can be in either the checked, unchecked or partially-checked state.</td>
-    <td><img src="assets/images/checkbox.png" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/checkbox.png" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/checkbox.png" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
   <tr>
     <td><a href="api/widgets/combobox">ComboBox</a></td>
     <td>A combobox to select an item from a list of items. An item can include text, an icon and user data.</td>
-    <td><img src="assets/images/combobox.gif" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/combobox.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/combobox.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
   <tr>
     <td><a href="api/widgets/double_spinbox">DoubleSpinBox</a></td>
     <td>Enter a floating-point value using increment/decrement buttons, arrow keys, or direct text entry.</td>
-    <td><img src="assets/images/double_spinbox.gif" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/double_spinbox.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/double_spinbox.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
   <tr>
     <td><a href="api/widgets/led">LED</a></td>
     <td>An LED (i.e., light-emitting diode) to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
-    <td><img src="assets/images/led.gif" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/led.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/led.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
   <tr>
     <td><a href="api/widgets/line_edit">LineEdit</a></td>
     <td>A single line of editable text that can rescale the font size based on the widget size.</td>
-    <td><img src="assets/images/line_edit.gif" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/line_edit.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/line_edit.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/widgets/logger">Logger</a></td>
+    <td>Display <a href="https://docs.python.org/3/library/logging.html#module-logging">logging</a> records.</td>
+    <td>
+        <a href="assets/images/logger.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/logger.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
   <tr>
     <td><a href="api/widgets/spinbox">SpinBox</a></td>
     <td>Enter an integer value using increment/decrement buttons, arrow keys, or direct text entry.</td>
-    <td><img src="assets/images/spinbox.gif" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/spinbox.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/spinbox.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
   <tr>
     <td><a href="api/widgets/toggle_switch">ToggleSwitch</a></td>
     <td>A toggle switch to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
-    <td><img src="assets/images/toggle_switch.gif" style="width: 50%; height: auto;"></td>
+    <td>
+        <a href="assets/images/toggle_switch.gif" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/toggle_switch.gif" style="width: 50%; height: auto;">
+        </a>
+    </td>
   </tr>
 </table>
 

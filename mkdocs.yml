@@ -62,6 +62,7 @@ nav:
       - api/widgets/double_spinbox.md
       - api/widgets/led.md
       - api/widgets/line_edit.md
+      - api/widgets/logger.md
       - api/widgets/spinbox.md
       - api/widgets/toggle_switch.md
     - api/loop_until_abort.md

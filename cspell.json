@@ -47,6 +47,8 @@
         "netcenter",
         "netshell",
         "networkexplorer",
+        "noopener",
+        "noreferrer",
         "pifmgr",
         "pnidui",
         "pycon",
