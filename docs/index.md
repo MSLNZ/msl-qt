@@ -34,6 +34,11 @@ The following widgets are provided, plus all of the [widget classes](https://doc
     <td><img src="assets/images/combobox.gif" style="width: 50%; height: auto;"></td>
   </tr>
   <tr>
+    <td><a href="api/widgets/double_spinbox">DoubleSpinBox</a></td>
+    <td>Enter a floating-point value using increment/decrement buttons, arrow keys, or direct text entry.</td>
+    <td><img src="assets/images/double_spinbox.gif" style="width: 50%; height: auto;"></td>
+  </tr>
+  <tr>
     <td><a href="api/widgets/led">LED</a></td>
     <td>An LED (i.e., light-emitting diode) to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
     <td><img src="assets/images/led.gif" style="width: 50%; height: auto;"></td>
@@ -42,6 +47,11 @@ The following widgets are provided, plus all of the [widget classes](https://doc
     <td><a href="api/widgets/line_edit">LineEdit</a></td>
     <td>A single line of editable text that can rescale the font size based on the widget size.</td>
     <td><img src="assets/images/line_edit.gif" style="width: 50%; height: auto;"></td>
+  </tr>
+  <tr>
+    <td><a href="api/widgets/spinbox">SpinBox</a></td>
+    <td>Enter an integer value using increment/decrement buttons, arrow keys, or direct text entry.</td>
+    <td><img src="assets/images/spinbox.gif" style="width: 50%; height: auto;"></td>
   </tr>
   <tr>
     <td><a href="api/widgets/toggle_switch">ToggleSwitch</a></td>

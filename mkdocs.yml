@@ -59,8 +59,10 @@ nav:
       - api/widgets/button.md
       - api/widgets/checkbox.md
       - api/widgets/combobox.md
+      - api/widgets/double_spinbox.md
       - api/widgets/led.md
       - api/widgets/line_edit.md
+      - api/widgets/spinbox.md
       - api/widgets/toggle_switch.md
     - api/loop_until_abort.md
     - api/binding.md

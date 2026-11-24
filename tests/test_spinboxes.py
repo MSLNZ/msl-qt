@@ -97,11 +97,11 @@ def test_double_spinbox() -> None:  # noqa: PLR0915
     assert dsb.suffix() == ""
     assert dsb.toolTip() == ""
 
-    dsb = DoubleSpinBox(unit=GREEK.beta.value)
+    dsb = DoubleSpinBox(suffix=GREEK.beta.value)
     assert dsb.suffix() == GREEK.beta.value
 
     dsb = DoubleSpinBox(
-        value=4.3, minimum=-632, maximum=1e5, step=0.02, decimals=4, use_si_prefix=False, unit="C", tooltip="hi"
+        value=4.3, minimum=-632, maximum=1e5, step=0.02, decimals=4, use_si_prefix=False, suffix="C", tooltip="hi"
     )
     assert dsb.value() == 4.3
     assert dsb.minimum() == -632.0

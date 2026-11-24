@@ -1,27 +1,5 @@
-"""Custom [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] and [QSpinBox][QtWidgets.QSpinBox] classes.
+"""Custom [QSpinBox][QtWidgets.QSpinBox] and [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] classes."""
 
-In situations where the value of the spinbox is used to represent the position/value
-of equipment in the laboratory one typically does not want to connect the
-[valueChanged][QtWidgets.QDoubleSpinBox.valueChanged] signal of the spinbox to change the
-value of the equipment because each numeric key press would be sent to the equipment.
-For example, if you wanted to set the position of a translation stage to 123 then
-typing the value 123 in the spinbox would send three move commands to the equipment:
-
-* 1 &mdash; move to position 1
-* 12 &mdash; move to position 12
-* 123 &mdash; move to position 123
-
-These custom [QAbstractSpinBox][QtWidgets.QAbstractSpinBox] subclasses will emit the
-[editingFinished][QtWidgets.QAbstractSpinBox.editingFinished] signal when any of the
-following events occur:
-
-* the spinbox loses focus
-* the Enter key is pressed
-* the Up, Down, PageUp or PageDown keys are pressed
-* the Increment and Decrement buttons are clicked
-"""
-
-# cSpell: ignore pyside
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -30,43 +8,45 @@ from msl.qt.binding import QtGui, QtWidgets
 from msl.qt.utils import number_to_si, si_to_number
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from typing import Any, Callable
 
 
 class SpinBox(QtWidgets.QSpinBox):
-    """A [QSpinBox][QtWidgets.QSpinBox] to show an integer value."""
+    """A [QSpinBox][QtWidgets.QSpinBox] to enter an integer value."""
 
     def __init__(  # noqa: PLR0913
         self,
         *,
-        parent: QtWidgets.QWidget | None = None,
         value: int = 0,
         minimum: int = 0,
         maximum: int = 100,
+        parent: QtWidgets.QWidget | None = None,
         step: int = 1,
-        unit: str | None = None,
+        suffix: str | None = None,
         tooltip: str | None = None,
-        value_changed: Callable[[int], None] | None = None,
-        editing_finished: Callable[[], None] | None = None,
+        value_changed: Callable[[int], Any] | None = None,
+        editing_finished: Callable[[], Any] | None = None,
     ) -> None:
-        """A [QSpinBox][QtWidgets.QSpinBox] to show an integer value.
+        """A [QSpinBox][QtWidgets.QSpinBox] to enter an integer value.
 
-        A [QSpinBox][QtWidgets.QSpinBox] that emits
+        The [QSpinBox][QtWidgets.QSpinBox] emits
         [editingFinished][QtWidgets.QAbstractSpinBox.editingFinished]
-        after a [stepBy][QtWidgets.QAbstractSpinBox.stepBy] signal.
+        after a [stepBy][QtWidgets.QAbstractSpinBox.stepBy] event.
 
         Args:
-            parent: The parent widget.
             value: The initial value.
-            minimum: The minimum value.
-            maximum: The maximum value.
+            minimum: The minimum value that can be entered.
+            maximum: The maximum value that can be entered.
+            parent: The parent widget.
             step: The step-by size.
-            unit: The text to display after the value (i.e., the *unit* of the displayed value).
+            suffix: The text to display after the value (i.e., the *unit* of the displayed value).
             tooltip: The text to use for the tooltip.
-            value_changed: A callable function to use as a slot for the
-                [valueChanged][QtWidgets.QSpinBox.valueChanged] signal.
-            editing_finished: A callable function to use as a slot for the
-                [editingFinished][QtWidgets.QAbstractSpinBox.editingFinished] signal.
+            value_changed: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
+                [valueChanged][QtWidgets.QSpinBox.valueChanged] [Signal][msl.qt.binding.Signal].
+                The function receives the value (as an [int][]) from the [Signal][msl.qt.binding.Signal].
+            editing_finished: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
+                [editingFinished][QtWidgets.QAbstractSpinBox.editingFinished] [Signal][msl.qt.binding.Signal].
+                The function does not receive any arguments from the [Signal][msl.qt.binding.Signal].
         """
         super().__init__(parent=parent)
         self.setRange(minimum, maximum)
@@ -74,8 +54,8 @@ class SpinBox(QtWidgets.QSpinBox):
         self.setSingleStep(step)
         if tooltip:
             self.setToolTip(tooltip)
-        if unit:
-            self.setSuffix(unit)
+        if suffix:
+            self.setSuffix(suffix)
         if value_changed:
             _ = self.valueChanged.connect(value_changed)
         if editing_finished:
@@ -93,44 +73,46 @@ class SpinBox(QtWidgets.QSpinBox):
 
 
 class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
-    """A [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] to show a float value."""
+    """A [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] to enter a floating-point value."""
 
     def __init__(  # noqa: PLR0913
         self,
         *,
-        parent: QtWidgets.QWidget | None = None,
         value: float = 0,
         minimum: float = 0,
         maximum: float = 100,
         step: float = 1,
         decimals: int = 2,
-        use_si_prefix: bool = False,
-        unit: str | None = None,
+        parent: QtWidgets.QWidget | None = None,
+        suffix: str | None = None,
         tooltip: str | None = None,
-        value_changed: Callable[[float], None] | None = None,
-        editing_finished: Callable[[], None] | None = None,
+        use_si_prefix: bool = False,
+        value_changed: Callable[[float], Any] | None = None,
+        editing_finished: Callable[[], Any] | None = None,
     ) -> None:
-        """A [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] to show a float value.
+        """A [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] to enter a floating-point value.
 
-        A [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] that emits
+        The [QDoubleSpinBox][QtWidgets.QDoubleSpinBox] emits
         [editingFinished][QtWidgets.QAbstractSpinBox.editingFinished] after a
-        [stepBy][QtWidgets.QAbstractSpinBox.stepBy] signal.
+        [stepBy][QtWidgets.QAbstractSpinBox.stepBy] event.
 
         Args:
-            parent: The parent widget.
             value: The initial value.
-            minimum: The minimum value.
-            maximum: The maximum value.
+            minimum: The minimum value that can be entered.
+            maximum: The maximum value that can be entered.
             step: The step-by size.
             decimals: The number of digits after the decimal place to use to show the value.
-            use_si_prefix: Whether to use an SI prefix to represent the number,
-                e.g., a value of `0.00431` would be represented as `4.31 m`.
-            unit: The text to display after the value (i.e., the *unit* of the displayed value).
+            parent: The parent widget.
+            suffix: The text to display after the value (i.e., the *unit* of the displayed value).
             tooltip: The text to use for the tooltip.
-            value_changed: A callable function to use as a slot for the
-                [valueChanged][QtWidgets.QDoubleSpinBox.valueChanged] signal.
-            editing_finished: A callable function to use as a slot for the
-                [editingFinished][QtWidgets.QAbstractSpinBox.editingFinished] signal.
+            use_si_prefix: Whether to use an SI prefix to represent the number,
+                e.g., a value of `0.00431` is represented as `4.31 m`.
+            value_changed: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
+                [valueChanged][QtWidgets.QDoubleSpinBox.valueChanged] [Signal][msl.qt.binding.Signal].
+                The function receives the value (as a [float][]) from the [Signal][msl.qt.binding.Signal].
+            editing_finished: A callable function to use as a [Slot][msl.qt.binding.Slot] for the
+                [editingFinished][QtWidgets.QAbstractSpinBox.editingFinished] [Signal][msl.qt.binding.Signal].
+                The function does not receive any arguments from the [Signal][msl.qt.binding.Signal].
         """
         super().__init__(parent=parent)
         if use_si_prefix:
@@ -142,13 +124,12 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
             self._validator = None
         self.setDecimals(decimals)  # must come before setValue
         self.setSingleStep(step)
-        self.setMinimum(minimum)
-        self.setMaximum(maximum)
+        self.setRange(minimum, maximum)
         self.setValue(value)
         if tooltip:
             self.setToolTip(tooltip)
-        if unit:
-            self.setSuffix(unit)
+        if suffix:
+            self.setSuffix(suffix)
         if value_changed:
             _ = self.valueChanged.connect(value_changed)
         if editing_finished:
@@ -167,19 +148,23 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         # in the methods self.fixup(), self.valueFromText() and self.stepBy()
         text = text.rstrip(self.suffix()).lstrip(self.prefix())
         state = self._validator.validate(text, position - len(self.prefix()))
-        return state, text, position
+        return state, f"{self.prefix()}{text}{self.suffix()}", position
 
     def fixup(self, text: str) -> str:  # pyright: ignore[reportImplicitOverride]
         """Overrides `QtWidgets.QAbstractSpinBox.fixup`."""
         if self._validator is None:
             return super().fixup(text)
-        return self._validator.fixup(self.cleanText())
+
+        text = self._validator.fixup(self.cleanText())
+        return f"{self.prefix()}{text}{self.suffix()}"
 
     def valueFromText(self, text: str) -> float:  # pyright: ignore[reportImplicitOverride]  # noqa: N802
         """Overrides `QtWidgets.QDoubleSpinBox.valueFromText`."""
         if self._validator is None:
             return super().valueFromText(text)
-        return si_to_number(self.cleanText())
+
+        stripped = self.cleanText().rstrip(self.suffix()).lstrip(self.prefix())
+        return si_to_number(stripped)
 
     def textFromValue(self, value: float) -> str:  # pyright: ignore[reportImplicitOverride]  # noqa: N802
         """Overrides `QtWidgets.QDoubleSpinBox.textFromValue`."""
@@ -209,7 +194,8 @@ class DoubleSpinBox(QtWidgets.QDoubleSpinBox):
         if self._validator is None:
             super().stepBy(steps)
         else:
-            number = si_to_number(self.cleanText())
+            stripped = self.cleanText().rstrip(self.suffix()).lstrip(self.prefix())
+            number = si_to_number(stripped)
             coerced = max(min(number, self.maximum()), self.minimum())
             _, si_prefix = number_to_si(coerced)
             value = number + si_to_number(str(steps * self.singleStep()) + si_prefix)

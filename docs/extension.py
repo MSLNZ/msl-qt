@@ -279,7 +279,7 @@ def update_qt_svg(_: griffe.Module) -> None:
     """Update the QtSvg module."""
 
 
-def update_qt_widgets(qt_widgets: griffe.Module) -> None:
+def update_qt_widgets(qt_widgets: griffe.Module) -> None:  # noqa: PLR0915
     """Update the QtWidgets module."""
     q_dialog = griffe.Class(
         name="QDialog",
@@ -499,3 +499,84 @@ def update_qt_widgets(qt_widgets: griffe.Module) -> None:
         ),
     )
     q_combobox.set_member(current_text_changed.name, current_text_changed)
+
+    q_spinbox = griffe.Class(
+        name="QSpinBox",
+        docstring=griffe.Docstring(
+            "Binding to the [QSpinBox](https://doc.qt.io/qt-6/qspinbox.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QSpinBox] or [PyQt6][PyQt6.QtWidgets.QSpinBox])."
+        ),
+    )
+    qt_widgets.set_member(q_spinbox.name, q_spinbox)
+
+    spinbox_value_changed = griffe.Function(
+        name="valueChanged",
+        docstring=griffe.Docstring(
+            "Binding to the [valueChanged](https://doc.qt.io/qt-6/qspinbox.html#valueChanged) function "
+            "(via [PySide6][PySide6.QtWidgets.QSpinBox.valueChanged] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qspinbox.html#valueChanged))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "value",
+                annotation=griffe.ExprName("int"),
+            ),
+        ),
+    )
+    q_spinbox.set_member(spinbox_value_changed.name, spinbox_value_changed)
+
+    q_abstract_spinbox = griffe.Class(
+        name="QAbstractSpinBox",
+        docstring=griffe.Docstring(
+            "Binding to the [QAbstractSpinBox](https://doc.qt.io/qt-6/qabstractspinbox.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QAbstractSpinBox] or [PyQt6][PyQt6.QtWidgets.QAbstractSpinBox])."
+        ),
+    )
+    qt_widgets.set_member(q_abstract_spinbox.name, q_abstract_spinbox)
+
+    editing_finished = griffe.Function(
+        name="editingFinished",
+        docstring=griffe.Docstring(
+            "Binding to the [editingFinished](https://doc.qt.io/qt-6/qabstractspinbox.html#editingFinished) function "
+            "(via [PySide6][PySide6.QtWidgets.QAbstractSpinBox.editingFinished] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qabstractspinbox.html#editingFinished))."
+        ),
+    )
+    q_abstract_spinbox.set_member(editing_finished.name, editing_finished)
+
+    step_by = griffe.Function(
+        name="stepBy",
+        docstring=griffe.Docstring(
+            "Binding to the [stepBy](https://doc.qt.io/qt-6/qabstractspinbox.html#stepBy) function "
+            "(via [PySide6][PySide6.QtWidgets.QAbstractSpinBox.stepBy] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qabstractspinbox.html#stepBy))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "steps",
+                annotation=griffe.ExprName("int"),
+            ),
+        ),
+    )
+    q_abstract_spinbox.set_member(step_by.name, step_by)
+
+    q_double_spinbox = griffe.Class(
+        name="QDoubleSpinBox",
+        docstring=griffe.Docstring(
+            "Binding to the [QDoubleSpinBox](https://doc.qt.io/qt-6/qdoublespinbox.html) class "
+            "(via [PySide6][PySide6.QtWidgets.QDoubleSpinBox] or [PyQt6][PyQt6.QtWidgets.QDoubleSpinBox])."
+        ),
+    )
+    qt_widgets.set_member(q_double_spinbox.name, q_double_spinbox)
+
+    double_spinbox_value_changed = griffe.Function(
+        name="valueChanged",
+        docstring=griffe.Docstring(
+            "Binding to the [valueChanged](https://doc.qt.io/qt-6/qdoublespinbox.html#valueChanged) function "
+            "(via [PySide6][PySide6.QtWidgets.QDoubleSpinBox.valueChanged] or [PyQt6](https://www.riverbankcomputing.com/static/Docs/PyQt6/api/qtwidgets/qdoublespinbox.html#valueChanged))."
+        ),
+        parameters=griffe.Parameters(
+            griffe.Parameter(
+                "value",
+                annotation=griffe.ExprName("float"),
+            ),
+        ),
+    )
+    q_double_spinbox.set_member(double_spinbox_value_changed.name, double_spinbox_value_changed)

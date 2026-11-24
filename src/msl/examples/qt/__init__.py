@@ -14,6 +14,7 @@ from . import (
     logger,
     loop_until_abort,
     loop_until_abort_sleep,
+    spinbox,
     standard_icons,
     toggle_switch,
 )
@@ -28,6 +29,7 @@ __all__: list[str] = [
     "logger",
     "loop_until_abort",
     "loop_until_abort_sleep",
+    "spinbox",
     "standard_icons",
     "toggle_switch",
 ]
@@ -42,6 +44,7 @@ mapping: dict[str, Callable[[], None]] = {
     "Logger": logger.show,
     "Loop": loop_until_abort.show,
     "LoopSleep": loop_until_abort_sleep.show,
+    "SpinBox": spinbox.show,
     "StandardIcons": standard_icons.show,
     "ToggleSwitch": toggle_switch.show,
 }
