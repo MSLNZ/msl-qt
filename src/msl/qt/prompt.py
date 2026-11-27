@@ -21,20 +21,21 @@ or you can import the module.
 from __future__ import annotations
 
 import json
+import re
 import sys
 import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .binding import Qt, QtGui, QtWidgets, application
-from .utils import screen_geometry, to_qcolor, to_qfont
+from .binding import Qt, QtGui, QtWidgets, Slot, application
+from .utils import screen_geometry, to_qfont
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
     from typing import Any
 
-    from .typing import Color, Filter, Font
+    from .typing import Filter, Font
 
 __all__: list[str] = [
     "comment",
@@ -64,7 +65,7 @@ def critical(message: str | Exception, *, title: str | None = None, font: Font |
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `#!py '<html>A <p style="color:red"><i>critical</i></p> error occurred!</html>'`.
+            `#!py 'A <span style="color:red"><i>critical</i></span> error occurred!'`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
@@ -289,14 +290,7 @@ def item(
     return items[strings.index(dialog.textValue())] if ok else None
 
 
-def comment(
-    *,
-    path: str | Path | None = None,
-    title: str | None = None,
-    even_row_color: Color | None = None,
-    odd_row_color: Color | None = None,
-    text_color: Color | None = None,
-) -> str:
+def comment(*, path: str | Path | None = None, title: str = "Comment") -> str:
     """Prompt the user for a comment.
 
     Opens a [QDialog][QtWidgets.QDialog] to allow a user to enter a comment about
@@ -329,31 +323,13 @@ def comment(
             of the comments that have been entered. If `None`, the default path is used.
             The file is created if it does not exist.
         title: The text to display in the title bar of the dialog window.
-        even_row_color: The background color of the even-numbered rows in the history table.
-            The default color is chosen based on the color scheme of the operating system.
-        odd_row_color: The background color of the odd-numbered rows in the history table.
-            The default color is chosen based on the color scheme of the operating system.
-        text_color: The text color of a comment in the history table.
-            The default color is chosen based on the color scheme of the operating system.
 
     Returns:
         The comment.
     """
-    app, title = _get_app_and_title(title)
-
-    if text_color is None:
-        text_color = app.palette().color(QtGui.QPalette.ColorRole.Text)
-
-    if even_row_color is None:
-        even_row_color = app.palette().color(QtGui.QPalette.ColorRole.Window)
-
-    if odd_row_color is None:
-        scheme = app.styleHints().colorScheme()
-        even_row_color = to_qcolor(even_row_color)
-        odd_row_color = even_row_color.lighter(150) if scheme == Qt.ColorScheme.Dark else even_row_color.darker(110)
-
+    _, title = _get_app_and_title(title)
     p = Path(path) if path else (Path("~/.msl").expanduser() / "msl-qt-comments.json")
-    c = _Comment(p, even_row_color, odd_row_color, text_color)
+    c = _Comment(p)
     c.setWindowTitle(title)
     _ = c.exec()
     return c.text()
@@ -630,92 +606,96 @@ def _get_file_filters(filters: Filter | None) -> str:  # noqa: C901
 
 
 class _Comment(QtWidgets.QDialog):
-    def __init__(self, path: Path, even_row_color: Color, odd_row_color: Color, text_color: Color) -> None:  # noqa: PLR0915
+    def __init__(self, path: Path) -> None:  # noqa: PLR0915
         """A dialog to prompt the user to enter/select a comment."""
         super().__init__(None, Qt.WindowType.WindowCloseButtonHint | Qt.WindowType.WindowMinMaxButtonsHint)
 
         self.path: Path = path
-        self.comments: list[dict[str, str]] = []
-        self.even_row_color: QtGui.QColor = to_qcolor(even_row_color)
-        self.odd_row_color: QtGui.QColor = to_qcolor(odd_row_color)
-        self.text_color: QtGui.QColor = to_qcolor(text_color)
+        self.comments: list[list[str]] = []
 
         if self.path.is_file():
             try:
-                self.comments = json.loads(self.path.read_text())
+                comments = json.loads(self.path.read_text())
             except Exception as e:  # noqa: BLE001
                 warning(f"Error loading JSON file:\n{self.path}\n\n{e}")
+            else:
+                if comments and isinstance(comments[0], dict):
+                    self.comments = [[c["timestamp"], c["comment"]] for c in comments]
+                else:
+                    self.comments = comments
 
         self.comment: QtWidgets.QPlainTextEdit = QtWidgets.QPlainTextEdit(self)
         height = self.comment.fontMetrics().lineSpacing()
         self.comment.setFixedHeight(5 * height)  # display 5 lines
 
-        from .widgets.button import Button  # noqa: PLC0415
+        self.ok_button: QtWidgets.QPushButton = QtWidgets.QPushButton(self)
+        self.ok_button.setText("Ok")
+        self.ok_button.setAutoDefault(False)
+        _ = self.ok_button.clicked.connect(self.prepend_and_close)
 
-        self.ok_button: Button = Button(
-            text="OK",
-            left_click=self.prepend_and_close,
-            tooltip="Select the comment and exit",
-            parent=self,
-        )
-        self.ok_button.add_menu_item(
-            text="Clear history",
-            icon=QtWidgets.QStyle.StandardPixmap.SP_DialogResetButton,
-            triggered=self.clear_history,
-            tooltip="Delete all comments that are in the history",
-        )
+        cancel_button: QtWidgets.QPushButton = QtWidgets.QPushButton(self)
+        cancel_button.setText("Cancel")
+        cancel_button.setAutoDefault(False)
+        _ = cancel_button.clicked.connect(self.cancelled)
 
         #
         # the filter field
         #
+        filter_label = QtWidgets.QLabel("Filter:")
         self.filter_edit: QtWidgets.QLineEdit = QtWidgets.QLineEdit()
-        self.filter_edit.setToolTip("Search filter for the history")
-        _ = self.filter_edit.returnPressed.connect(self.apply_filter)
+        self.filter_edit.setToolTip("Filter comments using a regular-expression pattern")
+        _ = self.filter_edit.editingFinished.connect(self.apply_filter)
 
-        filter_button: Button = Button(
-            icon=QtWidgets.QStyle.StandardPixmap.SP_FileDialogContentsView,
-            tooltip="Apply filter",
-            left_click=self.apply_filter,
-        )
-        clear_button: Button = Button(
-            icon=QtWidgets.QStyle.StandardPixmap.SP_LineEditClearButton,
-            tooltip="Clear filter",
-            left_click=self.clear_filter,
-        )
-
-        filter_layout = QtWidgets.QHBoxLayout()
-        filter_layout.addWidget(filter_button)
-        filter_layout.addWidget(self.filter_edit)
-        filter_layout.addWidget(clear_button)
-        filter_layout.setSpacing(1)
+        self.filter_ignore_case: QtWidgets.QCheckBox = QtWidgets.QCheckBox(self)
+        self.filter_ignore_case.setText("Ignore case?")
+        self.filter_ignore_case.setChecked(True)
+        self.filter_ignore_case.setToolTip("Whether to perform a case-insensitive filter")
+        _ = self.filter_ignore_case.checkStateChanged.connect(self.apply_filter)
 
         #
         # history table
         #
+        tip = (
+            "Double click a row to select the comment.\n"
+            "Delete comments by selecting the row(s) and pressing the Delete key."
+        )
         self.table: QtWidgets.QTableWidget = QtWidgets.QTableWidget()
         table_header = ["Timestamp", "Comment"]
         self.table.setColumnCount(len(table_header))
         self.table.setHorizontalHeaderLabels(table_header)
         self.table.setSortingEnabled(True)
+        self.table.setAlternatingRowColors(True)
         self.table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table.setToolTip(tip)
         h_header = self.table.horizontalHeader()
         if h_header:
             h_header.setStretchLastSection(True)
-            _ = h_header.sectionClicked.connect(self.update_table_row_colors_and_resize)
+            _ = h_header.sectionClicked.connect(self.resize_to_contents)
         _ = self.table.cellDoubleClicked.connect(self.table_double_click)
         self.table.keyPressEvent = self.table_key_press  # type: ignore[method-assign]
-        for item in self.comments:
-            self.append_to_history_table(item["timestamp"], item["comment"])
-        self.update_table_row_colors_and_resize()
+        for timestamp, comment in self.comments:
+            self.append_to_history_table(timestamp, comment)
+        self.resize_to_contents()
 
         #
         # main layout
         #
+        button_layout = QtWidgets.QHBoxLayout()
+        button_layout.addSpacerItem(QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Policy.Expanding))
+        button_layout.addWidget(self.ok_button)
+        button_layout.addWidget(cancel_button)
+        button_layout.addSpacerItem(QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Policy.Expanding))
+
+        filter_layout = QtWidgets.QHBoxLayout()
+        filter_layout.addWidget(filter_label)
+        filter_layout.addWidget(self.filter_edit)
+        filter_layout.addWidget(self.filter_ignore_case)
+
         layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(QtWidgets.QLabel("Enter a new comment or select one from the history below"))
+        layout.addWidget(QtWidgets.QLabel("Enter a new comment or select one (double click) from the table"))
         layout.addWidget(self.comment)
-        layout.addWidget(self.ok_button)
+        layout.addLayout(button_layout)
         layout.addLayout(filter_layout)
         layout.addWidget(self.table)
         self.setLayout(layout)
@@ -729,48 +709,52 @@ class _Comment(QtWidgets.QDialog):
         self.table.setItem(index, 0, QtWidgets.QTableWidgetItem(timestamp))
         self.table.setItem(index, 1, QtWidgets.QTableWidgetItem(comment))
 
-    def apply_filter(self) -> None:
-        filter_text = self.filter_edit.text().lower()
-        if not filter_text and self.table.rowCount() == len(self.comments):
+    @Slot()
+    @Slot(int)
+    def apply_filter(self, _: object = None) -> None:
+        filter_text = self.filter_edit.text()
+        if (not filter_text) and (self.table.rowCount() == len(self.comments)):
             # all rows are already visible
             return
 
+        flag = re.IGNORECASE if self.filter_ignore_case.isChecked() else 0
+        regex = re.compile(filter_text, flags=flag)
         self.table.setRowCount(0)
-        for item in self.comments:
-            if not filter_text or filter_text in item["timestamp"] or filter_text in item["comment"].lower():
-                self.append_to_history_table(item["timestamp"], item["comment"])
-        self.update_table_row_colors_and_resize()
+        for timestamp, comment in self.comments:
+            if (not filter_text) or (regex.search(timestamp) is not None) or (regex.search(comment) is not None):
+                self.append_to_history_table(timestamp, comment)
+        self.resize_to_contents()
 
-    def clear_filter(self) -> None:
-        # clear the filter text, only if there is text written in the filter
-        if self.filter_edit.text():
-            self.filter_edit.setText("")
-            self.apply_filter()
-
-    def clear_history(self) -> None:
-        if not self.comments or not yes_no("Clear the entire history?", default=False):
-            return
-        self.table.setRowCount(0)
-        self.comments = []
-        self.save_json()
-
-    def prepend_and_close(self) -> None:
+    @Slot()
+    def cancelled(self) -> None:
+        self.comment.setPlainText("")
         _ = self.close()
 
-        if not self.text():
-            # no new comments were entered so there is nothing to save to the history file
-            return
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:  # pyright: ignore[reportImplicitOverride]  # noqa: N802
+        if event.spontaneous():  # then the X in the title bar of the QDialog was clicked
+            self.comment.setPlainText("")
+        super().closeEvent(event)
 
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # noqa: DTZ005
-        self.comments.insert(0, {"timestamp": timestamp, "comment": self.text()})
-        self.save_json()
+    @Slot()
+    def prepend_and_close(self) -> None:
+        if self.text():
+            timestamp = datetime.now().isoformat(sep=" ", timespec="seconds")  # noqa: DTZ005
+            self.comments.insert(0, [timestamp, self.text()])
+            self.save_json()
+        _ = self.close()
+
+    @Slot()
+    def resize_to_contents(self) -> None:
+        self.table.verticalHeader().resizeSections(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
     def save_json(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open("w") as fp:
             json.dump(self.comments, fp, indent=2, ensure_ascii=False)
 
+    @Slot(int, int)
     def table_double_click(self, row: int, _: int) -> None:
+        # always use column 1 even if the timestamp column is double clicked
         table_item = self.table.item(row, 1)
         if table_item is not None:
             self.comment.setPlainText(table_item.text())
@@ -791,11 +775,7 @@ class _Comment(QtWidgets.QDialog):
         model = self.table.selectionModel()
         selected = sorted([s.row() for s in model.selectedRows()], reverse=True)
 
-        if len(selected) == self.table.rowCount():
-            self.clear_history()
-            return
-
-        msg = "this item" if len(selected) == 1 else f"these {len(selected)} items"
+        msg = "this comment" if len(selected) == 1 else f"these {len(selected)} comments"
         if not yes_no(f"Remove {msg} from the history?", default=False):
             return
 
@@ -808,16 +788,3 @@ class _Comment(QtWidgets.QDialog):
     def text(self) -> str:
         """The text in the comment editor."""
         return self.comment.toPlainText().strip()
-
-    def update_table_row_colors_and_resize(self) -> None:
-        for row in range(self.table.rowCount()):
-            color = self.even_row_color if row % 2 else self.odd_row_color
-            table_item = self.table.item(row, 0)
-            if table_item is not None:
-                table_item.setBackground(color)
-                table_item.setForeground(self.text_color)
-            table_item = self.table.item(row, 1)
-            if table_item is not None:
-                table_item.setBackground(color)
-                table_item.setForeground(self.text_color)
-        self.table.verticalHeader().resizeSections(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)

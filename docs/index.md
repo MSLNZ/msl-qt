@@ -2,6 +2,8 @@
 
 Custom [Qt] components for the graphical user interface (GUI).
 
+## Prompt User
+
 The [prompt][] module provides functions to create a window to either notify the user of an event that happened or to request input from the user. The functions are also convenient in scripts, not just in a GUI application.
 
 ```python
@@ -9,6 +11,33 @@ from msl.qt import DEGREE, prompt
 
 angle = prompt.number(f"Enter an angle [{DEGREE}]", minimum=0, maximum=360)
 ```
+<table>
+  <tr>
+    <th>Prompt</th>
+    <th>Description</th>
+    <th>Example</th>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.comment">comment</a></td>
+    <td>Prompt the user for a comment.</td>
+    <td>
+        <a href="assets/images/comment.png" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/comment.png" style="width: 50%; height: auto;">
+        </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.critical">critical</a></td>
+    <td>Display a message in a dialog window using a <i>critical</i> alert icon.</td>
+    <td>
+        <a href="assets/images/critical.png" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/critical.png" style="width: 50%; height: auto;">
+        </a>
+    </td>
+  </tr>
+</table>
+
+## Custom Widgets
 
 The following widgets are provided, plus all of the [widget classes](https://doc.qt.io/qt-6/widget-classes.html) from [Qt] are available.
 

@@ -19,24 +19,23 @@ prepositions = ["after", "before", "in", "to", "on", "with", "without", "next to
 
 def show() -> None:
     """Create some random comments then show the prompt."""
-    dummy = [
-        {
-            "timestamp": (datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d %H:%M:%S"),
-            "comment": "The {} {} {} {} {} the {}".format(
+    comments = [
+        [
+            (datetime.now() - timedelta(days=i)).isoformat(sep=" ", timespec="seconds"),
+            "The {} {} {} {} {} the {}".format(
                 *map(random.choice, (adjectives, nouns, verbs, adverbs, prepositions, nouns))
             ),
-        }
+        ]
         for i in range(1000)
     ]
 
-    dummy_file = Path(tempfile.gettempdir()) / "msl-qt-comments-example.json"
-    with dummy_file.open("w") as fp:
-        json.dump(dummy, fp, indent=2, ensure_ascii=False)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_file = Path(tmp_dir) / "msl-qt-comments-example.json"
+        with tmp_file.open("w") as fp:
+            json.dump(comments, fp, indent=2, ensure_ascii=False)
 
-    comment = prompt.comment(path=dummy_file)
-    print(f"The comment is {comment!r}")
-
-    dummy_file.unlink()
+        comment = prompt.comment(path=tmp_file, title="Enter a comment")
+        print(f"The comment is {comment!r}")
 
 
 if __name__ == "__main__":
