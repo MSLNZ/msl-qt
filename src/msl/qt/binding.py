@@ -123,7 +123,7 @@ def application(*args: str) -> QtWidgets.QApplication:
     """Returns the Qt application instance (creating one if necessary).
 
     There is a single [QApplication][QtWidgets.QApplication] instance during the lifetime
-    of your application. Calling this method multiple times will return the same instance.
+    of your application. Calling this function multiple times will return the same instance.
 
     ```pycon
     >>> from msl.qt import application
@@ -140,6 +140,7 @@ def application(*args: str) -> QtWidgets.QApplication:
     """
     app = QtWidgets.QApplication.instance()
     if app is None:
+        # PyQt6 requires a list[str], whereas PySide6 accepts a Sequence[str]
         app = QtWidgets.QApplication(list(args) if args else sys.argv)
 
         # use a default MSL logo as the app icon

@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .binding import Qt, QtGui, QtWidgets, Slot, application
-from .utils import screen_geometry, to_qfont
+from .utils import rescale_icon, screen_geometry, to_qfont, to_qicon
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -58,7 +58,7 @@ __all__: list[str] = [
 
 
 def critical(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
-    """Display a message in a dialog window using a *critical* alert icon.
+    """Display a message in a dialog window using a _critical_ alert icon.
 
     !!! note "See also"
         [information][..information], [warning][..warning]
@@ -73,7 +73,11 @@ def critical(message: str | Exception, *, title: str | None = None, font: Font |
     if isinstance(message, Exception):
         message = traceback.format_exc()
     _, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+    if font is None:
+        mb.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+    else:
+        icon = _message_box_icon(mb, QtWidgets.QStyle.StandardPixmap.SP_MessageBoxCritical)
+        mb.setIconPixmap(icon)
     _ = mb.exec()
 
 
@@ -95,7 +99,7 @@ def number(
 
     Args:
         message: The message that is shown to the user to describe what the value represents.
-            The message can use HTML/CSS markup, e.g., `#!py "<html>Enter a mass, in &mu;g</html>"`.
+            The message can use HTML/CSS markup, e.g., `#!py "Enter an angle [<b>&deg;</b>]"`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
@@ -124,7 +128,7 @@ def number(
 
 def file(
     *,
-    title: str = "Select File",
+    title: str | None = "Select File",
     directory: str | Path | None = None,
     filters: Filter | None = None,
 ) -> str:
@@ -135,6 +139,7 @@ def file(
 
     Args:
         title: The text to display in the title bar of the dialog window.
+            If `None`, the text in the title bar of the active window is used.
         directory: The initial directory to start in.
         filters: Only files that match the specified `filters` are shown.
 
@@ -150,7 +155,7 @@ def file(
 
 def files(
     *,
-    title: str = "Select Files",
+    title: str | None = "Select Files",
     directory: str | Path | None = None,
     filters: Filter | None = None,
 ) -> list[str]:
@@ -161,6 +166,7 @@ def files(
 
     Args:
         title: The text to display in the title bar of the dialog window.
+            If `None`, the text in the title bar of the active window is used.
         directory: The initial directory to start in.
         filters: Only files that match the specified `filters` are shown.
 
@@ -174,7 +180,7 @@ def files(
     return names
 
 
-def folder(*, title: str = "Select Folder", directory: str | Path | None = None) -> str:
+def folder(*, title: str | None = "Select Folder", directory: str | Path | None = None) -> str:
     """Select a folder.
 
     !!! note "See also"
@@ -182,6 +188,7 @@ def folder(*, title: str = "Select Folder", directory: str | Path | None = None)
 
     Args:
         title: The text to display in the title bar of the dialog window.
+            If `None`, the text in the title bar of the active window is used.
         directory: The initial directory to start in.
 
     Returns:
@@ -193,14 +200,14 @@ def folder(*, title: str = "Select Folder", directory: str | Path | None = None)
 
 
 def information(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
-    """Display a message in a dialog window using an *information* alert icon.
+    """Display a message in a dialog window using an _information_ alert icon.
 
     !!! note "See also"
         [critical][..critical], [warning][..warning]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `#!py "<html>Laser at 26.3 &deg;C</html>"`.
+            `#!py "<html>Laser is at 30.2&deg;C</html>"`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
@@ -208,7 +215,11 @@ def information(message: str | Exception, *, title: str | None = None, font: Fon
     if isinstance(message, Exception):
         message = traceback.format_exc()
     _, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Icon.Information)
+    if font is None:
+        mb.setIcon(QtWidgets.QMessageBox.Icon.Information)
+    else:
+        icon = _message_box_icon(mb, QtWidgets.QStyle.StandardPixmap.SP_MessageBoxInformation)
+        mb.setIconPixmap(icon)
     _ = mb.exec()
 
 
@@ -229,7 +240,7 @@ def integer(
 
     Args:
         message: The message that is shown to the user to describe what the value represents.
-            The message can use HTML/CSS markup, e.g., `#!py "<html>Enter a mass, in &mu;g</html>"`.
+            The message can use HTML/CSS markup, e.g., `#!py "Enter a mass [<b>&mu;g</b>]"`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
@@ -242,8 +253,8 @@ def integer(
     Returns:
         The value or `None` if the dialog was cancelled.
     """
-    mn = -sys.maxsize if minimum is None else minimum
-    mx = sys.maxsize if maximum is None else maximum
+    mn = -0x80000000 if minimum is None else minimum
+    mx = 0x7FFFFFFF if maximum is None else maximum
     _, dialog = _input_dialog(title=title, message=message, font=font)
     dialog.setInputMode(QtWidgets.QInputDialog.InputMode.IntInput)
     dialog.setIntRange(mn, mx)
@@ -266,7 +277,7 @@ def item(
     Args:
         message: The message that is shown to the user to describe what the
             sequence of items represent. The message can use HTML/CSS markup, e.g.,
-            `#!py "<html>Choose a <i>temperature</i> in &deg;C</html>"`
+            `#!py "Choose a <i>gain</i> factor"`
         items: The items to choose from. The items can be of any data type,
             the string representation of each item is displayed in the dialog window.
         title: The text to display in the title bar of the dialog window.
@@ -290,7 +301,7 @@ def item(
     return items[strings.index(dialog.textValue())] if ok else None
 
 
-def comment(*, path: str | Path | None = None, title: str = "Comment") -> str:
+def comment(*, path: str | Path | None = None, title: str | None = None) -> str:
     """Prompt the user for a comment.
 
     Opens a [QDialog][QtWidgets.QDialog] to allow a user to enter a comment about
@@ -323,6 +334,7 @@ def comment(*, path: str | Path | None = None, title: str = "Comment") -> str:
             of the comments that have been entered. If `None`, the default path is used.
             The file is created if it does not exist.
         title: The text to display in the title bar of the dialog window.
+            If `None`, the text in the title bar of the active window is used.
 
     Returns:
         The comment.
@@ -382,7 +394,7 @@ def text(
 
     Args:
         message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,
-            `#!py "<html>Enter a <i>hostname</i> or <i>IP address</i></html>"`.
+            `#!py "Enter a <i>hostname</i> or <i>IP address</i>"`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
@@ -413,7 +425,7 @@ def password(message: str, *, title: str | None = None, font: Font | None = None
 
     Args:
         message: The message that is shown to the user. The message can use HTML/CSS markup, e.g.,
-            `#!py "<html>Enter a <i>secure password</i></html>"`.
+            `#!py "Enter <b>secure</b> password"`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
@@ -425,14 +437,14 @@ def password(message: str, *, title: str | None = None, font: Font | None = None
 
 
 def warning(message: str | Exception, *, title: str | None = None, font: Font | None = None) -> None:
-    """Display a message in a dialog window using a *warning* alert icon.
+    """Display a message in a dialog window using a _warning_ alert icon.
 
     !!! note "See also"
         [critical][..critical], [information][..information]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `#!py '<html>A <p style="color:yellow">warning</p> message</html>'`.
+            `#!py 'A <span style="color:yellow">warning</span> message'`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
@@ -440,27 +452,31 @@ def warning(message: str | Exception, *, title: str | None = None, font: Font | 
     if isinstance(message, Exception):
         message = traceback.format_exc()
     _, mb = _message_box(title=title, message=message, font=font)
-    mb.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+    if font is None:
+        mb.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+    else:
+        icon = _message_box_icon(mb, QtWidgets.QStyle.StandardPixmap.SP_MessageBoxWarning)
+        mb.setIconPixmap(icon)
     _ = mb.exec()
 
 
 def ok_cancel(message: str, *, title: str | None = None, font: Font | None = None, default: bool = True) -> bool:
-    """Prompt for a response to a message where the logical options are `Ok` or `Cancel`.
+    """Prompt for a response to a message where the logical options are _Ok_ or _Cancel_.
 
     !!! note "See also"
         [yes_no][..yes_no], [yes_no_cancel][..yes_no_cancel]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `#!py '<html>Change the laser diode current to <p style="color:green">60 mA</p>?</html>'`.
+            `#!py 'Change the current to <span style="color:red">60 mA</span>?'`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
-        default: The button to initially select. If `True` then `Ok` is selected,
-            otherwise `Cancel` is selected.
+        default: The button to initially select. If `True` then _Ok_ is selected,
+            otherwise _Cancel_ is selected.
 
     Returns:
-        `True` if `Ok` was clicked, otherwise `False` if `Cancel` was clicked.
+        `True` if _Ok_ was clicked, otherwise `False` if _Cancel_ was clicked.
     """
     ok = QtWidgets.QMessageBox.StandardButton.Ok
     cancel = QtWidgets.QMessageBox.StandardButton.Cancel
@@ -472,22 +488,22 @@ def ok_cancel(message: str, *, title: str | None = None, font: Font | None = Non
 
 
 def yes_no(message: str, *, title: str | None = None, font: Font | None = None, default: bool = True) -> bool:
-    """Prompt for a response to a message where the logical options are `Yes` or `No`.
+    """Prompt for a response to a message where the logical options are _Yes_ or _No_.
 
     !!! note "See also"
         [ok_cancel][..ok_cancel], [yes_no_cancel][..yes_no_cancel]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `#!py '<html>Change the laser diode current to <p style="color:green">60 mA</p>?</html>'`.
+            `#!py 'Change the current to <span style="color:red">60 mA</span>?'`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
-        default: The button to initially select. If `True` then `Yes` is selected,
-            otherwise `No` is selected.
+        default: The button to initially select. If `True` then _Yes_ is selected,
+            otherwise _No_ is selected.
 
     Returns:
-        `True` if `Yes` was clicked, otherwise `False` if `No` was clicked.
+        `True` if _Yes_ was clicked, otherwise `False` if _No_ was clicked.
     """
     yes = QtWidgets.QMessageBox.StandardButton.Yes
     no = QtWidgets.QMessageBox.StandardButton.No
@@ -501,22 +517,22 @@ def yes_no(message: str, *, title: str | None = None, font: Font | None = None, 
 def yes_no_cancel(
     message: str, *, title: str | None = None, font: Font | None = None, default: bool | None = True
 ) -> bool | None:
-    """Prompt for a response to a message where the logical options are `Yes`, `No` or `Cancel`.
+    """Prompt for a response to a message where the logical options are _Yes_, _No_ or _Cancel_.
 
     !!! note "See also"
         [ok_cancel][..ok_cancel], [yes_no][..yes_no]
 
     Args:
         message: The message to display. The message can use HTML/CSS markup, e.g.,
-            `#!py '<html>Change the laser diode current to <p style="color:green">60 mA</p>?</html>'`.
+            `#!py 'Change the current to <span style="color:red">60 mA</span>?'`.
         title: The text to display in the title bar of the dialog window.
             If `None`, the text in the title bar of the active window is used.
         font: The font to use.
-        default: The button to initially select. If `True` then `Yes` is selected,
-            if `False` then `No` is selected, if `None` then `Cancel` is selected.
+        default: The button to initially select. If `True` then _Yes_ is selected,
+            if `False` then _No_ is selected, if `None` then _Cancel_ is selected.
 
     Returns:
-        `True` if `Yes` was clicked, `False` if `No` was clicked, `None` if `Cancel` was clicked.
+        `True` if _Yes_ was clicked, `False` if _No_ was clicked, `None` if _Cancel_ was clicked.
     """
     yes = QtWidgets.QMessageBox.StandardButton.Yes
     no = QtWidgets.QMessageBox.StandardButton.No
@@ -541,7 +557,7 @@ def _get_app_and_title(title: str | None) -> tuple[QtWidgets.QApplication, str]:
     app = application()
     if title is None:
         w = app.activeWindow()
-        title = "MSL" if w is None else w.windowTitle()
+        title = "MSL-Qt" if w is None else w.windowTitle()
     return app, title
 
 
@@ -603,6 +619,14 @@ def _get_file_filters(filters: Filter | None) -> str:  # noqa: C901
         return filters
 
     return ";;".join(f or all_files for f in filters)
+
+
+def _message_box_icon(mb: QtWidgets.QMessageBox, pixmap: QtWidgets.QStyle.StandardPixmap) -> QtGui.QPixmap:
+    """Rescale the `pixmap` based on the font size of the QMessageBox."""
+    icon = to_qicon(pixmap)
+    point_size = mb.font().pointSizeF() / 9.0  # Default QMessageBox font size is 9 (on Windows)
+    icon_width = icon.availableSizes()[-1].width() / 48.0  # Default QMessageBox.Icon size is 48 (on Windows)
+    return rescale_icon(icon, point_size / icon_width)
 
 
 class _Comment(QtWidgets.QDialog):

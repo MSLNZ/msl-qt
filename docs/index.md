@@ -11,28 +11,162 @@ from msl.qt import DEGREE, prompt
 
 angle = prompt.number(f"Enter an angle [{DEGREE}]", minimum=0, maximum=360)
 ```
+
 <table>
-  <tr>
-    <th>Prompt</th>
-    <th>Description</th>
-    <th>Example</th>
-  </tr>
+  <colgroup>
+    <col style="width: 20%;">
+    <col style="width: 50%;">
+    <col style="width: 30%;">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Prompt</th>
+      <th>Description</th>
+      <th>Example</th>
+    </tr>
+  </thead>
   <tr>
     <td><a href="api/prompt/#msl.qt.prompt.comment">comment</a></td>
     <td>Prompt the user for a comment.</td>
     <td>
-        <a href="assets/images/comment.png" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/comment.png" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/comment.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/comment.png" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/prompt/#msl.qt.prompt.critical">critical</a></td>
     <td>Display a message in a dialog window using a <i>critical</i> alert icon.</td>
     <td>
-        <a href="assets/images/critical.png" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/critical.png" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/critical.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/critical.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.file">file</a></td>
+    <td>Select a file.</td>
+    <td>
+      <a href="assets/images/file.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/file.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.files">files</a></td>
+    <td>Select multiple files.</td>
+    <td>
+      <a href="assets/images/files.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/files.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.folder">folder</a></td>
+    <td>Select a folder.</td>
+    <td>
+      <a href="assets/images/folder.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/folder.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.information">information</a></td>
+    <td>Display a message in a dialog window using an <i>information</i> alert icon.</td>
+    <td>
+      <a href="assets/images/information.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/information.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.integer">integer</a></td>
+    <td>Prompt for an integer value.</td>
+    <td>
+      <a href="assets/images/integer.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/integer.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.item">item</a></td>
+    <td>Prompt for an item from a sequence of items.</td>
+    <td>
+      <a href="assets/images/item.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/item.gif" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.number">number</a></td>
+    <td>Prompt for a floating-point number.</td>
+    <td>
+      <a href="assets/images/number.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/number.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.ok_cancel">ok_cancel</a></td>
+    <td>Prompt for a response to a message where the logical options are <i>Ok</i> or <i>Cancel</i>.</td>
+    <td>
+      <a href="assets/images/ok_cancel.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/ok_cancel.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.password">password</a></td>
+    <td>Prompt for a password.</td>
+    <td>
+      <a href="assets/images/password.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/password.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.save">save</a></td>
+    <td>Select where to save a file.</td>
+    <td>
+      <a href="assets/images/save.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/save.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.text">text</a></td>
+    <td>Prompt for text (a string).</td>
+    <td>
+      <a href="assets/images/text.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/text.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.warning">warning</a></td>
+    <td>Display a message in a dialog window using a <i>warning</i> alert icon.</td>
+    <td>
+      <a href="assets/images/warning.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/warning.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.yes_no">yes_no</a></td>
+    <td>Prompt for a response to a message where the logical options are <i>Yes</i> or <i>No</i>.</td>
+    <td>
+      <a href="assets/images/yes_no.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/yes_no.png" style="width: 100%; height: auto;">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="api/prompt/#msl.qt.prompt.yes_no_cancel">yes_no_cancel</a></td>
+    <td>Prompt for a response to a message where the logical options are <i>Yes</i>, <i>No</i> or <i>Cancel</i>.</td>
+    <td>
+      <a href="assets/images/yes_no_cancel.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/yes_no_cancel.png" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
 </table>
@@ -42,90 +176,97 @@ angle = prompt.number(f"Enter an angle [{DEGREE}]", minimum=0, maximum=360)
 The following widgets are provided, plus all of the [widget classes](https://doc.qt.io/qt-6/widget-classes.html) from [Qt] are available.
 
 <table>
-  <tr>
-    <th>Widget</th>
-    <th>Description</th>
-    <th>Example</th>
-  </tr>
+  <colgroup>
+    <col style="width: 20%;">
+    <col style="width: 50%;">
+    <col style="width: 30%;">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Widget</th>
+      <th>Description</th>
+      <th>Example</th>
+    </tr>
+  </thead>
   <tr>
     <td><a href="api/widgets/button">Button</a></td>
     <td>A button to display text, an icon and a menu. The button supports a left-click and a right-click event.</td>
     <td>
-        <a href="assets/images/button.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/button.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/button.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/button.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/checkbox">CheckBox</a></td>
     <td>A checkbox with a text label. A checkbox can be in either the checked, unchecked or partially-checked state.</td>
     <td>
-        <a href="assets/images/checkbox.png" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/checkbox.png" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/checkbox.png" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/checkbox.png" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/combobox">ComboBox</a></td>
     <td>A combobox to select an item from a list of items. An item can include text, an icon and user data.</td>
     <td>
-        <a href="assets/images/combobox.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/combobox.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/combobox.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/combobox.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/double_spinbox">DoubleSpinBox</a></td>
     <td>Enter a floating-point value using increment/decrement buttons, arrow keys, or direct text entry.</td>
     <td>
-        <a href="assets/images/double_spinbox.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/double_spinbox.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/double_spinbox.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/double_spinbox.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/led">LED</a></td>
     <td>An LED (i.e., light-emitting diode) to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
     <td>
-        <a href="assets/images/led.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/led.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/led.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/led.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/line_edit">LineEdit</a></td>
     <td>A single line of editable text that can rescale the font size based on the widget size.</td>
     <td>
-        <a href="assets/images/line_edit.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/line_edit.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/line_edit.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/line_edit.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/logger">Logger</a></td>
     <td>Display <a href="https://docs.python.org/3/library/logging.html#module-logging">logging</a> records.</td>
     <td>
-        <a href="assets/images/logger.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/logger.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/logger.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/logger.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/spinbox">SpinBox</a></td>
     <td>Enter an integer value using increment/decrement buttons, arrow keys, or direct text entry.</td>
     <td>
-        <a href="assets/images/spinbox.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/spinbox.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/spinbox.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/spinbox.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
   <tr>
     <td><a href="api/widgets/toggle_switch">ToggleSwitch</a></td>
     <td>A toggle switch to signify two states &mdash; <i>on</i> and <i>off</i>.</td>
     <td>
-        <a href="assets/images/toggle_switch.gif" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/toggle_switch.gif" style="width: 50%; height: auto;">
-        </a>
+      <a href="assets/images/toggle_switch.gif" target="_blank" rel="noopener noreferrer">
+        <img src="assets/images/toggle_switch.gif" style="width: 100%; height: auto;">
+      </a>
     </td>
   </tr>
 </table>

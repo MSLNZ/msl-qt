@@ -35,7 +35,7 @@ Unscoped enum access is supported for the `QtCore`, `QtWidgets`, `QtGui`, `QtSvg
 
 ## Qt Application
 
-You can create, or get the instance of, the [QApplication][PySide6.QtWidgets.QApplication] by calling the [application][msl.qt.binding.application] function.
+You can create, or get the instance of, the [QApplication][msl.qt.binding.QtWidgets.QApplication] by calling the [application][msl.qt.binding.application] function. There is a single [QApplication][msl.qt.binding.QtWidgets.QApplication] instance during the lifetime of your application. Calling this function multiple times will return the same instance.
 
 ```pycon
 >>> from msl.qt import application
